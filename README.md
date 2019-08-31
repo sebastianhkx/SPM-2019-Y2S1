@@ -1,2 +1,4 @@
-# G6T6
-SPM PROJECT
+
+# SPM PROJECT
+
+Framework: CodeIgniter
