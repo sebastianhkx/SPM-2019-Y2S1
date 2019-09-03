@@ -1,4 +1,3 @@
 
 # SPM PROJECT
 
-Framework: CodeIgniter
