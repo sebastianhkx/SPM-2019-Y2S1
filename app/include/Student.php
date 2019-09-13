@@ -1,12 +1,13 @@
 <?php
 
 class Student {
-    public $name;
-    public $gender;
-    public $username;    
+    public $userid;
     public $password;
+    public $name;    
+    public $school;
+    public $edollar;
     
-    public function __construct($userid='', $password='', $name='', $school='', $edollar='') {
+    public function __construct($userid, $password, $name, $school, $edollar) {
         $this->userid = $userid;
         $this->password = $password;
         $this->name = $name;
