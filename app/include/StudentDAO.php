@@ -25,7 +25,7 @@ class StudentDAO {
     }
 
     public function retrieve($userid){
-        $sql = 'SELECT userid, password, name, school, edollar FROM student where userid=:uderid';
+        $sql = 'SELECT userid, password, name, school, edollar FROM student where userid=:userid';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();

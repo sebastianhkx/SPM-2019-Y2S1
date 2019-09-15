@@ -5,19 +5,15 @@ $error = '';
 
 if ( isset($_GET['error']) ) {
     $error = $_GET['error'];
-} elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
+    } 
+elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-<<<<<<< HEAD
     $dao= new StudentDAO();
-    $student=$dao->retrieve($userid);
-=======
-    $dao= new Student();
     $student=$dao->retrieve($username);
->>>>>>> parent of 66ed3dd... fix
 
-    if ( $user != null && $user->authenticate($password) ) {
+    if ( $student != null && $student->authenticate($password) ) {
         $_SESSION['username'] = $username; 
         header("Location: DisplayBids.php");
         return;
