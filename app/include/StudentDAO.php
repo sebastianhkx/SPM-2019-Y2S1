@@ -41,8 +41,8 @@ class StudentDAO {
             return new Student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
         }
 
-        //$stmt = null;
-        //$conn = null; 
+        $stmt = null;
+        $conn = null; 
                  
         
     }

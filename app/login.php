@@ -37,7 +37,7 @@ elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
                     <td>Username</td>
                     <td>
                         <input name='username' />
-                    </td>
+                    </td>   
                 </tr>
                 <tr>
                     <td>Password</td>
