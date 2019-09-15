@@ -9,8 +9,8 @@ if ( isset($_GET['error']) ) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $user= new Student();
-    
+    $dao= new Student();
+    $student=$dao->retrieve($username);
 
     if ( $user != null && $user->authenticate($password) ) {
         $_SESSION['username'] = $username; 
@@ -26,7 +26,7 @@ if ( isset($_GET['error']) ) {
 ?>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="include/style.css">
+        <!--<link rel="stylesheet" type="text/css" href="include/style.css">-->
     </head>
     <body>
         <h1>Login</h1>

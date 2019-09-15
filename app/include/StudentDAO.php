@@ -24,6 +24,29 @@ class StudentDAO {
         return $result;
     }
 
+    public function retrieve($userid){
+        $sql = 'SELECT userid, password, name, school, edollar FROM student where userid=:uderid';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return new student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+                 
+        
+    }
+
     public function removeAll(){
         $sql = 'TRUNCATE TABLE student';
 
