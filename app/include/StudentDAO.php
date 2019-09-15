@@ -2,8 +2,8 @@
 
 class StudentDAO {
 
-    public function retrieve_all(){
-        $sql = 'SELECT userid, password, name, school, edollar FROM student;';
+    public function retrieveAll(){
+        $sql = 'SELECT userid, password, name, school, edollar FROM student';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -24,8 +24,8 @@ class StudentDAO {
         return $result;
     }
 
-    public function remove_all(){
-        $sql = 'TRUNCATE TABLE student;';
+    public function removeAll(){
+        $sql = 'TRUNCATE TABLE student';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
