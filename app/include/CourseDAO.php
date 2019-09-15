@@ -49,5 +49,32 @@ class CourseDAO {
         $conn = null; 
                  
         return $arr;
+    public function deleteAll(){
+        $sql = 'TRUNCATE TABLE course';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $count = $stmt->rowCount();
+    }
+
+    public function add($course){
+        $sql = 'INSERT IGNORE into course(course, school, title, description, exam_date, exam_start, exam_end) values (:course, :school, :title, :description, :exam_date, :exam_start, :exam_end)';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $course->course, PDO::PARAM_STR);
+        $stmt->bindParam(':school', $course->school, PDO::PARAM_STR);
+        $stmt->bindParam(':title', $course->title, PDO::PARAM_STR);
+        $stmt->bindParam(':description', $course->description, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_date', $course->exam_date, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_start', $course->exam_start, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_end', $course->exam_end, PDO::PARAM_STR);
+
+        $stmt->execute();
     }
 }
