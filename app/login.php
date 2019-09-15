@@ -5,20 +5,25 @@ $error = '';
 
 if ( isset($_GET['error']) ) {
     $error = $_GET['error'];
-} elseif ( isset($_POST['userid']) && isset($_POST['password']) ) {
-    $userid = $_POST['userid'];
+} elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
+<<<<<<< HEAD
     $dao= new StudentDAO();
     $student=$dao->retrieve($userid);
+=======
+    $dao= new Student();
+    $student=$dao->retrieve($username);
+>>>>>>> parent of 66ed3dd... fix
 
-    if ( $student != null && $student->authenticate($password) ) {
-        $_SESSION['userid'] = $userid; 
+    if ( $user != null && $user->authenticate($password) ) {
+        $_SESSION['username'] = $username; 
         header("Location: DisplayBids.php");
         return;
 
     } else {
-        $error = 'Incorrect userid or password!';
+        $error = 'Incorrect username or password!';
     }
 
 
@@ -33,9 +38,9 @@ if ( isset($_GET['error']) ) {
         <form method='POST' action='login.php'>
             <table border='0'>
                 <tr>
-                    <td>Userid</td>
+                    <td>Username</td>
                     <td>
-                        <input name='userid' />
+                        <input name='username' />
                     </td>
                 </tr>
                 <tr>
