@@ -59,6 +59,9 @@ class CourseDAO {
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null; 
     }
 
     public function add($course){
@@ -77,5 +80,8 @@ class CourseDAO {
         $stmt->bindParam(':exam_end', $course->exam_end, PDO::PARAM_STR);
 
         $stmt->execute();
+        
+        $stmt = null;
+        $conn = null; 
     }
 }
