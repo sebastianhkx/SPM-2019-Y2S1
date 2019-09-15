@@ -15,7 +15,7 @@ class StudentDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
+            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
         }
 
         $stmt = null;
@@ -31,18 +31,18 @@ class StudentDAO {
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":userid", $userid, PDO::PARAM_INT);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
         $stmt->execute();
 
         
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
+            return new Student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
         }
 
-        $stmt = null;
-        $conn = null; 
+        //$stmt = null;
+        //$conn = null; 
                  
         
     }
