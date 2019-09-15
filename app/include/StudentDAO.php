@@ -33,6 +33,9 @@ class StudentDAO {
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $count = $stmt->rowCount();
+        
+        $stmt = null;
+        $conn = null; 
     }
 
     public function add($student){
@@ -54,6 +57,9 @@ class StudentDAO {
 
         $stmt->execute();
         //might want to add check if stmt succeeded
+        
+        $stmt = null;
+        $conn = null; 
     }
 }
 

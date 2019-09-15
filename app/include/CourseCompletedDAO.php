@@ -28,6 +28,9 @@ class CourseCompletedDAO(){
         $stmt->bindParam(':code', $courseCompleted->code, PDO::PARAM_STR);
 
         $stmt->execute();
+
+        $stmt = null;
+        $conn = null; 
     }
 
 

@@ -35,6 +35,9 @@ class SectionDAO {
         $stmt->execute();
         $count = $stmt->rowCount();
 
+        
+        $stmt = null;
+        $conn = null; 
     }
 
     public function add($section){
@@ -56,5 +59,8 @@ class SectionDAO {
         $stmt->bindParam(':size', $section->size, PDO::PARAM_INT);
 
         $stmt->execute();
+        
+        $stmt = null;
+        $conn = null; 
     }
 }

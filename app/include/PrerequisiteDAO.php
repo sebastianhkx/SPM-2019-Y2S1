@@ -13,6 +13,8 @@ class PrequisiteDAO{
         $stmt->execute();
         $count = $stmt->rowCount();
 
+        $stmt = null;
+        $conn = null; 
     }
 
     public function add($prerequisite){
@@ -28,6 +30,9 @@ class PrequisiteDAO{
         $stmt->bindParam(':prerequisite', $prerequisite->prerequisite, PDO::PARAM_STR);
 
         $stmt->execute();
+        
+        $stmt = null;
+        $conn = null; 
     }
 
 }
