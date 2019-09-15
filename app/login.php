@@ -14,7 +14,7 @@ if ( isset($_GET['error']) ) {
 
     if ( $user != null && $user->authenticate($password) ) {
         $_SESSION['username'] = $username; 
-        header("Location: main.php");
+        header("Location: DisplayBids.php");
         return;
 
     } else {
