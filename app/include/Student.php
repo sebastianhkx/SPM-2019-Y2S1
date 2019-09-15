@@ -16,7 +16,12 @@ class Student {
     }
     
     public function authenticate($enteredPwd) {
-        return $enteredPwd == $this->$password;
+        if ($this->password == $enteredPwd){
+            return True;
+        }
+        else{
+            return False;
+        }
         // return password_verify ($enteredPwd, $this->password);
     }
 }
