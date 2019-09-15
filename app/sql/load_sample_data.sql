@@ -68,21 +68,20 @@ CONSTRAINT course_completed_pk primary key(userid, code),
 CONSTRAINT course_completed_fk1 foreign key(userid) references student(userid),
 CONSTRAINT course_completed_fk2 foreign key(code) references course(course)
 );
-
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\student.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\student.csv"
 INTO TABLE student FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\course.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\course.csv"
 INTO TABLE course FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\section.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\section.csv"
 INTO TABLE section FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\prerequisite.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\prerequisite.csv"
 INTO TABLE prerequisite FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\bid.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\bid.csv"
 INTO TABLE bid FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\wamp64\www\project-g6t6\app\sql\sampledata\course_completed.csv"
+LOAD DATA LOCAL INFILE "C:\\wamp64\\www\\project-g6t6\\app\\sql\\sampledata\\course_completed.csv"
 INTO TABLE course_completed FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
