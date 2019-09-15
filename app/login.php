@@ -5,20 +5,20 @@ $error = '';
 
 if ( isset($_GET['error']) ) {
     $error = $_GET['error'];
-} elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
-    $username = $_POST['username'];
+} elseif ( isset($_POST['userid']) && isset($_POST['password']) ) {
+    $userid = $_POST['userid'];
     $password = $_POST['password'];
 
-    $user= new Student();
-    
+    $dao= new Student();
+    $student=$dao->retrieve($userid);
 
-    if ( $user != null && $user->authenticate($password) ) {
-        $_SESSION['username'] = $username; 
-        header("Location: main.php");
+    if ( $student != null && $student->authenticate($password) ) {
+        $_SESSION['userid'] = $userid; 
+        header("Location: DisplayBids.php");
         return;
 
     } else {
-        $error = 'Incorrect username or password!';
+        $error = 'Incorrect userid or password!';
     }
 
 
@@ -26,16 +26,16 @@ if ( isset($_GET['error']) ) {
 ?>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="include/style.css">
+        <!--<link rel="stylesheet" type="text/css" href="include/style.css">-->
     </head>
     <body>
         <h1>Login</h1>
         <form method='POST' action='login.php'>
             <table border='0'>
                 <tr>
-                    <td>Username</td>
+                    <td>Userid</td>
                     <td>
-                        <input name='username' />
+                        <input name='userid' />
                     </td>
                 </tr>
                 <tr>
