@@ -43,12 +43,13 @@ class CourseDAO {
         while($row = $stmt->fetch()){
             $arr[] = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
 
-        }
+            }
 
         $stmt = null;
         $conn = null; 
                  
         return $arr;
+    }
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE course';
 
