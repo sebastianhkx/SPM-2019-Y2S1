@@ -38,7 +38,7 @@ class StudentDAO {
         
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
+            return new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
         }
 
         $stmt = null;
@@ -83,6 +83,29 @@ class StudentDAO {
         
         $stmt = null;
         $conn = null; 
+    }
+
+    public function updateEdollar($userid, $edollar) {
+        $sql = 'UPDATE student SET edollar=:edollar WHERE userid=:userid';
+    
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        
+        $isUpdateOk = FALSE;
+        if ($stmt->execute()) {
+            $isUpdateOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isUpdateOk;
+        //might want to add check if stmt succeeded
+
     }
 }
 

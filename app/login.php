@@ -1,25 +1,31 @@
 <?php
 require_once 'include/common.php';
 
+if ( isset($_SESSION['userid']) ) {
+    header("Location: home.php");
+    exit;
+}
+else {
+
 $error = '';
 
 if ( isset($_GET['error']) ) {
     $error = $_GET['error'];
     } 
-elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
-    $username = $_POST['username'];
+elseif ( isset($_POST['userid']) && isset($_POST['password']) ) {
+    $userid = $_POST['userid'];
     $password = $_POST['password'];
 
-    $dao= new StudentDAO();
-    $student=$dao->retrieve($username);
+    $dao = new StudentDAO();
+    $student = $dao->retrieve($userid);
 
     if ( $student != null && $student->authenticate($password) ) {
-        $_SESSION['username'] = $username; 
-        header("Location: DisplayBids.php");
+        $_SESSION['userid'] = $userid; 
+        header("Location: home.php");
         return;
 
     } else {
-        $error = 'Incorrect username or password!';
+        $error = 'Incorrect userid or password!';
     }
 
 
@@ -34,9 +40,9 @@ elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
         <form method='POST' action='login.php'>
             <table border='0'>
                 <tr>
-                    <td>Username</td>
+                    <td>User ID</td>
                     <td>
-                        <input name='username' />
+                        <input name='userid' />
                     </td>   
                 </tr>
                 <tr>
@@ -60,3 +66,7 @@ elseif ( isset($_POST['username']) && isset($_POST['password']) ) {
     </body>
 </html>
 
+<?php
+
+}
+?>

@@ -15,6 +15,9 @@ spl_autoload_register(function($class) {
 
 session_start();
 
+// don't implement protect.php
+// for easier testing
+
 
 // function printErrors() {
 //     if(isset($_SESSION['errors'])){

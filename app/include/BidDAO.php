@@ -24,6 +24,30 @@ class BidDAO {
         return $result;
     }
 
+    public  function retrieveByUser($userid) {
+        $sql = 'SELECT * FROM bid WHERE userid=:userid';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
+    }
+
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE bid';
 
@@ -59,4 +83,26 @@ class BidDAO {
         $conn = null; 
 
     }
+
+    public function drop($userid){
+        $sql = 'DELETE from bid where userid=:userid';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        
+        $isDeleteOk = FALSE;
+        if ($stmt->execute()) {
+            $isDeleteOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isDeleteOk;
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-class CourseCompletedDAO(){
+class CourseCompletedDAO {
 
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE course_completed';
