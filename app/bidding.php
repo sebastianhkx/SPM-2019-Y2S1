@@ -5,7 +5,7 @@ echo "Your info<br>";
 
 $userid = $_SESSION['userid'];
 
-$dao = new StudentDAO;
+$dao = new StudentDAO();
 $result = $dao->retrieve($userid);
 
 echo "<table border=1>
@@ -28,10 +28,8 @@ echo "<table border=1>
 
 echo "Your current bids<br>";
 
-$bid_dao = new BidDAO;
+$bid_dao = new BidDAO();
 $bids = $bid_dao->retrieveByUser($userid);
-
-var_dump($bids);
 
 echo "<table border='1'>
     <tr>
@@ -54,14 +52,8 @@ for ($i = 1; $i <= count($bids); $i++) {
     </tr>";
 }
 
+echo "</table>";
 
 
-
-
+echo "<a href='DisplayCourses.php' target='_blank' >Click to see all courses</a>";
 ?>
-<a href='DisplayCourses.php' target='_blank' >Click to see all courses</a>
-
-
-
-
-

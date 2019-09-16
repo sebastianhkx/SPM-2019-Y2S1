@@ -24,19 +24,20 @@ class BidDAO {
         return $result;
     }
 
-    public  function retrieveByUser($userid) {
+    public function retrieveByUser($userid) {
+        //this takes in a userid string
         $sql = 'SELECT * FROM bid WHERE userid=:userid';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        $result = [];
+        $result = array();
 
         while($row = $stmt->fetch()) {
             $result[] = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
