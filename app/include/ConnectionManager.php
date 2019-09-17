@@ -6,7 +6,10 @@ class ConnectionManager {
         
         $host = "localhost";
         $username = "root";
-        $password = "";  
+    
+        $password = "";
+        // $password = "root"; ## MAMP
+        
         $dbname = "g6t6";
         $port = 3306;    
 

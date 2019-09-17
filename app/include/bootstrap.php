@@ -4,7 +4,6 @@ require_once 'common.php';
 
 function doBootstrap() {
 		
-
 	$errors = array();
 	# need tmp_name -a temporary name create for the file and stored inside apache temporary folder- for proper read address
 	$zip_file = $_FILES["bootstrap-file"]["tmp_name"];
