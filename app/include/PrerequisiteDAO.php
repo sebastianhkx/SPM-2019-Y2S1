@@ -1,9 +1,9 @@
 <?php
 
-class PrequisiteDAO{
+class PrerequisiteDAO{
 
     public function deleteAll(){
-        $sql = 'TRUNCATE TABLE prequisite';
+        $sql = 'TRUNCATE TABLE prerequisite';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
