@@ -71,6 +71,41 @@ class CourseDAO {
     }
 
     public function add($course){
+        /*
+        takes in student obj and adds it to the database
+        returns array of errors if validation fails, returns null if validation passed
+        */
+        
+        //validation
+        $errors = [];
+
+        if($course->exam_date!=date("Ymd",strtotime($course->exam_date))){
+            $errors[]='invalid exam date';
+        }
+        if($course->exam_start!=date("G:i",strtotime($course->exam_start))){
+            // var_dump($course->exam_start);
+            // var_dump(date("G:i",strtotime($course->exam_start)));     
+            $errors[]='invalid exam start';
+        }
+        if($course->exam_end!=date("G:i",strtotime($course->exam_end))){
+            $errors[]='invalid exam end';
+        }
+        else{
+            $start_time=explode(":",$course->exam_start);
+            $end_time=explode(":",$course->exam_end);
+            if($start_time[0]*60+$start_time[1]>$start_time[0]*60+$start_time[1]){
+                $errors[]='invalid exam end';
+            }
+        }
+        if(strlen($course->title)>100){
+            $errors[]='invalid title';
+        }
+        if(strlen($course->description)>1000){
+            $errors[]='invalid description';
+        }
+        if (!empty($errors)){
+            return $errors; 
+        }
         $sql = 'INSERT IGNORE into course(course, school, title, description, exam_date, exam_start, exam_end) values (:course, :school, :title, :description, :exam_date, :exam_start, :exam_end)';
         
         $connMgr = new ConnectionManager();      

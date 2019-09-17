@@ -105,7 +105,7 @@ function doBootstrap() {
                 $filename = 'student.csv';
                 $row_num = 1;
                 $student_success = 0;
-                // var_dump($fields);
+                // var_dump($student);
    
                 while ( ($student_arr=fgetcsv($student) )  !== false){
                     // var_dump($student_arr);
@@ -121,7 +121,7 @@ function doBootstrap() {
                     }
                     if ($skip_line==FALSE){
                         //enters this if no empty values in row
-                        $studentObj= new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
+                        $studentObj = new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
                         $row_errors = $studentDAO->add($studentObj);
                     }
                     if (!empty($row_errors)){
@@ -134,11 +134,32 @@ function doBootstrap() {
                 fclose($student);
                 unlink($student_path);
                 
-                $course_arr=fgetcsv($course);
+                
+                $fields= fgetcsv($course);
+                $filename = 'course.csv';
+                $row_num = 1;
+                $course_success = 0;
                 while ( ($course_arr=fgetcsv($course) )  !== false){
-                    $courseObj= new Course($course_arr[0],$course_arr[1],$course_arr[2],$course_arr[3],$course_arr[4],$course_arr[5],$course_arr[6]);
-                    $courseDAO->add($courseObj);
-                    $lines_processed++;
+                    $course_arr= array_map('trim',$course_arr);
+                    $row_num++;
+                    $row_errors=[];
+                    $skip_line= FALSE;
+                    for ($i=0;$i<sizeof($course_arr);$i++){
+                        if(($course_arr[$i]) === ''){
+                            $skip_line=TRUE;
+                            $row_errors[]="blank {$fields[$i]}";
+                        }
+                    }
+                    if($skip_line==FALSE){
+                        $courseObj = new Course($course_arr[0],$course_arr[1],$course_arr[2],$course_arr[3],$course_arr[4],$course_arr[5],$course_arr[6]);
+                        $row_errors = $courseDAO->add($courseObj);
+                    }
+                    if(!empty($row_errors)){
+                        $errors[]=[$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $course_success++;
+                    }
                 }
                 fclose($course);
                 unlink($course_path);
@@ -189,6 +210,7 @@ function doBootstrap() {
         }
         var_dump($errors);
         echo $student_success;
+        echo $course_success;
     }
 
 
