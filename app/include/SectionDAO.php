@@ -25,16 +25,23 @@ class SectionDAO {
     }
 
     public function deleteAll(){
-        $sql = 'TRUNCATE TABLE section';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
+        $sql = 'SET foreign_key_checks = 0';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+
+        $sql = 'TRUNCATE TABLE section';
 
         $stmt = $conn->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
         $count = $stmt->rowCount();
 
+        $sql = 'SET foreign_key_checks = 1';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
         
         $stmt = null;
         $conn = null; 

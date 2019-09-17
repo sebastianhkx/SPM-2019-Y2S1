@@ -51,14 +51,20 @@ class CourseDAO {
         return $arr;
     }
     public function deleteAll(){
-        $sql = 'TRUNCATE TABLE course';
-
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
+        $sql = 'SET foreign_key_checks = 0';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
+        $sql = 'TRUNCATE TABLE course';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $count = $stmt->rowCount();
+
+        $sql = 'SET foreign_key_checks = 1';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         $stmt = null;
         $conn = null; 

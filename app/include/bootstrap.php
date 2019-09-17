@@ -11,6 +11,8 @@ function doBootstrap() {
 
 	# Get temp dir on system for uploading
     $temp_dir = sys_get_temp_dir();
+
+    $lines_processed = 0;
     
     if ($_FILES["bootstrap-file"]["size"] <= 0)
         $errors[] = "input files not found";
@@ -76,35 +78,59 @@ function doBootstrap() {
 				
             }
             else{
-                $studentDAO= new StudentDAO();
-                $studentDAO->removeAll();
-                
-                $courseDAO= new CourseDAO();
-                $courseDAO->removeAll();
-                
-                $sectionDAO= new SectionDAO();
-                $studentDAO->removeAll();
-                
-                $prerequisiteDAO= new PrerequisiteDAO();
-                $prerequisiteDAO->removeAll();
-                
-                $courseCompletedDAO= new CourseCompletedDAO();
-                $courseCompletedDAO->removeAll();
-                
-                $bidDAO= new BidDAO();
-                $bidDAO->removeAll();
-                
+
+                // var_dump(fgetcsv($student));
+
+                $bidDAO= new BidDAO();//has fk dependency on course, section, student
+                $bidDAO->deleteAll();
+
+                $course_completedDAO= new CourseCompletedDAO();//has fk dependency on course, student
+                $course_completedDAO->deleteAll();
+
+                $prerequisiteDAO= new PrerequisiteDAO();//has fk dependency on course
+                $prerequisiteDAO->deleteAll();
+
+                $sectionDAO= new SectionDAO();//has fk dependency on course
+                $sectionDAO->deleteAll();
+
+                $studentDAO= new StudentDAO();//no depdenency
+                $studentDAO->deleteAll();
+
+                $courseDAO= new CourseDAO();//no dependency
+                $courseDAO->deleteAll();
 
 
                 // read each line from csv
                 //skip header
-                $student_arr= fgetcsv($student);
-
-                
-
+                $fields= fgetcsv($student);
+                $filename = 'student.csv';
+                $row_num = 1;
+                $student_success = 0;
+                // var_dump($fields);
+   
                 while ( ($student_arr=fgetcsv($student) )  !== false){
-                    $studentObj= new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
-                    $studentDAO->add($studentObj);
+                    var_dump($student_arr);
+                    $student_arr = array_map('trim', $student_arr);//trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($student_arr); $i++){
+                        if ($student_arr[$i] === ''){
+                            $skip_line = TRUE;
+                            $row_errors[] = "blank {$fields[$i]}";
+                        }
+                    }
+                    if ($skip_line==FALSE){
+                        //enters this if no empty values in row
+                        $studentObj= new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
+                        $row_errors = $studentDAO->add($studentObj);
+                    }
+                    if (!empty($row_errors)){
+                        $errors[] = [$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $student_success++;
+                    }
                 }
                 fclose($student);
                 unlink($student_path);
@@ -113,6 +139,7 @@ function doBootstrap() {
                 while ( ($course_arr=fgetcsv($course) )  !== false){
                     $courseObj= new Course($course_arr[0],$course_arr[1],$course_arr[2],$course_arr[3],$course_arr[4],$course_arr[5],$course_arr[6]);
                     $courseDAO->add($courseObj);
+                    $lines_processed++;
                 }
                 fclose($course);
                 unlink($course_path);
@@ -122,6 +149,7 @@ function doBootstrap() {
                 while ( ($section_arr=fgetcsv($section) )  !== false){
                     $sectionObj= new Section($section_arr[0],$section_arr[1],$section_arr[2],$section_arr[3],$section_arr[4],$section_arr[5],$section_arr[6],$section_arr[7]);
                     $sectionDAO->add($sectionObj);
+                    $lines_processed++;
                 }
                 fclose($section);
                 unlink($section_path);
@@ -131,24 +159,27 @@ function doBootstrap() {
                 while ( ($prerequisite_arr=fgetcsv($prerequisite) )  !== false){
                     $prerequisiteObj= new Prerequisite($prerequisite_arr[0],$prerequisite_arr[1]);
                     $prerequisiteDAO->add($prerequisiteObj);
+                    $lines_processed++;
                 }
                 fclose($prerequisite);
                 unlink($prerequisite_path);
                 
 
-                $courseCompleted_arr=fgetcsv($courseCompleted);
-                while ( ($courseCompleted_arr=fgetcsv($courseCompleted) )  !== false){
-                    $courseCompletedObj= new CourseCompleted($courseCompleted_arr[0],$courseCompleted_arr[1]);
-                    $courseCompletedDAO->add($courseCompletedObj);
+                $course_completed_arr=fgetcsv($course_completed);
+                while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
+                    $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
+                    $course_completedDAO->add($course_completedObj);
+                    $lines_processed++;
                 }
-                fclose($courseCompleted);
-                unlink($courseCompleted_path);
+                fclose($course_completed);
+                unlink($course_completed_path);
                 
 
                 $bid_arr=fgetcsv($bid);
                 while ( ($bid_arr=fgetcsv($bid) )  !== false){
                     $bidObj= new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
                     $bidDAO->add($bidObj);
+                    $lines_processed++;
                 }
                 fclose($bid);
 				unlink($bid_path);
@@ -156,6 +187,10 @@ function doBootstrap() {
 
 
             }
+        }
+        var_dump($errors);
+        echo $student_success;
+    }
 
 
 
