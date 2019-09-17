@@ -1,1 +1,0 @@
-clarify what to store in supervisor minutes
