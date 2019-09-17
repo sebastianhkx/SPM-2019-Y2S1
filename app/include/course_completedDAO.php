@@ -46,10 +46,29 @@
             $stmt = null;
             return $result;
         }
+        
+        public function completed_prerequisite($userid, $courseid){
+            /*
+            does a recursive check if user has completed prerequiste for a course
+            ex1: course C has prereq B which has prereq A, function($userid, C) will check for B which calls recurisve function($userid, B)
+            will fail if user completed B but not its prereq A when function($userid, C)
+            */
+            $prerequisiteDAO = new PrerequisiteDAO;
+            $prerequisites = $prerequisiteDAO->retrievePrerequiste($courseid);
+            if (empty($prerequisites)){
+                return True;
+            }
+            else{
+                //has prerequistes
+                foreach ($prerequisite as $prereqid){//does recursive check
+                    $recursive_check = $this->completed_prerequisite($userid, $prereqid);
+                    if ($recursive_check == FALSE){
+                        //returns false if any of the nested prereq isn't completed
+                        return FALSE;
+                    }
+                }
+                return TRUE;
+            }
+        }
     }
-
-
-
-
-
 ?>

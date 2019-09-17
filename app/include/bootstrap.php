@@ -153,12 +153,32 @@ function doBootstrap() {
                 fclose($section);
                 unlink($section_path);
                 
+                $fields= fgetcsv($prerequisite);
+                $filename = 'prerequisite.csv';
+                $row_num = 1;
+                $prerequisite_success = 0;
 
-                $prerequisite_arr=fgetcsv($prerequisite);
                 while ( ($prerequisite_arr=fgetcsv($prerequisite) )  !== false){
-                    $prerequisiteObj= new Prerequisite($prerequisite_arr[0],$prerequisite_arr[1]);
-                    $prerequisiteDAO->add($prerequisiteObj);
-                    $lines_processed++;
+                    $prerequisite_arr = array_map('trim', $prerequisite_arr);//trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($prerequisite_arr); $i++){//this loop checks for empty cols
+                        if ($student_arr[$i] === ''){
+                            $skip_line = TRUE;
+                            $row_errors[] = "blank {$fields[$i]}";
+                        }
+                    }
+                    if ($skip_line == FALSE){
+                        $prerequisiteObj= new Prerequisite($prerequisite_arr[0],$prerequisite_arr[1]);
+                        $row_errors = $prerequisiteDAO->add($prerequisiteObj);
+                    }
+                    if (!empty($row_errors)){
+                        $errors[] = [$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $prerequisite_success++;
+                    }
                 }
                 fclose($prerequisite);
                 unlink($prerequisite_path);
@@ -189,6 +209,8 @@ function doBootstrap() {
         }
         var_dump($errors);
         echo $student_success;
+        echo "<br>";
+        echo $prerequisite_success;
     }
 
 

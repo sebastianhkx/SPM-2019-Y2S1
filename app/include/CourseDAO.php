@@ -90,4 +90,29 @@ class CourseDAO {
         $stmt = null;
         $conn = null; 
     }
+
+    public function retrieveByCourseId($courseId){
+        //returns course obj if courseid exists, returns null if doesn't
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+
+
+        $sql = 'SELECT * FROM course where course = :courseId';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':courseId',$courseId,PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+        $result = null;
+
+        while($row = $stmt->fetch()){
+            $result = new Course($row['course'], $row['school'], $row['title'], $row['description'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+                 
+        return $result;
+
+    }
 }
