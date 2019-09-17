@@ -108,7 +108,7 @@ function doBootstrap() {
                 // var_dump($fields);
    
                 while ( ($student_arr=fgetcsv($student) )  !== false){
-                    var_dump($student_arr);
+                    // var_dump($student_arr);
                     $student_arr = array_map('trim', $student_arr);//trims all cols in row
                     $row_num++;
                     $row_errors = [];

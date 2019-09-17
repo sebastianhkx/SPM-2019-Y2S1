@@ -85,7 +85,7 @@ class StudentDAO {
             $errors[] = "duplicate userid";
         }
 
-        $edollar_array = explode('.',$student->edollar);
+        $edollar_array = explode('.',$student->edollar);//10.000 ['10','000']
         if (isset($edollar_array[1])){
             $decimal_place = $edollar_array[1];
         }
