@@ -25,7 +25,7 @@ class StudentDAO {
     }
 
     public function retrieve($userid){
-        $sql = 'SELECT userid, password, name, school, edollar FROM student where userid=:userid';
+        $sql = 'SELECT userid, password, name, school, edollar FROM student where userid = :userid';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -130,8 +130,8 @@ class StudentDAO {
         $conn = null; 
     }
 
-    public function updateEdollar($userid, $edollar) {
-        $sql = 'UPDATE student SET edollar=:edollar WHERE userid=:userid';
+    public function setEdollar($userid, $edollar) {
+        $sql = 'UPDATE student SET edollar = :edollar WHERE userid = :userid';
     
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -149,7 +149,50 @@ class StudentDAO {
         $conn = null; 
 
         return $isUpdateOk;
-        //might want to add check if stmt succeeded
+
+    }
+
+    public function deductEdollar($userid, $edollar) {
+        $sql = 'UPDATE student SET edollar = edollar - :edollar WHERE userid = :userid';
+    
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        
+        $isUpdateOk = FALSE;
+        if ($stmt->execute()) {
+            $isUpdateOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isUpdateOk;
+
+    }
+
+    public function addEdollar($userid, $edollar) {
+        $sql = 'UPDATE student SET edollar = edollar + :edollar WHERE userid = :userid';
+    
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        
+        $isUpdateOk = FALSE;
+        if ($stmt->execute()) {
+            $isUpdateOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isUpdateOk;
 
     }
 }
