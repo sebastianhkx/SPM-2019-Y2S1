@@ -64,7 +64,7 @@ class PrerequisiteDAO{
         $stmt->execute();
 
         
-        $result = []
+        $result = [];
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $result[] = $row['prerequisite'];
