@@ -75,14 +75,18 @@ class BidDAO {
 
         $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
         $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_INT);
-        $stmt->bindParam(':course', $bid->code, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
 
-        $stmt->execute();
+        $isAddOk = FALSE;
+        if ($stmt->execute()) {
+            $isAddOk = TRUE;
+        }
 
         $stmt = null;
         $conn = null; 
 
+        return $isAddOk;
     }
 
     public function drop($userid){

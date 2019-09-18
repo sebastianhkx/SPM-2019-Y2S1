@@ -26,8 +26,8 @@ for ($i = 1; $i <= count($sections); $i++) {
         <td>$section->course</td>
         <td>$section->section</td>
         <td>$section->day</td>
-        <td>$section->start_time</td>
-        <td>$section->end_time</td>
+        <td>$section->start</td>
+        <td>$section->end</td>
         <td>$section->instructor</td>
         <td>$section->venue</td>
         <td>$section->size</td>

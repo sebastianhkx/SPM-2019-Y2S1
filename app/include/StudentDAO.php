@@ -137,8 +137,8 @@ class StudentDAO {
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
-        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':edollar', $edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         
         $isUpdateOk = FALSE;
         if ($stmt->execute()) {
@@ -159,8 +159,8 @@ class StudentDAO {
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
-        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':edollar', $edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         
         $isUpdateOk = FALSE;
         if ($stmt->execute()) {
@@ -181,8 +181,8 @@ class StudentDAO {
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
-        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':edollar', $edollar, PDO::PARAM_INT);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
         
         $isUpdateOk = FALSE;
         if ($stmt->execute()) {

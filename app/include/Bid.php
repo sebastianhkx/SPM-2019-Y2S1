@@ -3,13 +3,13 @@
 class Bid {
     public $userid;
     public $amount;
-    public $code;    
+    public $course;    
     public $section;
     
-    public function __construct($userid, $amount, $code, $section) {
+    public function __construct($userid, $amount, $course, $section) {
         $this->userid = $userid;
         $this->amount = $amount;
-        $this->code = $code;
+        $this->course = $course;
         $this->section = $section;
     }
 }
