@@ -6,19 +6,31 @@ echo "<h2>Your info:</h2>";
 $userid = $_SESSION['userid'];
 
 $student_dao = new StudentDAO();
-$student = $student_dao->retrieve($userid);
+$student = $student_dao->retrieve($userid); // student object
 
 $bid_dao = new BidDAO();
-$bids = $bid_dao->retrieveByUser($userid);
+$bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
 
 if ( isset($_POST['submit'])) {
-    // updates student's info and bids if a new bid was placed
-    $student_dao->deductEdollar($userid, $_POST['bidamount']);
     $bidded = new Bid($userid, $_POST['bidamount'], $_POST['course'], $_POST['section']);
-    $bid_dao->add($bidded);
+    $isUpdated = False;
+    var_dump($bidded);
 
-    // if place new bid for existing course and section (update bid amout)
-    // to do
+    // if student places new bid for existing course and section (update bid amount and refund/deduct e$)
+    foreach ($bids as $bid) {
+        if ($bidded->course == $bid->course && $bidded->section == $bid->section) {
+            $to_refund = $bid->amount - $bidded->amount;
+            $student_dao->addEdollar($userid, $to_refund);
+            $bid->amount = $bidded->amount;
+            $isUpdated = True;
+        }
+    }
+
+    if ( $isUpdated == False ) {
+        // updates student's info and bids if a new bid was placed
+        $student_dao->deductEdollar($userid, $_POST['bidamount']);
+        $bid_dao->add($bidded);
+    }
 
     // throw errors depending on validation test cases
     // to do
