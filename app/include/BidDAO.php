@@ -64,19 +64,31 @@ class BidDAO {
         $conn = null; 
     }
 
-    public function add($bid){
+    public function add($bid_input){
         //takes in argument bid obj
-        $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
-
+        //$bid_input is new bid;
+        $student_dao = new StudentDAO();
+        $to_refund = 0;
+        $amount_old = $this->checkExistingBid($bid_input);
+        if($amount_old != 0){
+            $to_refund = $amount_old - ($bid_input->amount);
+            $student_dao->addEdollar($bid_input->userid, $to_refund);
+            //"UPDATE MyGuests SET lastname='Doe' WHERE id=2";
+            $sql = 'UPDATE bid SET amount=:amount WHERE userid=:userid AND course=:course AND section=:section' ;
+        }
+        else{
+            $student_dao->deductEdollar($bid_input->userid, $bid_input->amount);
+            $sql = $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
+        }
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_INT);
-        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $bid_input->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $bid_input->amount, PDO::PARAM_INT);
+        $stmt->bindParam(':course', $bid_input->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid_input->section, PDO::PARAM_STR);
 
         $isAddOk = FALSE;
         if ($stmt->execute()) {
@@ -84,7 +96,7 @@ class BidDAO {
         }
 
         $stmt = null;
-        $conn = null; 
+        $conn = null;
 
         return $isAddOk;
     }
@@ -108,6 +120,34 @@ class BidDAO {
         $conn = null; 
 
         return $isDeleteOk;
+    }
+
+    
+    public function checkExistingBid($bid_input) {
+        //this takes in a userid , course and section to check if the bid is existed in databse
+        $sql = 'SELECT amount FROM bid WHERE userid=:userid AND course=:course AND section=:section';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $bid_input ->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $bid_input ->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid_input ->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $amount = 0;
+
+        if($row = $stmt->fetch()){
+            $amount = $row['amount'];
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $amount;
     }
 
 }

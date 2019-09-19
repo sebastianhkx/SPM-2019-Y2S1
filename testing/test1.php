@@ -3,6 +3,7 @@ require_once '../app/include/common.php';
 $dao = new CourseDAO;
 $pdo = new SectionDAO;
 $pdo2 = new course_completedDAO;
+$pdo3 = new BidDAO;
 
 
 
@@ -20,5 +21,9 @@ $pdo2 = new course_completedDAO;
 // $userid = "ben.ng.2009";
 // $msg3 = $pdo2->retrieve($userid);
 // var_dump($msg3);
+
+// $bid = new Bid("ben.ng.2009", 12, "IS100", "S1");
+// $result = $pdo3->add($bid);
+
 
 ?>
