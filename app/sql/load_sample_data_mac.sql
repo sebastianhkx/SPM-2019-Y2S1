@@ -7,7 +7,7 @@ use g6t6;
 create table student
 (
 userid varchar(50) not null,
-password varchar(50) not null,
+password varchar(255) not null,
 name varchar(50) not null,
 school char(3) not null,
 edollar int not null,
