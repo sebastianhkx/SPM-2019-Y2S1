@@ -69,20 +69,20 @@ CONSTRAINT course_completed_fk1 foreign key(userid) references student(userid),
 CONSTRAINT course_completed_fk2 foreign key(code) references course(course)
 );
 
-LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/G6T6/sampledata/student.csv"
-INTO TABLE student FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/student.csv"
+INTO TABLE student FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\\Users\\zychoo.2018\\Desktop\\sampledata\\course.csv"
-INTO TABLE course FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/course.csv"
+INTO TABLE course CHARACTER SET latin1 FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\\Users\\zychoo.2018\\Desktop\\sampledata\\section.csv"
-INTO TABLE section FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/section.csv"
+INTO TABLE section FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\\Users\\zychoo.2018\\Desktop\\sampledata\\prerequisite.csv"
-INTO TABLE prerequisite FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/prerequisite.csv"
+INTO TABLE prerequisite FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\\Users\\zychoo.2018\\Desktop\\sampledata\\bid.csv"
-INTO TABLE bid FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/bid.csv"
+INTO TABLE bid FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE "C:\\Users\\zychoo.2018\\Desktop\\sampledata\\course_completed.csv"
-INTO TABLE course_completed FIELDS TERMINATED BY ',' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE "/Users/sebh/Development/GitHub/project-g6t6/app/sql/sampledata/course_completed.csv"
+INTO TABLE course_completed FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES;

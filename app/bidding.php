@@ -1,6 +1,32 @@
 <?php
 require_once 'include/common.php';
+?>
+<html>
+<head>
+  <title>BIOS Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body>
 
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">BIOS</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="home.php">Home</a></li>
+      
+      <li class="active"><a href="#">Bidding</a></li>
+      <li><a href="#">Page 2</a></li>
+      <li><a href='logout.php'>Log Out</a></li>
+    </ul>
+  </div>
+</nav>
+
+<?php
 echo "<h2>Your info:</h2>";
 
 $userid = $_SESSION['userid'];
