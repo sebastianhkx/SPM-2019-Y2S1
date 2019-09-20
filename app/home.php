@@ -7,8 +7,6 @@ $userid = $_SESSION['userid'];
 
 // bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
 ?>
-
-
 <html>
 <head>
   <title>BIOS Home</title>
@@ -35,7 +33,6 @@ $userid = $_SESSION['userid'];
   
 <div class="container">
   <h3>Hello, <?= $userid ?> and welcome back!</h3>
-  <p><a href='logout.php'>Log Out</a></p>
 </div>
 
 </body>
