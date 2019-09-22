@@ -166,13 +166,37 @@ function doBootstrap() {
                 
 
                 $section_arr=fgetcsv($section);
+                $filename = 'section.csv';
+                $row_num = 1;
+                $section_success = 0;
                 while ( ($section_arr=fgetcsv($section) )  !== false){
-                    $sectionObj= new Section($section_arr[0],$section_arr[1],$section_arr[2],$section_arr[3],$section_arr[4],$section_arr[5],$section_arr[6],$section_arr[7]);
-                    $sectionDAO->add($sectionObj);
-                    $lines_processed++;
+                    $section_arr= array_map('trim',$section_arr);
+                    $row_num++;
+                    $row_errors=[];
+                    $skip_line= FALSE;
+                    for ($i=0;$i<sizeof($section_arr);$i++){
+                        if(($section_arr[$i]) === ''){
+                            $skip_line=TRUE;
+                            $row_errors[]="blank {$fields[$i]}";
+                        }
+                    }
+                    if($skip_line==FALSE){
+                        $sectionObj = new Section($section_arr[0],$section_arr[1],$section_arr[2],$section_arr[3],$section_arr[4],$section_arr[5],$section_arr[6],$section_arr[7]);
+                        $row_errors = $sectionDAO->add($sectionObj);
+                    }
+                    if(!empty($row_errors)){
+                        $errors[]=[$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $section_success++;
+                    }
                 }
+               
                 fclose($section);
                 unlink($section_path);
+
+
+
                 
                 $fields= fgetcsv($prerequisite);
                 $filename = 'prerequisite.csv';
