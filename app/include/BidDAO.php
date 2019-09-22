@@ -67,13 +67,30 @@ class BidDAO {
     public function add($bid_input){
         //takes in argument bid obj
         //$bid_input is new bid;
+        $errors = [];
         $student_dao = new StudentDAO();
         $to_refund = 0;
+
+        //check course
+        $course_dao = new CourseDAO();
+        $course = $course_dao->retrieveByCourseId($bid_input->course);
+        //check if course vaild
+        if($course==null){
+            //course not found in the system
+            $error[] = "Invalid course";
+        }
+        else{
+            //course found
+            //check if sectio vaild
+            $
+        }
+
+
+
         $amount_old = $this->checkExistingBid($bid_input);
         if($amount_old != 0){
             $to_refund = $amount_old - ($bid_input->amount);
             $student_dao->addEdollar($bid_input->userid, $to_refund);
-            //"UPDATE MyGuests SET lastname='Doe' WHERE id=2";
             $sql = 'UPDATE bid SET amount=:amount WHERE userid=:userid AND course=:course AND section=:section' ;
         }
         else{
@@ -101,15 +118,18 @@ class BidDAO {
         return $isAddOk;
     }
 
-    public function drop($userid){
-        $sql = 'DELETE from bid where userid=:userid';
+    public function drop($bid){
+        // this takes in a bidded obj that user/admin want to drop
+        $sql = 'DELETE from bid where userid=:userid AND course=:course AND section=:section';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
         
         $isDeleteOk = FALSE;
         if ($stmt->execute()) {
@@ -148,6 +168,6 @@ class BidDAO {
         $conn = null; 
 
         return $amount;
-    }
+    } 
 
 }

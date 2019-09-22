@@ -104,9 +104,9 @@ echo "</table>";
 
 <h2>I want to bid for:</h2>
 <form action="bidding.php" method="POST">
-Course: <input type="text" name="course" required> <br>
-Section: <input type="text" name="section" required> <br>
-Bid Amount: <input type="number" name="bidamount" required> <br>
+Course: <input type="text" name="course" required> <br><br>
+Section: <input type="text" name="section" required> <br><br>
+Bid Amount: <input type="number" name="bidamount" placeholder="1.00" step="0.01" min="10.00"required> <br><br>
 <input type="submit" name='submit' value="Confirm Bid" >
 
 <br>
@@ -114,6 +114,5 @@ Bid Amount: <input type="number" name="bidamount" required> <br>
     <a href='DisplayCourses.php' target='_blank' >Click to see all courses</a>
 
 <br>   
-    <a href='logout.php'>Log Out</a>
 </body>
 </html>
