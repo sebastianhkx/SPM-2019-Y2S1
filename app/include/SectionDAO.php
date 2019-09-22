@@ -59,7 +59,7 @@ class SectionDAO {
         }
         $section_name=$section->section;
         $section_number=substr($section_name,1);
-        var_dump($section);
+        // var_dump($section);
         if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<0  || $section_number>100){
             $errors[]='invalid section';
         }
@@ -67,20 +67,30 @@ class SectionDAO {
         if( $section->day<1 || $section->day>7 ){
             $errors[]= 'invalid day';
         }
-        $start_time = 
-        if( $section->start!=date("G:i",strtotime($section->start))){
+        $start_array = ['8:30', '12:00', '15:30'];
+        $end_array=['11:45', '15:15', '18:45'];
+
+        if( $section->start!=date("G:i",strtotime($section->start)) || !in_array($section->start,$start_array) ){
             $errors[]='invalid start';
         }
-        if($section->end!=date("G:i",strtotime($section->end))){
+        if($section->end!=date("G:i",strtotime($section->end))  || !in_array($section->end,$end_array)){
             $errors[]='invalid end';
         }
-        if(strlen($section->instructor>100)){
+        else{
+            $start_time=explode(":",date("G:i",strtotime($section->start)));
+            $end_time=explode(":",date("G:i",strtotime($section->end)));
+            if($start_time[0]*60+$start_time[1]>$start_time[0]*60+$start_time[1] ){
+                $errors[]='invalid end';
+            }
+        }
+    
+        if(strlen($section->instructor)>100){
             $errors[]='invalid instructor';
         }
-        if(strlen($section->venue>100)){
+        if(strlen($section->venue)>100){
             $errors[]='invalid venue';
         }
-        if( ! ($section->size>0 || is_numeric($section->size))){
+        if( ! ($section->size>0 && is_numeric($section->size))){
             $errors[]='invalid size';
         }
         if (!empty($errors)){

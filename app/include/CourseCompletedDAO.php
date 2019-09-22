@@ -46,6 +46,25 @@ class CourseCompletedDAO {
         $stmt = null;
         return $result;
     }
+
+    public function delete($userid, $courseid){
+        $connMgr = new ConnectionManager();  
+        $conn = $connMgr->getConnection();
+
+        $sql = "DELETE from course_completed where userid = :userid and code = :courseid";
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindparam(':userid',$userid,PDO::PARAM_STR);
+        $stmt->bindparam(':courseid',$courseid,PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $status = $stmt->execute();
+        var_dump($status);
+
+
+        $conn = null;
+        $stmt = null;
+    }
     
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE course_completed';
@@ -92,7 +111,6 @@ class CourseCompletedDAO {
         */
         $prerequisiteDAO = new PrerequisiteDAO;
         $prerequisites = $prerequisiteDAO->retrievePrerequiste($courseid);
-        var_dump($userid, $courseid, $prerequisites);
         if (empty($prerequisites)){//has prerequisites
             return True; //base case if course has not prerequisites
         }
@@ -146,15 +164,6 @@ class CourseCompletedDAO {
             $errors[] = "invalid course";
         }
         
-        if(!empty($errors)){
-            return $errors;
-        }
-        else{
-            if ($this->completed_prerequisite($courseCompleted->userid, $courseCompleted->code)==FALSE){
-                $errors[] = "invalid course completed";
-            }
-        }
-
         if(!empty($errors)){
             return $errors;
         }
