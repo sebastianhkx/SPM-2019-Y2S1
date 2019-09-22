@@ -58,13 +58,9 @@ class CourseCompletedDAO {
         $stmt->bindparam(':courseid',$courseid,PDO::PARAM_STR);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute();
-        
-        $result = [];
+        $status = $stmt->execute();
+        var_dump($status);
 
-        if ($row=$stmt->fetch()){
-            $result[] = $row['code'];
-        }
 
         $conn = null;
         $stmt = null;
@@ -115,7 +111,6 @@ class CourseCompletedDAO {
         */
         $prerequisiteDAO = new PrerequisiteDAO;
         $prerequisites = $prerequisiteDAO->retrievePrerequiste($courseid);
-        var_dump($userid, $courseid, $prerequisites);
         if (empty($prerequisites)){//has prerequisites
             return True; //base case if course has not prerequisites
         }

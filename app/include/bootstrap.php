@@ -279,11 +279,11 @@ function doBootstrap() {
                         $userid = $course_completedObj->userid;
                         $code = $course_completedObj->code;
                         //checks if course_completed row exists && checks if all prerequisites completed)
-                        if ($course_completedDAO->completed_course($userid, $code)!=null && $course_completedDAO->completed_prerequisite($userid, $code)){
+                        if (!empty($course_completedDAO->completed_course($userid, $code)) && !$course_completedDAO->completed_prerequisite($userid, $code)){
                             $course_completedDAO->delete($userid,$code);
+                            $errors[] = [$filename, $row_num, ["invalid course completed"]];
+                            $course_completed_success--;
                         }
-                        $errors[] = [$filename, $row_num, ["invalid course completed"]];
-                        $course_completed_success--;
                     }
                 }
                 fclose($course_completed);
