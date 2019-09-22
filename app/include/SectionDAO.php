@@ -51,7 +51,7 @@ class SectionDAO {
         $errors=[];
 
         $course=$section->course;
-        $courseDAO= new Course;
+        $courseDAO= new CourseDAO;
         $all_course=$courseDAO->retrieveAll();
         
         if(!in_array($course,$all_course)){
