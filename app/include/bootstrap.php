@@ -228,6 +228,7 @@ function doBootstrap() {
                 unlink($prerequisite_path);
                 
                 //processes course_completed.csv
+                //#does data validation for userid and course
                 $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
                 $filename = "course_completed.csv";
                 $row_num = 1;
@@ -253,6 +254,36 @@ function doBootstrap() {
                     }
                     else{
                         $course_completed_success++;
+                    }
+                }
+                fclose($course_completed);
+
+                //redoes validation for prerequisite completion check
+                $course_completed = @fopen($course_completed_path, "r");
+                $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
+                $filename = "course_completed.csv";
+                $row_num = 1;
+
+                while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
+                    $course_completed_arr = array_map('trim', $course_completed_arr); //trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($course_completed_arr); $i++){
+                        if ($course_completed_arr[$i]===''){
+                            $skip_line = TRUE;
+                        }
+                    }
+                    if ($skip_line == False){
+                        $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
+                        $userid = $course_completedObj->userid;
+                        $code = $course_completedObj->code;
+                        //checks if course_completed row exists && checks if all prerequisites completed)
+                        if ($course_completedDAO->completed_course($userid, $code)!=null && $course_completedDAO->completed_prerequisite($userid, $code)){
+                            $course_completedDAO->delete($userid,$code);
+                        }
+                        $errors[] = [$filename, $row_num, ["invalid course completed"]];
+                        $course_completed_success--;
                     }
                 }
                 fclose($course_completed);

@@ -59,7 +59,7 @@ class SectionDAO {
         }
         $section_name=$section->section;
         $section_number=substr($section_name,1);
-        var_dump($section);
+        // var_dump($section);
         if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<0  || $section_number>100){
             $errors[]='invalid section';
         }
@@ -67,7 +67,6 @@ class SectionDAO {
         if( $section->day<1 || $section->day>7 ){
             $errors[]= 'invalid day';
         }
-        $start_time = 
         if( $section->start!=date("G:i",strtotime($section->start))){
             $errors[]='invalid start';
         }
