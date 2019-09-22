@@ -84,13 +84,13 @@ class SectionDAO {
             }
         }
     
-        if(strlen($section->instructor>100)){
+        if(strlen($section->instructor)>100){
             $errors[]='invalid instructor';
         }
-        if(strlen($section->venue>100)){
+        if(strlen($section->venue)>100){
             $errors[]='invalid venue';
         }
-        if( ! ($section->size>0 || is_numeric($section->size))){
+        if( ! ($section->size>0 && is_numeric($section->size))){
             $errors[]='invalid size';
         }
         if (!empty($errors)){
