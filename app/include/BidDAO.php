@@ -124,7 +124,7 @@ class BidDAO {
 
     
     public function checkExistingBid($bid_input) {
-        //this takes in a userid , course and section to check if the bid is existed in databse
+        //this takes in a userid , course and section and returns amount bidded on existing bid, 0 if no existing bids
         $sql = 'SELECT amount FROM bid WHERE userid=:userid AND course=:course AND section=:section';
         
         $connMgr = new ConnectionManager();      

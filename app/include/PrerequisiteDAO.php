@@ -53,7 +53,7 @@ class PrerequisiteDAO{
 
     public function retrievePrerequiste($courseid){
         // returns array of prerequiste courseid for input courseid
-        $sql = 'SELECT prerequisite FROM student where course=:courseid';
+        $sql = 'SELECT * FROM prerequisite where course=:courseid';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -62,7 +62,6 @@ class PrerequisiteDAO{
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->bindParam(":courseid", $courseid, PDO::PARAM_STR);
         $stmt->execute();
-
         
         $result = [];
 
