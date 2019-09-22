@@ -106,7 +106,8 @@ function doBootstrap() {
                 $row_num = 1;
                 $student_success = 0;
                 // var_dump($student);
-   
+
+                //processes student.csv
                 while ( ($student_arr=fgetcsv($student) )  !== false){
                     // var_dump($student_arr);
                     $student_arr = array_map('trim', $student_arr);//trims all cols in row
@@ -134,7 +135,7 @@ function doBootstrap() {
                 fclose($student);
                 unlink($student_path);
                 
-                
+                //processes course csv
                 $fields= fgetcsv($course);
                 $filename = 'course.csv';
                 $row_num = 1;
@@ -164,16 +165,38 @@ function doBootstrap() {
                 fclose($course);
                 unlink($course_path);
                 
-
+                //processess section.csv
                 $section_arr=fgetcsv($section);
+                $filename = 'section.csv';
+                $row_num = 1;
+                $section_success = 0;
                 while ( ($section_arr=fgetcsv($section) )  !== false){
-                    $sectionObj= new Section($section_arr[0],$section_arr[1],$section_arr[2],$section_arr[3],$section_arr[4],$section_arr[5],$section_arr[6],$section_arr[7]);
-                    $sectionDAO->add($sectionObj);
-                    $lines_processed++;
+                    $section_arr= array_map('trim',$section_arr);
+                    $row_num++;
+                    $row_errors=[];
+                    $skip_line= FALSE;
+                    for ($i=0;$i<sizeof($section_arr);$i++){
+                        if(($section_arr[$i]) === ''){
+                            $skip_line=TRUE;
+                            $row_errors[]="blank {$fields[$i]}";
+                        }
+                    }
+                    if($skip_line==FALSE){
+                        $sectionObj = new Section($section_arr[0],$section_arr[1],$section_arr[2],$section_arr[3],$section_arr[4],$section_arr[5],$section_arr[6],$section_arr[7]);
+                        $row_errors = $sectionDAO->add($sectionObj);
+                    }
+                    if(!empty($row_errors)){
+                        $errors[]=[$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $section_success++;
+                    }
                 }
+               
                 fclose($section);
                 unlink($section_path);
-                
+
+                //processes prerequisite.csv
                 $fields= fgetcsv($prerequisite);
                 $filename = 'prerequisite.csv';
                 $row_num = 1;
@@ -185,7 +208,7 @@ function doBootstrap() {
                     $row_errors = [];
                     $skip_line = FALSE;
                     for ($i=0; $i<sizeof($prerequisite_arr); $i++){//this loop checks for empty cols
-                        if ($student_arr[$i] === ''){
+                        if ($prerequisite_arr[$i] === ''){
                             $skip_line = TRUE;
                             $row_errors[] = "blank {$fields[$i]}";
                         }
@@ -204,17 +227,39 @@ function doBootstrap() {
                 fclose($prerequisite);
                 unlink($prerequisite_path);
                 
+                //processes course_completed.csv
+                $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
+                $filename = "course_completed.csv";
+                $row_num = 1;
+                $course_completed_success = 0;
 
-                $course_completed_arr=fgetcsv($course_completed);
                 while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
-                    $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
-                    $course_completedDAO->add($course_completedObj);
-                    $lines_processed++;
+                    $course_completed_arr = array_map('trim', $course_completed_arr); //trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($course_completed_arr); $i++){
+                        if ($course_completed_arr[$i]===''){
+                            $skip_line = TRUE;
+                            $row_errors[] = "blank {$field[$i]}";
+                        }
+                    }
+                    if ($skip_line == False){
+                        $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
+                        $row_errors = $course_completedDAO->add($course_completedObj);
+                    }
+                    if (!empty($row_errors)){
+                        $errors[] = [$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $course_completed_success++;
+                    }
                 }
                 fclose($course_completed);
                 unlink($course_completed_path);
                 
 
+                //processes bid.csv
                 $bid_arr=fgetcsv($bid);
                 while ( ($bid_arr=fgetcsv($bid) )  !== false){
                     $bidObj= new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
@@ -228,10 +273,14 @@ function doBootstrap() {
 
             }
         }
-        var_dump($errors);
-        echo $student_success;
-        echo $prerequisite_success;
-        echo $course_success;
+        echo "student.csv ".$student_success."<br>";
+        echo "course.csv".$course_success."<br>";
+        echo "section.csv".$section_success."<br>";
+        echo "prerequisite.csv ".$prerequisite_success."<br>";
+        echo "course_completed.csv ".$course_completed_success."<br";
+        echo "<hr>";
+        
+        var_dump($errors);   
     }
 
 

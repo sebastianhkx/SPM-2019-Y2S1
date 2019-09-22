@@ -48,7 +48,45 @@ class SectionDAO {
     }
 
     public function add($section){
-        //takes in section object
+    //takes in section object
+        $errors=[];
+
+        $course=$section->course;
+        $courseDAO= new CourseDAO;
+        
+        if ($courseDAO->retrieveByCourseId($section->course)==null){
+            $errors[] = "invalid course";
+        }
+        $section_name=$section->section;
+        $section_number=substr($section_name,1);
+        var_dump($section);
+        if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<0  || $section_number>100){
+            $errors[]='invalid section';
+        }
+
+        if( $section->day<1 || $section->day>7 ){
+            $errors[]= 'invalid day';
+        }
+        $start_time = 
+        if( $section->start!=date("G:i",strtotime($section->start))){
+            $errors[]='invalid start';
+        }
+        if($section->end!=date("G:i",strtotime($section->end))){
+            $errors[]='invalid end';
+        }
+        if(strlen($section->instructor>100)){
+            $errors[]='invalid instructor';
+        }
+        if(strlen($section->venue>100)){
+            $errors[]='invalid venue';
+        }
+        if( ! ($section->size>0 || is_numeric($section->size))){
+            $errors[]='invalid size';
+        }
+        if (!empty($errors)){
+            return $errors; 
+        }
+
         $sql = 'INSERT IGNORE into section(course, section, day, start, end, instructor, venue, size) values (:course, :section, :day, :start, :end, :instructor, :venue, :size)';
 
         $connMgr = new ConnectionManager();      
