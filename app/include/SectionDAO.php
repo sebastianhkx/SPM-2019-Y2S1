@@ -118,31 +118,33 @@ class SectionDAO {
         $stmt = null;
         $conn = null; 
     }
-    public function retrieveBySection($section){
+    public function retrieveBySection($bid){
+        //This takes in a bid object and return section object that existed, otherwise return null
         //step 1 
         $connMgr = new ConnectionManager();
         $pdo = $connMgr->getConnection();
 
 
         // Step 2 - Write & Prepare SQL Query (take care of Param Binding if necessary)
-        $sql = 'SELECT * FROM section WHERE section=:section';
+        $sql = 'SELECT * FROM section WHERE section=:section AND course=:course';
         $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':section',$section,PDO::PARAM_STR);
+        $stmt->bindParam(':section',$bid->section,PDO::PARAM_STR);
+        $stmt->bindParam(':section',$bid->course,PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $stmt->execute();
         // Step 3 - Execute SQL Query
-        $arr = [];
+        $result = null;
 
         while($row = $stmt->fetch()){
-            $arr[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+            $result = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
 
         }
 
         $stmt = null;
         $conn = null; 
                  
-        return $arr;
+        return $result;
     }
 
 }

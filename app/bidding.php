@@ -35,12 +35,6 @@ $student_dao = new StudentDAO();
 $bid_dao = new BidDAO();
 
 if ( isset($_POST['submit'])){
-    // if(!isset($_POST['course']) || !isset($_POST['section']) || !isset($_POST['bidamount'])){
-    //     // throw errors depending on validation test cases
-    //     // to do
-    //     //if()
-    // }
-    //else{
     $bidded = new Bid($userid, $_POST['bidamount'], $_POST['course'], $_POST['section']);
     $bid_dao->add($bidded);
 }

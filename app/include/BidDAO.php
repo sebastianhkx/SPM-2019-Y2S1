@@ -70,23 +70,6 @@ class BidDAO {
         $errors = [];
         $student_dao = new StudentDAO();
         $to_refund = 0;
-
-        //check course
-        $course_dao = new CourseDAO();
-        $course = $course_dao->retrieveByCourseId($bid_input->course);
-        //check if course vaild
-        if($course==null){
-            //course not found in the system
-            $error[] = "Invalid course";
-        }
-        else{
-            //course found
-            //check if sectio vaild
-            $
-        }
-
-
-
         $amount_old = $this->checkExistingBid($bid_input);
         if($amount_old != 0){
             $to_refund = $amount_old - ($bid_input->amount);
