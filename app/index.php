@@ -2,7 +2,13 @@
 require_once 'include/common.php';
 
 if ( isset($_SESSION['username']) ) {
-    header("Location: home.php");
+    if ($_SESSION == "admin") {
+    header("Location: home_admin.php");
+    }
+
+    else {
+        header("Location: home.php");
+    }
 }
 
 else {

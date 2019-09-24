@@ -1,23 +1,20 @@
 <?php
 
 class Admin {
-    private $username;
-    private $passwordHash;
+    private $userid;
+    private $password;
 
-
-    function __construct($username, $passwordHash) {
-        $this->username = $username;
-        $this->passwordHash = $passwordHash;
+    function __construct($userid, $password) {
+        $this->userid = $userid;
+        $this->password = $password;
+    }
+    
+    public function authenticate($enteredPwd) {
+        return password_verify($enteredPwd, $this->password);
     }
 
 
-    public function getPasswordHash(){
-        return $this->passwordHash;
-    }
 
-    public function setPasswordHash($hashed){
-        $this->passwordHash = $hashed;
-    }
 
    
 }

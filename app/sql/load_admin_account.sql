@@ -3,9 +3,14 @@
 use g6t6;
 
 CREATE TABLE if not exists admin (
-  username varchar(20) NOT NULL,
-  password_hash varchar(64) NOT NULL
+  userid varchar(20) NOT NULL,
+  password varchar(64) NOT NULL
 );
 
-INSERT INTO admin (username, password_hash) VALUES
+#u: admin p: adminbios
+INSERT INTO admin (userid, password) VALUES
 ('admin', '$2y$10$uRDXEiX888QQgXQoFLmK4OzqT1kTns.7gwYWyrZ71l9htRvK3NciS');
+
+
+
+
