@@ -25,8 +25,6 @@ $userid = $_SESSION['userid'];
     <ul class="nav navbar-nav">
       <li class="active"><a href="#">Home</a></li>
 
-      <li><a href="bidding.php">Bidding</a></li>
-      <li><a href='DropBid.php'>Drop Bid</a></li>
       <li><a href="bootstrap.php">Start Bootstrap</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
