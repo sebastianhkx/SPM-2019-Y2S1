@@ -115,9 +115,9 @@ Drop bid testcases: (do while logged into ben.ng.2009 account) *can only do duri
 Bootstrap testcases:
 	#testcases should test for all validation requirements stated in wiki
 	SampleData(0).zip - Fails as student.csv is missing
-	SampleData(2).zip - tests for student.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
-	SampleData(3).zip - tests for course.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
-	SampleData(4).zip - tests for section.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
+	SampleData(1).zip - tests for student.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
+	SampleData(2).zip - tests for course.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
+	SampleData(3).zip - tests for section.csv - #TODO UPDATE BELOW ON LINE WITH ERRORS AND ERROR MSGS
 	SampleData(4).zip - tests for prerequisite.csv
 	SampleData(5).zip - tests for course_completed.csv
 	SampleData(6).zip - tests for bid.csv (to be done after add bid datavalidation done in iter2)
