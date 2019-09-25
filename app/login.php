@@ -1,6 +1,7 @@
 <?php
 require_once 'include/common.php';
 
+$error = "";
 if ( !isset($_SESSION['userid']) ) {
     if ( isset($_POST['error']) ) {
         $error = $_POST['error'];
