@@ -1,10 +1,10 @@
 <?php
 require_once 'include/common.php';
 
-$error = "";
 if ( !isset($_SESSION['userid']) ) {
-    if ( isset($_POST['error']) ) {
-        $error = $_POST['error'];
+    if ( isset($_GET['error']) ) {
+        $error = $_GET['error'];
+        echo $error;
         } 
     ?>
     <html>
@@ -13,7 +13,7 @@ if ( !isset($_SESSION['userid']) ) {
         </head>
         <body>
             <h1>Login</h1>
-            <form method='POST' action='login_process.php'>
+            <form method='POST' action='login.php'>
                 <table border='0'>
                     <tr>
                         <td>User ID</td>
@@ -40,6 +40,46 @@ if ( !isset($_SESSION['userid']) ) {
         </body>
     </html>
     <?php
+    if ( isset($_POST['userid']) && isset($_POST['password']) ) {
+        $userid = $_POST['userid'];
+        $password = $_POST['password'];
+    
+    
+        if ( $userid === "admin") {
+            $dao = new AdminDAO();
+            $admin = $dao->retrieve($userid);
+        
+            if ( $admin != null && $admin->authenticate($password) ) {
+                $_SESSION['userid'] = $userid; 
+    
+                header("Location: home_admin.php");
+                exit;
+            }
+            else {
+                $error = 'Incorrect userid or password!';
+                echo $error;
+            }
+        }
+    
+        else {
+            $dao = new StudentDAO();
+            $student = $dao->retrieve($userid);
+    
+            if ( $student != null && $student->authenticate($password) ) {
+                $_SESSION['userid'] = $userid; 
+            
+                header("Location: home.php");
+                exit;
+            }
+            else {
+                $error = 'Incorrect userid or password!';
+                echo $error;
+            }
+    
+        }
+    
+    }
+
 }
 
 else {
