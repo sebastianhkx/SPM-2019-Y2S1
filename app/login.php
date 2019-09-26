@@ -1,11 +1,9 @@
 <?php
 require_once 'include/common.php';
+session_start();
 
 if ( !isset($_SESSION['userid']) ) {
-    if ( isset($_GET['error']) ) {
-        $error = $_GET['error'];
-        echo $error;
-        } 
+
     ?>
     <html>
         <head>
@@ -44,7 +42,7 @@ if ( !isset($_SESSION['userid']) ) {
         $userid = $_POST['userid'];
         $password = $_POST['password'];
     
-    
+        # if admin, log into admin home page
         if ( $userid === "admin") {
             $dao = new AdminDAO();
             $admin = $dao->retrieve($userid);
@@ -60,7 +58,8 @@ if ( !isset($_SESSION['userid']) ) {
                 echo $error;
             }
         }
-    
+        
+        # if student, log into student home page
         else {
             $dao = new StudentDAO();
             $student = $dao->retrieve($userid);
@@ -75,16 +74,21 @@ if ( !isset($_SESSION['userid']) ) {
                 $error = 'Incorrect userid or password!';
                 echo $error;
             }
-    
         }
-    
     }
-
 }
 
+# if session key exits, redirect to respective home page
 else {
-    header("Location: home.php");
+    if ($_SESSION['userid'] == "admin") {
+    header("Location: home_admin.php");
     exit;
+    }
+
+    else {
+        header("Location: home.php");
+        exit;
+    }
 }
 
 
