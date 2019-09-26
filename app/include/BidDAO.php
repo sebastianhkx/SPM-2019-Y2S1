@@ -49,6 +49,33 @@ class BidDAO {
         return $result;
     }
 
+    public function retrieveByCourseSection($courseSection){
+        //this takes in a array [course, section] and returns a array of bid objs
+        
+        $sql = 'SELECT * FROM bid WHERE course=:course and section=:section';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $courseSection[0], PDO::PARAM_STR);
+        $stmt->bindParam(':course', $courseSection[1], PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
+    }
+
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE bid';
 
@@ -153,4 +180,49 @@ class BidDAO {
         return $amount;
     } 
 
+    public function retrieveBiddedSections(){
+        //this returns a list of distinct (course, sections) in the bid table as an array of array [course, section]
+        //used for check how many course and sections need to be resolved in round clearing
+        $sql = 'select distinct course, section from bid';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = [];
+
+        while ($row = $stmt->fetch()){
+            $result[] = [$row['course'], $row['section']];
+        }
+        
+        return $result
+    }
+
+    public function getClearingPrice($bidObj, $vacancy){
+
+        $sql = 'SELECT amount FROM bid WHERE course=:course and section=:section order by amount DESC limit 1 offset :vacancy';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidObj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid_Obj->section, PDO::PARAM_STR);
+        $stmt->bindParam(':vacancy', $vacancy, PDO::PARAM_INT);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = [];
+
+        while ($row = $stmt->fetch()){
+            $result = $row['amount'];
+        }
+        
+        return $result
+
+    }
 }

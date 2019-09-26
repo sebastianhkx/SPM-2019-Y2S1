@@ -65,6 +65,35 @@ class ResultDAO {
         $stmt = null;
         $conn = null; 
     }
+
+    public function add($result){
+        //takes in a result object and updates tha table
+        $sql = 'INSERT IGNORE INTO bid_result(userid, amount, course, section, outcome, round) values (:userid, :amount, :course, :section, :outcome, :round)';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $stmt->bindParam(':userid', $result->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $result->amount, PDO::PARAM_FLOAT);
+        $stmt->bindParam(':course', $result->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $result->section, PDO::PARAM_STR);
+        $stmt->bindParam(':outcome', $result->outcome, PDO::PARAM_STR);
+        $stmt->bindParam(':round', $result->round, PDO::PARAM_INT);
+
+        $isAddOk = FALSE;
+        if ($stmt->execute()) {
+            $isAddOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null;
+
+        return $isAddOk;
+    }
 }
 
 
