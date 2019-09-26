@@ -11,7 +11,14 @@ function doBootstrap() {
 	# Get temp dir on system for uploading
     $temp_dir = sys_get_temp_dir();
 
-    $lines_processed = 0;
+    $student_success = 0;
+    $course_success = 0;
+    $section_success = 0;
+    $prerequisite_success = 0;
+    $course_completed_success = 0;
+    $bid_success = 0;
+
+
     
     if ($_FILES["bootstrap-file"]["size"] <= 0)
         $errors[] = "input files not found";
@@ -47,7 +54,7 @@ function doBootstrap() {
                 $errors[] = "input files not found";
 				if (!empty($student)){
 					fclose($student);
-					@unlink($student_path); //delete the file from your computer 
+					@unlink($student_path); //delete the file from your computer temp folder
 				} 
 				
 				if (!empty($course)) {
@@ -98,13 +105,14 @@ function doBootstrap() {
                 $courseDAO= new CourseDAO();//no dependency
                 $courseDAO->deleteAll();
 
+                //todo delete all for new tables
+
 
                 // read each line from csv
                 //skip header
                 $fields= fgetcsv($student);
                 $filename = 'student.csv';
                 $row_num = 1;
-                $student_success = 0;
                 // var_dump($student);
 
                 //processes student.csv
@@ -139,7 +147,6 @@ function doBootstrap() {
                 $fields= fgetcsv($course);
                 $filename = 'course.csv';
                 $row_num = 1;
-                $course_success = 0;
                 while ( ($course_arr=fgetcsv($course) )  !== false){
                     $course_arr= array_map('trim',$course_arr);
                     $row_num++;
@@ -169,7 +176,6 @@ function doBootstrap() {
                 $section_arr=fgetcsv($section);
                 $filename = 'section.csv';
                 $row_num = 1;
-                $section_success = 0;
                 while ( ($section_arr=fgetcsv($section) )  !== false){
                     $section_arr= array_map('trim',$section_arr);
                     $row_num++;
@@ -200,7 +206,7 @@ function doBootstrap() {
                 $fields= fgetcsv($prerequisite);
                 $filename = 'prerequisite.csv';
                 $row_num = 1;
-                $prerequisite_success = 0;
+
 
                 while ( ($prerequisite_arr=fgetcsv($prerequisite) )  !== false){
                     $prerequisite_arr = array_map('trim', $prerequisite_arr);//trims all cols in row
@@ -232,7 +238,6 @@ function doBootstrap() {
                 $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
                 $filename = "course_completed.csv";
                 $row_num = 1;
-                $course_completed_success = 0;
 
                 while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
                     $course_completed_arr = array_map('trim', $course_completed_arr); //trims all cols in row
@@ -295,7 +300,7 @@ function doBootstrap() {
                 while ( ($bid_arr=fgetcsv($bid) )  !== false){
                     $bidObj= new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
                     $bidDAO->add($bidObj);
-                    $lines_processed++;
+                    $bid_success++;
                 }
                 fclose($bid);
 				unlink($bid_path);
@@ -304,14 +309,17 @@ function doBootstrap() {
 
             }
         }
-        echo "student.csv ".$student_success."<br>";
-        echo "course.csv".$course_success."<br>";
-        echo "section.csv".$section_success."<br>";
-        echo "prerequisite.csv ".$prerequisite_success."<br>";
-        echo "course_completed.csv ".$course_completed_success."<br";
-        echo "<hr>";
+
+        $lines_loaded = [
+                        "student.csv" => $student_success,
+                        "course.csv" => $course_success,
+                        "section.csv" => $section_success,
+                        "prerequisite.csv" => $prerequisite_success,
+                        "course_completed.csv" => $course_completed_success,
+                        "bid.csv" => $bid_success
+                        ];
         
-        var_dump($errors);   
+        return [$lines_loaded, $errors];  
     }
 
 

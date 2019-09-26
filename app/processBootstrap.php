@@ -32,12 +32,71 @@ $userid = $_SESSION['userid'];
   </div>
 </nav>
 
+<div class="container">
 <?php
 
     require_once 'include/bootstrap.php';
-    doBootstrap();
-
+    $msg = doBootstrap();
+    $lines_loaded = $msg[0];
+    $errors = $msg[1];
 ?>
 
+<table border='1'>
+  <tr>
+    <th colspan='2'>Lines Loaded</th>
+  </tr>
+  <tr>
+    <th>File</th>
+    <th>Number of lines</th>
+  </tr>
+<?php
+  //displays lines loaded into a table
+  foreach ($lines_loaded as $file=>$lines){
+    echo "<tr>
+            <td>$file</td>
+            <td>$lines<td>
+          </tr>";
+  }
+?>
+</table>
+
+<hr>
+
+
+<table border='1'>
+<?php
+  //display errors
+  if (empty($errors)){
+    echo "<tr>
+            <th>No Errors!</th>
+          </tr>";
+  }
+  else{
+    echo "<tr>
+            <th colspan='3'>Errors</th>
+          </tr>
+          <tr>
+            <th>File</th>
+            <th>Line</th>
+            <th>Error Message</th>
+          </tr>";
+    foreach ($errors as $error){
+      echo "
+            <tr>
+              <td>{$error[0]}</td>
+              <td>{$error[1]}</td>
+              <td>";
+      foreach ($error[2] as $error_msg){
+        echo "$error_msg<br>";
+      }
+        echo "</td>
+            </tr>";
+    }
+  }
+
+
+?>
+</table>
+</div> <!--div container ends here-->
 </body>
 </html>
