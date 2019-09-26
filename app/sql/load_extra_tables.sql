@@ -7,7 +7,7 @@ userid varchar(50) not null,
 amount int not null,
 course varchar(10),
 section varchar(3) not null,
-outcome varchar(10) not null,
+result varchar(10) not null,
 round int not null
 );
 
@@ -20,8 +20,10 @@ section varchar(3) not null,
 day int(1) not null,
 start time not null,
 end time not null,
-instructor varchar(50) not null,
-venue varchar(50) not null
+
+exam_date date not null,
+exam_start time not null,
+exam_end time  not null
 );
 
 

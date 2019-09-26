@@ -117,7 +117,8 @@ class StudentDAO {
         $stmt->bindParam(':password', $student->password, PDO::PARAM_STR);
         $stmt->bindParam(':name', $student->name, PDO::PARAM_STR);
         $stmt->bindParam(':school', $student->school, PDO::PARAM_STR);
-        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_INT);
+        ## use PARAM_STR instead of INT. remember to convert to FLOAT
+        $stmt->bindParam(':edollar', $student->edollar, PDO::PARAM_STR);
 
         $stmt->execute();
         //might want to add check if stmt succeeded
