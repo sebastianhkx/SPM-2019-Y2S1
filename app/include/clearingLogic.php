@@ -20,17 +20,17 @@ function roundOneResolve($courseSection){
     $resultDAO = new ResultDAO();
     $studentDAO = new StudentDAO();
     $sectionDAO = new SectionDAO();
-    $courseDAO = new CouseDAO();
+    $courseDAO = new CourseDAO();
     $courseEnrolledDAO = new CourseEnrolledDAO();
-    
     $bidObjs = $bidDAO->retrieveByCourseSection($courseSection);
-    $sectionObj = $sectionDAO->retrieve($bidObjs[0]);
+    var_dump($bidObjs);
+    $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
 
     $successBids = [];
     $failureBids = [];
     $clearingPriceBids = [];
 
-    $vacancy = $sectionObj->size();//uses size as no student is enrolled in a course in round 1
+    $vacancy = $sectionObj->size;//uses size as no student is enrolled in a course in round 1
     if (sizeof($bidObjs)<$vacancy){//all bids succeed
         foreach ($bidObjs as $bidObj){
             //adds all bids to success
@@ -38,7 +38,7 @@ function roundOneResolve($courseSection){
         }
     }
     else{
-        $clearingPrice = getClearingPrice($bidObjs[0], $vacancy-1);//vacancy-1 as index starts from 0
+        $clearingPrice = $bidDAO->getClearingPrice($bidObjs[0], $vacancy-1);//vacancy-1 as index starts from 0
         foreach ($bidObjs as $bidObj){
             if ($bidObj->amount==$clearingPrice){
                 $clearingPriceBids[] = $bidObj;
@@ -67,10 +67,10 @@ function roundOneResolve($courseSection){
     }
 
     foreach ($successBids as $successBid){
-        $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->section, 'success', 1);
+        $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->course, $successBid->section, 'success', 1);
         $sectionObj = $sectionDAO->retrieveBySection($successBid);
-        $courseObj = $courseDAO->retrieveByCourseId($successBid->course)
-        $courseEnrolledObj = new CourseEnroll($successBid->userid, $successBid->course, $successBid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
+        $courseObj = $courseDAO->retrieveByCourseId($successBid->course);
+        $courseEnrolledObj = new CourseEnrolled($successBid->userid, $successBid->course, $successBid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
         //add to bidresults
         $resultDAO->add($resultObj);
         //add to course_enrolled
@@ -79,11 +79,11 @@ function roundOneResolve($courseSection){
         $bidDAO->drop($successBid);
     }
     foreach ($failureBids as $failureBid){
-        $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->section, 'fail', 1);
+        $resultObj = new Result($failureBid->userid, $failureBid->amount, $failureBid->course, $failureBid->section, 'fail', 1);
         //add to bidresult
-        $resultDAO->add($resultObj)
+        $resultDAO->add($resultObj);
         //refund edollars
-        $student->addEdollar($failureBid->userid, $failureBid->amount);
+        $studentDAO->addEdollar($failureBid->userid, $failureBid->amount);
         //delete from bid table
         $bidDAO->drop($failureBid);
     }

@@ -60,7 +60,7 @@ class BidDAO {
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':course', $courseSection[0], PDO::PARAM_STR);
-        $stmt->bindParam(':course', $courseSection[1], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $courseSection[1], PDO::PARAM_STR);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
@@ -280,15 +280,15 @@ class BidDAO {
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':course', $bidObj->course, PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid_Obj->section, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidObj->section, PDO::PARAM_STR);
         $stmt->bindParam(':vacancy', $vacancy, PDO::PARAM_INT);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        $result = [];
+        $result = null;
 
-        while ($row = $stmt->fetch()){
+        if ($row = $stmt->fetch()){
             $result = $row['amount'];
         }
         

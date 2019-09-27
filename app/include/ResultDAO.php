@@ -13,9 +13,8 @@ class ResultDAO {
         $stmt->execute();
 
         $result = array();
-
         while($row = $stmt->fetch()) {
-            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round']);
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['outcome'],$row['round']);
         }
 
         $stmt = null;
@@ -75,10 +74,9 @@ class ResultDAO {
 
         $stmt = $conn->prepare($sql);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute();
 
         $stmt->bindParam(':userid', $result->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $result->amount, PDO::PARAM_FLOAT);
+        $stmt->bindParam(':amount', $result->amount, PDO::PARAM_STR);
         $stmt->bindParam(':course', $result->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $result->section, PDO::PARAM_STR);
         $stmt->bindParam(':outcome', $result->outcome, PDO::PARAM_STR);
