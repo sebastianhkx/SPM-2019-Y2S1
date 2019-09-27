@@ -105,6 +105,12 @@ function doBootstrap() {
 
                 //todo delete all for new tables
 
+                $resultDAO = new ResultDAO();
+                $resultDAO->deleteAll();
+
+                $courseEnrolledDAO = new courseEnrolledDAO();
+                $courseEnrolledDAO->deleteAll();
+
 
                 // read each line from csv
                 //skip header
