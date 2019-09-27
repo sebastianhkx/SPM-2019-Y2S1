@@ -1,6 +1,5 @@
 <?php
 require_once 'include/common.php';
-session_start();
 
 if ( !isset($_SESSION['userid']) ) {
 
@@ -32,9 +31,6 @@ if ( !isset($_SESSION['userid']) ) {
                     </tr>
                 </table>             
             </form>
-            </p>
-                <?=$error?>
-            </p>
         </body>
     </html>
     <?php
