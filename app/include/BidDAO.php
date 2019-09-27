@@ -26,6 +26,7 @@ class BidDAO {
 
     public function retrieveByUser($userid) {
         //this takes in a userid string
+        //returns an array of bids by the user
         $sql = 'SELECT * FROM bid WHERE userid=:userid';
         
         $connMgr = new ConnectionManager();      
@@ -92,10 +93,79 @@ class BidDAO {
     }
 
     public function add($bid_input){
-        //takes in argument bid obj
-        //$bid_input is new bid;
+        //takes in new bid object
+
         $errors = [];
+
+        //validation
+        if ($bid_input->amount < 10.00){
+            $errors[] = "invalid amount";
+        }
+
         $student_dao = new StudentDAO();
+        $student = $student_dao->retrieve($bid_input->userid);
+        if ($bid_input->amount > $student->edollar){
+            $errors[] = "not enough e-dollar";
+        }
+
+        // performs 2 validation checks
+        // 1. check valid course first
+        // 2. then check valid section
+        $course_and_section_valid = True;
+        $course_dao = new CourseDAO();
+        $course_exists = $course_dao->retrieveByCourseId($bid_input->course);
+        if ($course_exists == null){
+            $errors[] = "invalid course";
+            $course_and_section_valid = False;
+        }
+        else {
+            $section_dao = new SectionDAO();
+            $section_exists = $section_dao->retrieveBySection($bid_input);
+            if ($section_exists == null){
+                $errors[] = "invalid section";
+                $course_and_section_valid = False;
+            }
+        }
+
+        // performs 2 validation checks (but only if course + section combi is valid)
+        // firstly, if the student has already completed the course they're trying to bid
+        // if not completed, check if the student is eligible to bid in terms of prerequisite completions
+        if ($course_and_section_valid == True) {
+            $course_completed_dao = new CourseCompletedDAO();
+            $student_completed_course = $course_completed_dao->completed_course($bid_input->userid, $bid_input->course);
+            if ($student_completed_course) {
+                $errors[] = "course completed";
+            }
+            else {
+                $prerequisite_dao = new PrerequisiteDAO();
+                $prerequisite = $prerequisite_dao->retrievePrerequisite($bid_input->course);
+                if ($prerequisite != null){
+                    $course_completed = $course_completed_dao->retrieve($bid_input->userid) ;
+                    if (count($prerequisite) != count($course_completed)) {
+                        $errors[] = "incomplete prerequisites";
+                    }
+                }
+            }
+        }
+        
+        $student_current_bids = $this->retrieveByUser($bid_input->userid);
+        if (count($student_current_bids) >= 5){
+            $errors[] = "section limit reached";
+        }
+
+        // if ($course_and_section_valid == True) {
+        //     $array_of_bidded_sections = [];
+        //     if (count($student_current_bids) > 0) {
+        //         foreach ($student_current_bids as $bid) {
+        //             $array_of_bidded_sections[] = $section_dao->retrieveBySection($bid);
+        //         }
+        //     }
+        // }
+
+        if (!empty($errors)){
+            return $errors;
+        }
+
         $to_refund = 0;
         $amount_old = $this->checkExistingBid($bid_input);
         if($amount_old != 0){
@@ -105,7 +175,7 @@ class BidDAO {
         }
         else{
             $student_dao->deductEdollar($bid_input->userid, $bid_input->amount);
-            $sql = $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
+            $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
         }
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -198,7 +268,7 @@ class BidDAO {
             $result[] = [$row['course'], $row['section']];
         }
         
-        return $result
+        return $result;
     }
 
     public function getClearingPrice($bidObj, $vacancy){
@@ -222,7 +292,7 @@ class BidDAO {
             $result = $row['amount'];
         }
         
-        return $result
+        return $result;
 
     }
 }

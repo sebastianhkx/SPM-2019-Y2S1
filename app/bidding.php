@@ -36,7 +36,8 @@ $bid_dao = new BidDAO();
 
 if ( isset($_POST['submit'])){
     $bidded = new Bid($userid, $_POST['bidamount'], $_POST['course'], $_POST['section']);
-    $bid_dao->add($bidded);
+    $errors = $bid_dao->add($bidded);
+    var_dump($errors);
 }
 
 //$student_dao = new StudentDAO();

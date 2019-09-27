@@ -129,7 +129,7 @@ class SectionDAO {
         $sql = 'SELECT * FROM section WHERE section=:section AND course=:course';
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':section',$bid->section,PDO::PARAM_STR);
-        $stmt->bindParam(':section',$bid->course,PDO::PARAM_STR);
+        $stmt->bindParam(':course',$bid->course,PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $stmt->execute();

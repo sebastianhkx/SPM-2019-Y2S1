@@ -92,14 +92,15 @@ class CourseCompletedDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
         
-        $result = [];
+        $result = False;
 
-        while ($row=$stmt->fetch()){
-            $result[] = $row['code'];
+        if ($row=$stmt->fetch()){
+            $result = True;
         }
 
         $conn = null;
         $stmt = null;
+        
         return $result;
     }
 
@@ -110,7 +111,7 @@ class CourseCompletedDAO {
         will fail if user completed B but not its prereq A when function($userid, C)
         */
         $prerequisiteDAO = new PrerequisiteDAO;
-        $prerequisites = $prerequisiteDAO->retrievePrerequiste($courseid);
+        $prerequisites = $prerequisiteDAO->retrievePrerequisite($courseid);
         if (empty($prerequisites)){//has prerequisites
             return True; //base case if course has not prerequisites
         }
@@ -135,7 +136,7 @@ class CourseCompletedDAO {
             return FALSE;
         }
         $prerequisiteDAO = new PrerequisiteDAO;
-        $prerequisites = $prerequisites = $prerequisiteDAO->retrievePrerequiste($courseid);
+        $prerequisites = $prerequisites = $prerequisiteDAO->retrievePrerequisite($courseid);
         if (!empty($prerequisites)){
             foreach ($prerequisites as $prerequisite){
                 if ($this->completed_course($userid, $courseid)==null){
