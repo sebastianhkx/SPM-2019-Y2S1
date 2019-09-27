@@ -40,7 +40,7 @@ class BidDAO {
 
         $result = array();
 
-        while($row = $stmt->fetch()) {
+        if ($row = $stmt->fetch()) {
             $result[] = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
         }
 
@@ -153,19 +153,51 @@ class BidDAO {
             $errors[] = "section limit reached";
         }
 
-        // if ($course_and_section_valid == True) {
-        //     $array_of_bidded_sections = [];
-        //     if (count($student_current_bids) > 0) {
-        //         foreach ($student_current_bids as $bid) {
-        //             $array_of_bidded_sections[] = $section_dao->retrieveBySection($bid);
-        //         }
-        //     }
-        // }
+        if ($course_and_section_valid == True) {
+            // retrieve all the sections the student has bidded for
+            $bidding_section = $section_dao->retrieveBySection($bid_input);
+            $array_of_bidded_sections = [];
+            if (count($student_current_bids) > 0) {
+                foreach ($student_current_bids as $bid) {
+                    $array_of_bidded_sections[] = $section_dao->retrieveBySection($bid);
+                }
+            }
+            // check for class timetable clash
+            $class_time_clash = False;
+            foreach ($array_of_bidded_sections as $bidded_section) {
+                if ($bidded_section->day == $bidding_section->day and $bidded_section->start == $bidding_section->start and $bidded_section->end == $bidding_section->end) {
+                    $class_time_clash = True;
+                }
+            }
+            if ($class_time_clash) {
+                $errors[] = "class timetable clash";
+            }
+
+            // retrieve all the courses the student has bidded for
+            $bidding_course = $course_dao->retrieveByCourseId($bid_input->course);
+            $array_of_bidded_courses = [];
+            if (count($student_current_bids) > 0) {
+                foreach ($student_current_bids as $bid) {
+                    $array_of_bidded_courses[] = $course_dao->retrieveByCourseId($bid->course);
+                }
+            }
+            // check for exam timetable clash
+            $exam_time_clash = False;
+            foreach ($array_of_bidded_courses as $bidded_course) {
+                if ($bidded_course->exam_date == $bidding_course->exam_date and $bidded_course->exam_start == $bidding_course->exam_start and $bidded_course->exam_end == $bidding_course->exam_end) {
+                    $exam_time_clash = True;
+                }
+            }
+            if ($exam_time_clash) {
+                $errors[] = "exam timetable clash";
+            }
+        }
 
         if (!empty($errors)){
             return $errors;
         }
 
+        // update student's edollar
         $to_refund = 0;
         $amount_old = $this->checkExistingBid($bid_input);
         if($amount_old != 0){
@@ -177,6 +209,7 @@ class BidDAO {
             $student_dao->deductEdollar($bid_input->userid, $bid_input->amount);
             $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
         }
+
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
@@ -224,7 +257,8 @@ class BidDAO {
 
     
     public function checkExistingBid($bid_input) {
-        //this takes in a userid , course and section and returns amount bidded on existing bid, 0 if no existing bids
+        //this takes in a userid , course and section
+        // returns amount bidded on existing bid, 0 if no existing bids
         $sql = 'SELECT amount FROM bid WHERE userid=:userid AND course=:course AND section=:section';
         
         $connMgr = new ConnectionManager();      
