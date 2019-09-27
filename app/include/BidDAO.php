@@ -167,6 +167,7 @@ class BidDAO {
             foreach ($array_of_bidded_sections as $bidded_section) {
                 if ($bidded_section->day == $bidding_section->day and $bidded_section->start == $bidding_section->start and $bidded_section->end == $bidding_section->end) {
                     $class_time_clash = True;
+                    break;
                 }
             }
             if ($class_time_clash) {
@@ -186,6 +187,7 @@ class BidDAO {
             foreach ($array_of_bidded_courses as $bidded_course) {
                 if ($bidded_course->exam_date == $bidding_course->exam_date and $bidded_course->exam_start == $bidding_course->exam_start and $bidded_course->exam_end == $bidding_course->exam_end) {
                     $exam_time_clash = True;
+                    break;
                 }
             }
             if ($exam_time_clash) {
