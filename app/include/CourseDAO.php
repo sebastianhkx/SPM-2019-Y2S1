@@ -25,19 +25,16 @@ class CourseDAO {
     }
 
     public function retrieveBySchool($school){
-        //step 1 
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
 
-
-        // Step 2 - Write & Prepare SQL Query (take care of Param Binding if necessary)
         $sql = 'SELECT * FROM course where school = :school ORDER BY course';
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':school',$school,PDO::PARAM_STR);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $stmt->execute();
-        // Step 3 - Execute SQL Query
+
         $arr = [];
 
         while($row = $stmt->fetch()){

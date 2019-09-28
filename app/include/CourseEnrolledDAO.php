@@ -7,21 +7,21 @@ class CourseEnrolledDAO {
 :exam_date, :exam_start, :exam_end
     */
     public function add($course_enrolled) {
-        $sql = 'INSERT IGNORE into course_enrolled(userid, course, section, day, start, end, exam_date, exam_start, exam_end) values (:userid, :course, :section, :day, :start, :end, :exam_date, :exam_start, :exam_end)';
+        $sql = "INSERT IGNORE INTO course_enrolled(userid, course, section, day, start, end, exam_date, exam_start, exam_end) values(:userid, :course, :section, :day, :start, :end, :exam_date, :exam_start, :exam_end)";
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':userid', $course->course, PDO::PARAM_STR);
-        $stmt->bindParam(':course', $course->school, PDO::PARAM_STR);
-        $stmt->bindParam(':section', $course->title, PDO::PARAM_STR);
-        $stmt->bindParam(':day', $course->description, PDO::PARAM_STR);
-        $stmt->bindParam(':start', $course->exam_date, PDO::PARAM_STR);
-        $stmt->bindParam(':end', $course->exam_start, PDO::PARAM_STR);
-        $stmt->bindParam(':exam_date', $course->exam_end, PDO::PARAM_STR);
-        $stmt->bindParam(':exam_start', $course->exam_end, PDO::PARAM_STR);
-        $stmt->bindParam(':exam_end', $course->exam_end, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $course_enrolled->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course_enrolled->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $course_enrolled->section, PDO::PARAM_STR);
+        $stmt->bindParam(':day', $course_enrolled->day, PDO::PARAM_INT);
+        $stmt->bindParam(':start', $course_enrolled->start, PDO::PARAM_STR);
+        $stmt->bindParam(':end', $course_enrolled->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_date', $course_enrolled->exam_date, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_start', $course_enrolled->exam_start, PDO::PARAM_STR);
+        $stmt->bindParam(':exam_end', $course_enrolled->exam_end, PDO::PARAM_STR);
 
 
         $stmt->execute();

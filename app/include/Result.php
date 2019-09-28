@@ -7,16 +7,16 @@ class Result
     public $course; 
     public $section;
 
-    public $result;
+    public $outcome;
     public $round;
 
-    public function __construct($userid, $amount, $section, $result, $round) {
+    public function __construct($userid, $amount, $course, $section, $outcome, $round) {
         $this->userid = $userid;
         $this->amount = $amount;
         $this->course = $course;
         $this->section = $section;
 
-        $this->result = $result;
+        $this->outcome = $outcome;
         $this->round = $round;
     }
   

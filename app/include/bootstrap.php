@@ -17,8 +17,6 @@ function doBootstrap() {
     $prerequisite_success = 0;
     $course_completed_success = 0;
     $bid_success = 0;
-
-
     
     if ($_FILES["bootstrap-file"]["size"] <= 0)
         $errors[] = "input files not found";
@@ -81,7 +79,7 @@ function doBootstrap() {
 					@unlink($bid_path);
 				}
 				
-				
+	
             }
             else{
 
@@ -106,6 +104,12 @@ function doBootstrap() {
                 $courseDAO->deleteAll();
 
                 //todo delete all for new tables
+
+                $resultDAO = new ResultDAO();
+                $resultDAO->deleteAll();
+
+                $courseEnrolledDAO = new courseEnrolledDAO();
+                $courseEnrolledDAO->deleteAll();
 
 
                 // read each line from csv
