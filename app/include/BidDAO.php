@@ -105,7 +105,7 @@ class BidDAO {
         }
         else{
             $student_dao->deductEdollar($bid_input->userid, $bid_input->amount);
-            $sql = $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
+            $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
         }
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -198,7 +198,7 @@ class BidDAO {
             $result[] = [$row['course'], $row['section']];
         }
         
-        return $result
+        return $result;
     }
 
     public function getClearingPrice($bidObj, $vacancy){
@@ -222,7 +222,7 @@ class BidDAO {
             $result = $row['amount'];
         }
         
-        return $result
+        return $result;
 
     }
 }
