@@ -50,3 +50,25 @@ SampleData(5).zip error
 -row 8: 'invalid userid'[userid not found in student csv];
 -row 9: 'blank userid';
 rows successfully loaded for course_completed.csv: 2
+
+bid.csv:
+SampleData(6).zip error:
+-row 5: 'blank userid';
+-row 6: 'blank code','blank section';
+-row 7: 'invalid amount'[amount less than 10];
+-row 8: 'invalid amount'[negative amount];
+-row 23: 'invalid section'[not found in section.csv];
+-row 24:'invalid userid'[not found in student.csv];
+row successfully loaded for bid.csv:  17
+
+bid.csv:
+SampleData(7).zip error:
+-row 29: 'section limit reached'[same user has more than 5bids];
+-row 2: 'course completed';
+-row 4: 'class tiemtable clash' [clash with row 3];
+-row 10: 'exam timetable clash' [clash with row 9];
+-row 16: 'incomplete prerequisite';
+-row 18: 'not enough e-dollar';
+row successfully loaded for bid.csv:24
+
+
