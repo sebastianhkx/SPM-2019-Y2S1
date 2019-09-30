@@ -12,6 +12,8 @@ select * from section;
 
 
 DROP TABLE if exists admin;
+drop table course_enrolled;
+
 
 
 SELECT * FROM bid WHERE userid='calvin.ng.2009';

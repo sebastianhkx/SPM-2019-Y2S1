@@ -20,7 +20,7 @@ require_once 'include/common.php';
       <li><a href="home.php">Home</a></li>
       
       <li class="active"><a href="#">Bidding</a></li>
-      <li><a href="#">Page 2</a></li>
+      <li><a href='dropbid.php'>Drop Bid</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -188,7 +188,7 @@ require_once 'include/common.php';
   <br>
   <br>
 
-    <a href='DisplayCourses.php' target='_blank' >Click to see all courses</a>
+    <a href='displaycourses.php' target='_blank' >Click to see all courses</a>
 
   <br>   
 </body>
