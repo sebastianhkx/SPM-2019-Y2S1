@@ -4,6 +4,8 @@ require_once 'include/common.php';
 // implement protect.php later
 
 $userid = $_SESSION['userid'];
+$r1_disabled = 'disabled';
+$r2_disabled = 'disabled';
 
 // bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
 ?>
@@ -32,19 +34,51 @@ $userid = $_SESSION['userid'];
 </nav>
   
 <div class="container">
-  <h3>Hello, <?= $userid ?> and welcome back!</h3><br>
-
+  <h3>Hello <?= $userid ?> and welcome back!</h3><br>
+<?php
+$roundstatus_dao = new RoundStatusDAO();
+$round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+// echo $round_status->round_num;
+// echo $round_status->status;
+?>
+<!-- Round 1 controls-->
   <form id='stop_r1' action="processClearing.php" method="post">
-	Stop Round 1 Bidding: 
-	<input type="submit" name="submit" value="Stop">
-
-  <a href='displayr1.php' target='_blank' >Click to see round 1 results</a>
-
+	Round 1 Bidding: 
   <?php
+  if ($round_status->round_num ==  '1') {
+    $r1_disabled = '';
+  }
+  echo "
+  <input type='submit' name='submit' value='Stop' $r1_disabled >";
+
+  if ($round_status->round_num ==  '1' && $round_status->status == 'ended') {
+    echo "
+    <a href='displayr1.php' target='_blank'> Click to see round 1 results </a><br><br>
+    ";
+  }
+  ?>
+  </form>
+
+
+<!-- Round 2 controls-->
+  <form id='stop_r2' action="processClearing.php" method="post">
+	Round 2 Bidding: 
+  <?php
+  if ($round_status->round_num ==  '2') {
+    $r2_disabled = '';
+  }
+
+  echo "
+  <input type='submit' name='submit' value='Stop' $r2_disabled >";
+  
+  if ($round_status->round_num ==  '2' && $round_status->status == 'ended') {
+    echo "
+    <a href='displayr2.php' target='_blank' >Click to see round 2 results</a>
+    ";
+  }
 
   ?>
-
-</form>
+  </form>
 
 </div>
 
