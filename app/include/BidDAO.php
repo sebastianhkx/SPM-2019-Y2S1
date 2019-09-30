@@ -141,6 +141,7 @@ class BidDAO {
                 $prerequisite = $prerequisite_dao->retrievePrerequisite($bid_input->course);
                 if ($prerequisite != null){
                     $course_completed = $course_completed_dao->retrieve($bid_input->userid) ;
+                    //have error!!!: NO.of prerequisite== No.of course_completed doesnot mean student has completed the prerequisite
                     if (count($prerequisite) != count($course_completed)) {
                         $errors[] = "incomplete prerequisites";
                     }

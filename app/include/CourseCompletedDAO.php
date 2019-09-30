@@ -25,6 +25,7 @@ class CourseCompletedDAO {
     }
 
     public function retrieve($userid){
+        //this funtion takes in a single string 'userid' and return an array of course that user has completed
         $connMgr = new ConnectionManager();  
         $conn = $connMgr->getConnection();
 
@@ -48,6 +49,8 @@ class CourseCompletedDAO {
     }
 
     public function delete($userid, $courseid){
+        //this function takes in two single string 'userid' and course code
+        //no return 
         $connMgr = new ConnectionManager();  
         $conn = $connMgr->getConnection();
 
@@ -59,7 +62,7 @@ class CourseCompletedDAO {
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $status = $stmt->execute();
-        var_dump($status);
+        //var_dump($status);
 
 
         $conn = null;

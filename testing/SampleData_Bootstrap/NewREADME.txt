@@ -4,7 +4,7 @@ Student.csv:
 -row4 : 'invalid password' [exceed 128 characters];
 -row5 : 'invalid name'[exceed 100 characters] , 'invalid e-dollar'[value with more than 2 decimals];
 -row6 : 'invalid e-dollar'[negative value];
--row7 : 'duplicate userid' [two same userid];
+-row28 : 'duplicate userid' [two same userid with row7];
 -row20 : 'blank userid','blank name','blank school','blank edollar';
 rows loaded: student.csv :21
 
@@ -13,11 +13,12 @@ SampleData(2).zip errors
 -row 2: 'invalid exam date', 'invalid exam start','invalid exam end'[incorrect format];
 -row 3: 'invalid title', 'invalid description'[exceed 100 characters];
 -row 4: 'invalid description'[exceed 100 characters];
+-row 5: 'invalid exam end' [exam start time is later than end time]
 -row 6: 'invalid exam date'[incorrect format];
 -row 15: 'blank course';
 -row 16: 'blank school','blank exam date','blank end time';
 -row 17: 'invalid exam end' [exam start time is later than end time]
-rows successfully loaded for course.csv: 17
+rows successfully loaded for course.csv: 16
 
 Section.csv:
 SampleData(3).zip errors
@@ -46,10 +47,10 @@ SampleData(5).zip error
 -row 2: 'invalid course'[course not found in course csv];
 -row 3: 'blank course';
 -row 4: 'invalid course completed'[the pre-requisite course has yet to be attempted];
--row 7: 'invalid userid'[userid(case-insensitive) not found in student csv];
--row 8: 'invalid userid'[userid not found in student csv];
--row 9: 'blank userid';
-rows successfully loaded for course_completed.csv: 2
+-row 6: 'invalid userid'[userid(case-insensitive) not found in student csv];
+-row 7: 'invalid userid'[userid not found in student csv];
+-row 8: 'blank userid';
+rows successfully loaded for course_completed.csv: 1
 
 bid.csv:
 SampleData(6).zip error:
@@ -63,12 +64,13 @@ row successfully loaded for bid.csv:  17
 
 bid.csv:
 SampleData(7).zip error:
--row 29: 'section limit reached'[same user has more than 5bids];
+-row 31: 'section limit reached'[same user has more than 5bids];
 -row 2: 'course completed';
 -row 4: 'class tiemtable clash' [clash with row 3];
 -row 10: 'exam timetable clash' [clash with row 9];
 -row 16: 'incomplete prerequisite';
 -row 18: 'not enough e-dollar';
+-row 32: 'incomplete prerequisite';
 row successfully loaded for bid.csv:24
 
 
