@@ -38,7 +38,7 @@ $userid = $_SESSION['userid'];
 	Stop Round 1 Bidding: 
 	<input type="submit" name="submit" value="Stop">
 
-  <a href='DisplayR1.php' target='_blank' >Click to see round 1 results</a>
+  <a href='displayr1.php' target='_blank' >Click to see round 1 results</a>
 
   <?php
 
