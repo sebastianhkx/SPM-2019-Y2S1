@@ -188,7 +188,9 @@ require_once 'include/common.php';
   <br>
   <br>
 
-    <a href='displaycourses.php' target='_blank' >Click to see all courses</a>
+    <a href='displayCourses.php' target='_blank' >Click to see all courses</a><br>
+    <a href='displaySections.php' target='_blank' >Click to see all sections</a>
+
 
   <br>   
 </body>

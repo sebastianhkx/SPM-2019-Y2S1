@@ -1,6 +1,24 @@
 <?php
 
 require_once 'include/common.php';
+?>
+<html>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        th {
+        padding: 10px;
+        }
+    </style>
+</html>
+<?php
 
 $dao = new SectionDAO();
 $sections = $dao->retrieveAll();

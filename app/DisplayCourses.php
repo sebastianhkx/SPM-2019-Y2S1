@@ -12,7 +12,7 @@ require_once 'include/common.php';
             border: 1px solid black;
             text-align: center;
         }
-        
+
         th {
         padding: 10px;
         }
@@ -29,7 +29,7 @@ echo "<table border='1'>
         <th>School</th>
         <th>Title</th>
         <th>Description</th>
-        <th>Exam Date</th>
+        <th width='60'>Exam Date</th>
         <th>Exam Start Time</th>
         <th>Exam End time</th>
         
@@ -43,7 +43,7 @@ for ($i = 1; $i <= count($courses); $i++) {
         <td>$course->course</td>
         <td>$course->school</td>
         <td>$course->title</td>
-        <td style='text-align:left' width='500'>$course->description</td>
+        <td style='text-align:left' >$course->description</td>
         <td>$course->exam_date</td>
         <td>$course->exam_start</td>
         <td>$course->exam_end</td>

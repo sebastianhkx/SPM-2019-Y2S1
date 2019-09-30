@@ -17,7 +17,7 @@ require_once 'include/common.php';
       <a class="navbar-brand">BIOS</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Home</a></li>
+      <li><a href="home.php">Home</a></li>
 
       <li><a href="bidding.php">Bidding</a></li>
       <li><a href='dropbid.php'>Drop Bid</a></li>
