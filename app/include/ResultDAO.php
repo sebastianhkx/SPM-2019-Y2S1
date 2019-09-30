@@ -14,7 +14,7 @@ class ResultDAO {
 
         $result = array();
         while($row = $stmt->fetch()) {
-            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['outcome'],$row['round']);
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
         }
 
         $stmt = null;
@@ -39,7 +39,7 @@ class ResultDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round']);
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
         }
 
         $stmt = null;
@@ -67,7 +67,7 @@ class ResultDAO {
 
     public function add($result){
         //takes in a result object and updates tha table
-        $sql = 'INSERT IGNORE INTO bid_result(userid, amount, course, section, outcome, round) values (:userid, :amount, :course, :section, :outcome, :round)';
+        $sql = 'INSERT IGNORE INTO bid_result(userid, amount, course, section, result, round_num) values (:userid, :amount, :course, :section, :result, :round_num)';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -79,8 +79,8 @@ class ResultDAO {
         $stmt->bindParam(':amount', $result->amount, PDO::PARAM_STR);
         $stmt->bindParam(':course', $result->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $result->section, PDO::PARAM_STR);
-        $stmt->bindParam(':outcome', $result->outcome, PDO::PARAM_STR);
-        $stmt->bindParam(':round', $result->round, PDO::PARAM_INT);
+        $stmt->bindParam(':result', $result->result, PDO::PARAM_STR);
+        $stmt->bindParam(':round_num', $result->round_num, PDO::PARAM_INT);
 
         $isAddOk = FALSE;
         if ($stmt->execute()) {
