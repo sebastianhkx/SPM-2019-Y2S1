@@ -40,7 +40,7 @@ class BidDAO {
 
         $result = array();
 
-        if ($row = $stmt->fetch()) {
+        while ($row = $stmt->fetch()) {
             $result[] = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
         }
 
@@ -93,11 +93,13 @@ class BidDAO {
     }
 
     public function add($bid_input){
-        //takes in new bid object
+        // takes in new bid object
+        // returns array of errors if there is any, otherwise returns True
 
         $errors = [];
 
         //validation
+
         if ($bid_input->amount < 10.00){
             $errors[] = "invalid amount";
         }
@@ -127,6 +129,20 @@ class BidDAO {
             }
         }
 
+        $round_status_dao = new RoundStatusDAO();
+        $round_status = $round_status_dao->retrieveCurrentActiveRound();
+        // var_dump($round_status);
+        if ($round_status == null) {
+            $errors[] = 'bidding round is not active';
+        }
+
+        else {
+            // $bidded_school = $bid_input->course
+            if ($round_status->round_num == 1 && $student->school != $course_exists->school) {
+                $errors[] = 'not own school course';
+            }
+        }
+
         // performs 2 validation checks (but only if course + section combi is valid)
         // firstly, if the student has already completed the course they're trying to bid
         // if not completed, check if the student is eligible to bid in terms of prerequisite completions
@@ -141,7 +157,6 @@ class BidDAO {
                 $prerequisite = $prerequisite_dao->retrievePrerequisite($bid_input->course);
                 if ($prerequisite != null){
                     $course_completed = $course_completed_dao->retrieve($bid_input->userid) ;
-                    //have error!!!: NO.of prerequisite== No.of course_completed doesnot mean student has completed the prerequisite
                     if (count($prerequisite) != count($course_completed)) {
                         $errors[] = "incomplete prerequisites";
                     }
@@ -200,6 +215,32 @@ class BidDAO {
             return $errors;
         }
 
+        // NEED TEST FIRST
+        //check for if the bid is too low( for round 2 only)
+        // $result_dao = new ResultDAO();
+        // $results = $result_dao->retrieveAll();
+        // $count=0
+        // for($results as $result){
+        //     if($result[5]==1){
+        //         if ($bid_input->course ==$result[2] && $bid_input->section ==$result[3] &&$bid_input->userid == $result[0]){
+        //             $errors=["course enrolled"];
+        //             $min_bid=$result[1];
+        //             if($bid_input->amount < $min_bid){
+        //                 $errors=["bid too low"];
+        //             }
+        //         }
+        //         if($bid_input->course ==$result[2] && $bid_input->section ==$result[3]) {
+        //             $count+=1;
+        //         }
+        //     }
+        // }
+        // $section_dao=new SectionDAO();
+        // $section=$section_dao->retrieveBySection($bid_input);
+        // $section_size=$section[7];
+        // if($count>=$section_size){
+        //     $errors[]="no vacancy";
+        // }
+
         // update student's edollar
         $to_refund = 0;
         $amount_old = $this->checkExistingBid($bid_input);
@@ -236,6 +277,51 @@ class BidDAO {
 
     public function drop($bid){
         // this takes in a bidded obj that user/admin want to drop
+        // returns array of errors if there is any, otherwise returns True
+
+        // validation
+        $errors = [];
+
+        $course_dao = new CourseDAO();
+        $course_exists = $course_dao->retrieveByCourseId($bid->course);
+        $section_dao = new SectionDAO();
+        $section_exists = $section_dao->retrieveBySection($bid);
+        if ($course_exists == null) {
+            $errors[] = "invalid course";
+        }
+        elseif ($section_exists == null) {
+            $errors[] = "invalid section";
+        }
+        else {
+            $matching_bid = False;
+            $current_bids = $this->retrieveByUser($bid->userid);
+            foreach ($current_bids as $current_bid) {
+                if ($current_bid->course == $section_exists->course && $current_bid->section == $section_exists->section) {
+                    $matching_bid = True;
+                    break;
+                }
+            }
+            if (!$matching_bid) {
+                $errors[] = "no such bid";
+            }
+        }
+
+        $round_status_dao = new RoundStatusDAO();
+        $round_status = $round_status_dao->retrieveCurrentActiveRound();
+        if ($round_status == null) {
+            $errors[] = 'round ended';
+        }
+
+        if (!empty($errors)){
+            return $errors;
+        }
+
+        // refund the student first before deleting bid
+        $student_dao = new StudentDAO();
+        $to_refund = $this->checkExistingBid($bid);
+        $student_dao->addEdollar($bid->userid, $to_refund);
+
+        // delete the bid
         $sql = 'DELETE from bid where userid=:userid AND course=:course AND section=:section';
 
         $connMgr = new ConnectionManager();      
@@ -260,7 +346,8 @@ class BidDAO {
 
     
     public function checkExistingBid($bid_input) {
-        //this takes in a userid , course and section
+        // this takes in a userid , course and section
+        // **no, this takes in a bid object without caring about the amount**
         // returns amount bidded on existing bid, 0 if no existing bids
         $sql = 'SELECT amount FROM bid WHERE userid=:userid AND course=:course AND section=:section';
         
@@ -330,6 +417,5 @@ class BidDAO {
         }
         
         return $result;
-
     }
 }
