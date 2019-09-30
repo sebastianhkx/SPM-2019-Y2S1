@@ -1,7 +1,13 @@
 <?php
     require_once 'include/common.php';
 ?>
-
+<html>
+    <style>
+        th, td {
+            text-align: center;
+        }
+    </style>
+</html>
 <html>
 <head>
   <title>BIOS Drop Bid</title>
@@ -46,27 +52,6 @@
 
     $student_dao = new StudentDAO();
     $bid_dao = new BidDAO();
-
-    // if user drops a bid
-    if (isset($_POST['submitdrop'])){
-        $coursedrop = $_POST['coursedrop']; // for repopulating form fields also
-        $sectiondrop = $_POST['sectiondrop'];
-
-        $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
-        $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
-        $errors = $bid_dao->drop($bid_to_drop);
-        if (is_array($errors)) {
-        echo "Errors:<br><ul>";
-        foreach($errors as $err) {
-            echo "<li>$err</li>";
-        }
-        echo "</ul>";
-        }
-        else {
-        echo "<h1>Bid was dropped successfully!</h1><br>
-                <h1>e$ updated</h1>";
-        }
-    }    
 
     $student = $student_dao->retrieve($userid); // student object
     $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
@@ -120,12 +105,39 @@
     <h2>I want to drop this bid :</h2>
     <form action="DropBid.php" method="POST">
         <table>
-        <tr><td>
+        <tr><td style='text-align:left'>
     Course: </td><td><input type="text" name="coursedrop" value="<?= $coursedrop ?>" required> </td></tr>
-    <tr><td>
+    <tr><td style='text-align:left'>
     Section: </td><td><input type="text" name="sectiondrop" value="<?= $sectiondrop ?>" required> </td></tr>
     <tr><td>
     <input type="submit" name='submitdrop' value="Drop Bid" ></td></tr>
+    </table>
+    <br>
+
+<?php
+    // if user drops a bid
+    if (isset($_POST['submitdrop'])){
+        $coursedrop = $_POST['coursedrop']; // for repopulating form fields also
+        $sectiondrop = $_POST['sectiondrop'];
+
+        $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
+        $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
+        $errors = $bid_dao->drop($bid_to_drop);
+        if (is_array($errors)) {
+        echo "<font color='red'>Error!</font><br>
+        <ul>";
+        foreach($errors as $err) {
+            echo "<font color='red'><li>$err</li></font>";
+        }
+        echo "</ul>";
+        }
+        else {
+        header("Refresh:3"); //refreshes page after 3 secs
+        echo "<font color='green'>Bid was dropped successfully!<br>
+                e$ updated</font>";
+        }
+    }    
+?>
 </div>
 </body>
 </html>
