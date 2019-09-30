@@ -2,10 +2,6 @@
 
 class CourseEnrolledDAO {
 
-    /*
-:userid, :course, :section, :day, :start, :end, 
-:exam_date, :exam_start, :exam_end
-    */
     public function add($course_enrolled) {
         $sql = "INSERT IGNORE INTO course_enrolled(userid, course, section, day, start, end, exam_date, exam_start, exam_end) values(:userid, :course, :section, :day, :start, :end, :exam_date, :exam_start, :exam_end)";
         
@@ -31,6 +27,70 @@ class CourseEnrolledDAO {
 
 
     }
+
+    public function retrieveByUserid($userid){
+        $sql = "SELECT * from course_enrolled where userid = :userid";
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()){
+            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+        return $result;
+    }
+
+    public function retrieveByUseridCourse($userid, $course){
+        $sql = "SELECT * from course_enrolled where userid = :userid and course = :course";
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        $result = null;
+
+        while($row = $stmt->fetch()){
+            $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+        return $result;
+    }
+
+    public function delete($courseEnrolled){
+        //takes in a CourseEnrolled object
+        $sql = 'DELETE from course_enrolled where userid = :userid and course = :course and section = :section';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $courseEnrolled->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $courseEnrolled->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $courseEnrolled->section, PDO::PARAM_STR);
+        
+        $isDeleteOk = FALSE;
+        if ($stmt->execute()) {
+            $isDeleteOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isDeleteOk;
+    }
+
+    ## truncate tables when bootstraping
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE course_enrolled';
 
