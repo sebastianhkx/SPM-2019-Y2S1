@@ -36,6 +36,18 @@ $userid = $_SESSION['userid'];
   <h3>Hello, <?= $userid ?> and welcome back!</h3>
 </div>
 
+<?php
+    $roundstatus_dao = new RoundStatusDAO();
+    $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+    if ($round_status != null) {
+        echo "<h1>Current Round: $round_status->round_num</h1>";
+    }
+    else {
+        echo "<h1>No active bidding round currently.</h1>";
+    }
+    echo "<hr>";
+?>
+
 </body>
 </html>
 
