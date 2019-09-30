@@ -4,7 +4,7 @@
 
 <html>
 <head>
-  <title>BIOS Home</title>
+  <title>BIOS Drop Bid</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <script src="js/jquery.min.js"></script>
@@ -25,6 +25,7 @@
     </ul>
   </div>
 </nav>
+<div class="container">
 
 <?php
     // Displays the current active round
@@ -118,8 +119,13 @@
 <body>
     <h2>I want to drop this bid :</h2>
     <form action="DropBid.php" method="POST">
-    Course: <input type="text" name="coursedrop" value="<?= $coursedrop ?>" required> <br>
-    Section: <input type="text" name="sectiondrop" value="<?= $sectiondrop ?>" required> <br>
-    <input type="submit" name='submitdrop' value="Drop Bid" >
+        <table>
+        <tr><td>
+    Course: </td><td><input type="text" name="coursedrop" value="<?= $coursedrop ?>" required> </td></tr>
+    <tr><td>
+    Section: </td><td><input type="text" name="sectiondrop" value="<?= $sectiondrop ?>" required> </td></tr>
+    <tr><td>
+    <input type="submit" name='submitdrop' value="Drop Bid" ></td></tr>
+</div>
 </body>
 </html>

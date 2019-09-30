@@ -3,7 +3,7 @@ require_once 'include/common.php';
 ?>
 <html>
 <head>
-  <title>BIOS Home</title>
+  <title>BIOS Bidding</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <script src="js/jquery.min.js"></script>
@@ -25,6 +25,7 @@ require_once 'include/common.php';
   </div>
 </nav>
 
+<div class="container">
 <?php
 
   // Displays the current active round
@@ -121,11 +122,16 @@ require_once 'include/common.php';
 
   <h2>I want to bid for:</h2>
   <form action="bidding.php" method="POST">
-  Course: <input type="text" name="course" value="<?= $course ?>" required> <br>
-  Section: <input type="text" name="section" value="<?= $section ?>" required> <br>
-  Bid Amount: <input type="number" name="bidamount" placeholder="1.00" step="0.01" min="10.00" value="<?= $amount ?>" required> <br>
-  <input type="submit" name='submitbid' value="Confirm Bid" >
+    <table>
+      
+  <tr><td>Course: </td><td><input type="text" name="course" value="<?= $course ?>" required> </td></tr>
+  <tr><td>
+  Section: </td><td><input type="text" name="section" value="<?= $section ?>" required> </td></tr>
+  <tr><td>
+  Bid Amount: </td><td><input type="number" name="bidamount" placeholder="1.00" step="0.01" min="10.00" value="<?= $amount ?>" required>  </td></tr>
 
+  <tr><td><input type="submit" name='submitbid' value="Confirm Bid" ></td></tr>
+</table>
   <br>
   <br>
 
@@ -134,5 +140,6 @@ require_once 'include/common.php';
 
 
   <br>   
+</div>
 </body>
 </html>

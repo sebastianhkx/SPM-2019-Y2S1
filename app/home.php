@@ -34,7 +34,6 @@ $userid = $_SESSION['userid'];
   
 <div class="container">
   <h3>Hello, <?= $userid ?> and welcome back!</h3>
-</div>
 
 <?php
     $roundstatus_dao = new RoundStatusDAO();
@@ -47,6 +46,7 @@ $userid = $_SESSION['userid'];
     }
     echo "<hr>";
 ?>
+</div>
 
 </body>
 </html>
