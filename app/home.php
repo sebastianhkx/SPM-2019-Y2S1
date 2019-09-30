@@ -26,8 +26,7 @@ $userid = $_SESSION['userid'];
       <li class="active"><a href="#">Home</a></li>
 
       <li><a href="bidding.php">Bidding</a></li>
-      <li><a href='DropBid.php'>Drop Bid</a></li>
-      <li><a href="#">Page 2</a></li>
+      <li><a href='dropBid.php'>Drop Bid</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>

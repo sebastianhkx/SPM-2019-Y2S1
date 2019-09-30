@@ -1,21 +1,55 @@
 <?php
 require_once 'include/common.php';
+?>
+<html>
+<head>
+  <title>BIOS Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body>
 
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">BIOS</a>
+</nav>
+
+<style>
+table, th, td {
+  border: 0px solid black;
+}
+
+th, td {
+  padding: 10px;
+}
+</style>
+</head>
+
+<?php
 if ( !isset($_SESSION['userid']) ) {
-
+    if (isset ($_POST['userid'])) {
+    $wrong_userid = $_POST['userid'];
+    }
+    else {
+        $wrong_userid = "";
+    }
     ?>
     <html>
         <head>
             <!--<link rel="stylesheet" type="text/css" href="include/style.css">-->
         </head>
         <body>
+        <div class="container">
             <h1>Login</h1>
             <form method='POST' action='login.php'>
                 <table border='0'>
                     <tr>
-                        <td>User ID</td>
+                        <td width="100">User ID</td>
                         <td>
-                            <input name='userid' />
+                            <input name='userid' value=<?= $wrong_userid ?> >
                         </td>   
                     </tr>
                     <tr>
@@ -25,7 +59,7 @@ if ( !isset($_SESSION['userid']) ) {
                         </td>
                     </tr>
                     <tr>
-                        <td colspan='2'>
+                        <td colspan='2' style="text-align:right">
                             <input name='Login' type='submit' />
                         </td>
                     </tr>
@@ -51,7 +85,7 @@ if ( !isset($_SESSION['userid']) ) {
             }
             else {
                 $error = 'Incorrect userid or password!';
-                echo $error;
+                echo "<font color='red'>$error</font>";
             }
         }
         
@@ -68,7 +102,7 @@ if ( !isset($_SESSION['userid']) ) {
             }
             else {
                 $error = 'Incorrect userid or password!';
-                echo $error;
+                echo "<font color='red'>$error</font>";
             }
         }
     }

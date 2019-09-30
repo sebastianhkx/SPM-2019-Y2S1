@@ -9,7 +9,7 @@ $userid = $_SESSION['userid'];
 ?>
 <html>
 <head>
-  <title>BIOS Admin Home</title>
+  <title>BIOS Bootstrap</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <script src="js/jquery.min.js"></script>
@@ -25,7 +25,7 @@ $userid = $_SESSION['userid'];
     <ul class="nav navbar-nav">
       <li><a href="home_admin.php">Home</a></li>
 
-      <li><a class="active" href="#">Start Bootstrap</a></li>
+      <li class="active"><a href='bootstrap.php'>Start Bootstrap</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
