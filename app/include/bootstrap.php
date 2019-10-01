@@ -108,7 +108,7 @@ function doBootstrap() {
                 $resultDAO = new ResultDAO();
                 $resultDAO->deleteAll();
 
-                $courseEnrolledDAO = new courseEnrolledDAO();
+                $courseEnrolledDAO = new CourseEnrolledDAO();
                 $courseEnrolledDAO->deleteAll();
 
 
