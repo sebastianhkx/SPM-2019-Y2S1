@@ -7,13 +7,13 @@ class ConnectionManager {
         $host = "localhost";
         $username = "root";
     
-        // $password = "";                // WAMP
-        // $port = 3306;                  // WAMP
+        $password = "";                // WAMP
+        $port = 3306;                  // WAMP
 
         // $password = "root";         // MAMP   
 
-        $password = "oAoW79DW2TSy"; // AWS
-        $port = 8888;               // AWS
+        // $password = "oAoW79DW2TSy"; // AWS
+        // $port = 8888;               // AWS
 
         $dbname = "g6t6";
 
