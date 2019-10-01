@@ -343,7 +343,6 @@ class BidDAO {
 
         return $isDeleteOk;
     }
-
     
     public function checkExistingBid($bid_input) {
         // this takes in a userid , course and section

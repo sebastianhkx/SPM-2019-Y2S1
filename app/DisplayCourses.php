@@ -43,7 +43,7 @@ for ($i = 1; $i <= count($courses); $i++) {
         <td>$course->course</td>
         <td>$course->school</td>
         <td>$course->title</td>
-        <td style='text-align:left' >$course->description</td>
+        <td style='text-align:left'>$course->description</td>
         <td>$course->exam_date</td>
         <td>$course->exam_start</td>
         <td>$course->exam_end</td>

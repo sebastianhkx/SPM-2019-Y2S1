@@ -26,7 +26,7 @@
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
       <li><a href="bidding.php">Bidding</a></li>
-      <li class="active"><a href='DropBid.php'>Drop Bid</a></li>
+      <li class="active"><a href='dropBid.php'>Drop Bid</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -102,8 +102,8 @@
 
 <html>
 <body>
-    <h2>I want to drop this bid :</h2>
-    <form action="DropBid.php" method="POST">
+    <h2>I want to drop this bid:</h2>
+    <form action="dropBid.php" method="POST">
         <table>
         <tr><td style='text-align:left'>
     Course: </td><td><input type="text" name="coursedrop" value="<?= $coursedrop ?>" required> </td></tr>
