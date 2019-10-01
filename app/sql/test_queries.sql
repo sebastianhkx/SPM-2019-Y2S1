@@ -1,3 +1,4 @@
+use g6t6;
 
 select * from admin;
 select * from student;
