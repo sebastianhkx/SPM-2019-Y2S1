@@ -314,6 +314,9 @@ function doBootstrap() {
             }
         }
 
+        $roundDAO = new RoundStatusDAO();
+        $roundDAO->startRound(1);
+
         $lines_loaded = [
                         "student.csv" => $student_success,
                         "course.csv" => $course_success,
