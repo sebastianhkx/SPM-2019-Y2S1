@@ -108,7 +108,7 @@ function doBootstrap() {
                 $resultDAO = new ResultDAO();
                 $resultDAO->deleteAll();
 
-                $courseEnrolledDAO = new courseEnrolledDAO();
+                $courseEnrolledDAO = new CourseEnrolledDAO();
                 $courseEnrolledDAO->deleteAll();
 
 
@@ -313,6 +313,9 @@ function doBootstrap() {
 
             }
         }
+
+        $roundDAO = new RoundStatusDAO();
+        $roundDAO->startRound(1);
 
         $lines_loaded = [
                         "student.csv" => $student_success,

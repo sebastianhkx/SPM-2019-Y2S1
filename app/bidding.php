@@ -26,7 +26,7 @@ require_once 'include/common.php';
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
       <li class="active"><a href="bidding.php">Bidding</a></li>
-      <li><a href='dropBid.php'>Drop Bid</a></li>
+      <li><a href='dropbid.php'>Drop Bid</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>

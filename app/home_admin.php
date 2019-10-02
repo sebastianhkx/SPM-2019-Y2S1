@@ -37,12 +37,13 @@ $r2_disabled = 'disabled';
   <h3>Hello <?= $userid ?> and welcome back!</h3><br>
 <?php
 $roundstatus_dao = new RoundStatusDAO();
-$round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+if (!empty($round_status)){
+  $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
 // echo $round_status->round_num;
 // echo $round_status->status;
 ?>
 <!-- Round 1 controls-->
-  <form id='stop_r1' action="processClearing.php" method="post">
+  <form id='stop_r1' action="processclearing.php" method="post">
 	Round 1 Bidding: 
   <?php
   if ($round_status->round_num ==  '1') {
@@ -61,7 +62,7 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
 
 
 <!-- Round 2 controls-->
-  <form id='stop_r2' action="processClearing.php" method="post">
+  <form id='stop_r2' action="processclearing.php" method="post">
 	Round 2 Bidding: 
   <?php
   if ($round_status->round_num ==  '2') {
@@ -76,6 +77,7 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
     <a href='displayr2.php' target='_blank' >Click to see round 2 results</a>
     ";
   }
+}//if (!empty($round_status)){  ends here
 
   ?>
   </form>
