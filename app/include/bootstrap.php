@@ -177,7 +177,7 @@ function doBootstrap() {
                 unlink($course_path);
                 
                 //processess section.csv
-                $section_arr=fgetcsv($section);
+                $fields=fgetcsv($section);
                 $filename = 'section.csv';
                 $row_num = 1;
                 while ( ($section_arr=fgetcsv($section) )  !== false){
@@ -251,7 +251,7 @@ function doBootstrap() {
                     for ($i=0; $i<sizeof($course_completed_arr); $i++){
                         if ($course_completed_arr[$i]===''){
                             $skip_line = TRUE;
-                            $row_errors[] = "blank {$field[$i]}";
+                            $row_errors[] = "blank {$fields[$i]}";
                         }
                     }
                     if ($skip_line == False){

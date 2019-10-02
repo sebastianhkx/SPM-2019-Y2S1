@@ -66,8 +66,8 @@ bid.csv:
 SampleData(7).zip error:
 -row 31: 'section limit reached'[same user has more than 5bids];
 -row 2: 'course completed';
--row 4: 'class tiemtable clash' [clash with row 3];
--row 10: 'exam timetable clash' [clash with row 9];
+-row 4: 'class tiemtable clash' [clash with row 3];-check
+-row 10: 'exam timetable clash' [clash with row 9];-check
 -row 16: 'incomplete prerequisite';
 -row 18: 'not enough e-dollar';
 -row 32: 'incomplete prerequisite';
