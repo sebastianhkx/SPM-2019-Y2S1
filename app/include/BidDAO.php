@@ -196,7 +196,7 @@ class BidDAO {
         $courseCompletedDAO = new CourseCompletedDAO();
         $bidPrerequisiteCodeArray = $prerequisiteDAO->retrievePrerequisite($bid->course);
         if (!empty($bidPrerequisiteCodeArray)){
-            foreach ($courseCompletedDAO->$bidPrerequisiteCodeArray as $prerequisiteCode){
+            foreach ($courseCompletedDAO->bidPrerequisiteCodeArray as $prerequisiteCode){
                 if (completed_course($bid->userid, $prerequisiteCode)==FALSE){
                     $errors[] = 'incomplete prerequisite';
                     break;
