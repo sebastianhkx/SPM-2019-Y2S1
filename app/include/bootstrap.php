@@ -177,7 +177,7 @@ function doBootstrap() {
                 unlink($course_path);
                 
                 //processess section.csv
-                $section_arr=fgetcsv($section);
+                $fields=fgetcsv($section);
                 $filename = 'section.csv';
                 $row_num = 1;
                 while ( ($section_arr=fgetcsv($section) )  !== false){
@@ -251,7 +251,7 @@ function doBootstrap() {
                     for ($i=0; $i<sizeof($course_completed_arr); $i++){
                         if ($course_completed_arr[$i]===''){
                             $skip_line = TRUE;
-                            $row_errors[] = "blank {$field[$i]}";
+                            $row_errors[] = "blank {$fields[$i]}";
                         }
                     }
                     if ($skip_line == False){
@@ -300,11 +300,30 @@ function doBootstrap() {
                 
 
                 //processes bid.csv
-                $bid_arr=fgetcsv($bid);
+                $fields = $bid_arr=fgetcsv($bid);
+                $filename = 'bid.csv';
+                $row_num = 1;
                 while ( ($bid_arr=fgetcsv($bid) )  !== false){
-                    $bidObj= new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
-                    $bidDAO->add($bidObj);
-                    $bid_success++;
+                    $bid_arr = array_map('trim', $bid_arr); //trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($bid_arr); $i++){
+                        if ($bid_arr[$i]===''){
+                            $skip_line = TRUE;
+                            $row_errors[] = "blank {$fields[$i]}";
+                        }
+                    }
+                    if ($skip_line == False){
+                        $bidObj = new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
+                        $row_errors = $bidDAO->add($bidObj);
+                    }
+                    if (!empty($row_errors)){
+                        $errors[] = [$filename, $row_num, $row_errors];
+                    }
+                    else{
+                        $bid_success++;
+                    }
                 }
                 fclose($bid);
 				unlink($bid_path);
