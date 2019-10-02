@@ -131,16 +131,20 @@ if (isset($_POST['submitbid'])) {
   <?php
   // if user submits a new bid
   if (isset($errors)) {
-    echo "<font color='red'>Error!</font><br><ul>";
-    foreach($errors as $err) {
-      echo "<font color='red'><li>$err</li></font>";
+    if (is_array($errors)){
+      echo "<font color='red'>Error!</font><br><ul>";
+      foreach($errors as $err) {
+        echo "<font color='red'><li>$err</li></font>";
+      }
+      echo "</ul>";
     }
-    echo "</ul>";
+    else {
+      echo "<font color='green'>Bid was added successfully!<br>
+            e$ updated</font><br>";
+    
+    }
   }
-  else {
-    echo "<font color='green'>Bid was added successfully!<br>
-          e$ updated</font><br>";
-  }
+  
   ?>
   <br>
     <a href='displayCourses.php' target='_blank' >Click to see all courses</a><br>

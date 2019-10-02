@@ -148,14 +148,10 @@ class BidDAO {
             $studentObj = $studentDAO->retrieve($bid->userid);
             $courseDAO = new CourseDAO();
             $courseObj = $courseDAO->retrieveByCourseId($bid->course);
-            if (!empty($courseObj) and $studentObj->school != $courseObj->school){
+            if (!empty($courseObj) && $studentObj->school != $courseObj->school){
                 $errors[] = 'not own school course';
             }
-    
-            $stmt = null;
-            $conn = null;
-    
-            return $isAddOk;
+            
     }
 
         //retrieves list of current bids
@@ -167,8 +163,8 @@ class BidDAO {
                 //checks if section is valid
                 $bidSectionObj = $sectionDAO->retrieveBySection($bid);
                 foreach ($bidObj_array as $bidObj){
-                    $existingBidSectionObj = $sectionDAO->retrieveBySection($bid);
-                    if ($bidObj->course != $bid->course and $bidSectionObj->day == $existingBidSectionObj->day and ($bidSectionObj->start == $existingBidSectionObj->start || $bidSectionObj->end == $existingBidSectionObj->end))
+                    $existingBidSectionObj = $sectionDAO->retrieveBySection($bidObj);
+                    if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && $bidSectionObj->start == $existingBidSectionObj->start && $bidSectionObj->end == $existingBidSectionObj->end)
                         //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                         //2nd condition checks if days clash, 3rd condition checks if start time clash, 4th checks if end time clash
                         $errors[] = 'class timetable clash';
@@ -186,7 +182,7 @@ class BidDAO {
                     $existingBidCourseObj = $courseDAO->retrieveByCourseId($bidObj->course);
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
                     //2nd condition checks if exam date clash, 3rd condition checks if exam start time clash, 4th checks if exam end time clash
-                    if ($bidObj->course != $bid->course and $bidCourseObj->exam_date == $existingBidCourseObj->exam_date and ($bidCourseObj->exam_start == $existingBidCourseObj->exam_start || $bidCourseObj->exam_end == $existingBidCourseObj->exam_end)){
+                    if ($bidObj->course != $bid->course && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && $bidCourseObj->exam_start == $existingBidCourseObj->exam_start && $bidCourseObj->exam_end == $existingBidCourseObj->exam_end){
                         $errors[] = 'exam timetable clash';
                         break;
                     }
@@ -197,9 +193,10 @@ class BidDAO {
       
         //incomplete prereq
         $prerequisiteDAO = new PrerequisiteDAO();
+        $courseCompletedDAO = new CourseCompletedDAO();
         $bidPrerequisiteCodeArray = $prerequisiteDAO->retrievePrerequisite($bid->course);
         if (!empty($bidPrerequisiteCodeArray)){
-            foreach ($bidPrerequisiteCodeArray as $prerequisiteCode){
+            foreach ($courseCompletedDAO-$bidPrerequisiteCodeArray as $prerequisiteCode){
                 if (completed_course($bid->userid, $prerequisiteCode)==FALSE){
                     $errors[] = 'incomplete prerequisite';
                     break;
@@ -208,7 +205,6 @@ class BidDAO {
         }
 
         //course completed
-        $courseCompletedDAO = new CourseCompletedDAO();
         if ($courseCompletedDAO->completed_course($bid->userid, $bid->course)==TRUE){
             $errors[] = 'course completed';
         }
