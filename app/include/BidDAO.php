@@ -151,7 +151,12 @@ class BidDAO {
             if (!empty($courseObj) and $studentObj->school != $courseObj->school){
                 $errors[] = 'not own school course';
             }
-        }
+    
+            $stmt = null;
+            $conn = null;
+    
+            return $isAddOk;
+    }
 
         //retrieves list of current bids
         $bidObj_array = $this->retrieveByUser($bid->userid);
