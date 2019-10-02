@@ -12,7 +12,7 @@ class ConnectionManager {
 
         // $password = "root";         // MAMP   
 
-        //$password = "oAoW79DW2TSy"; // AWS
+        // $password = "oAoW79DW2TSy"; // AWS
         // $port = 8888;               // AWS
 
         $dbname = "g6t6";
