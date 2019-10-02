@@ -71,8 +71,12 @@ $userid = $_SESSION['userid'];
             <th>No Errors!</th>
           </tr>";
   }
-  else{
-    echo "<tr>
+  elseif(is_array($errors)){
+    if (sizeof($errors)==1){
+      echo "{$errors[0]}";
+    }
+    else{
+      echo "<tr>
             <th colspan='3'>Errors</th>
           </tr>
           <tr>
@@ -80,18 +84,19 @@ $userid = $_SESSION['userid'];
             <th>Line</th>
             <th>Error Message</th>
           </tr>";
-    foreach ($errors as $error){
-      echo "
-            <tr>
-              <td>{$error[0]}</td>
-              <td>{$error[1]}</td>
-              <td>";
-      foreach ($error[2] as $error_msg){
-        echo "$error_msg<br>";
+      foreach ($errors as $error){
+        echo "
+              <tr>
+                <td>{$error[0]}</td>
+                <td>{$error[1]}</td>
+                <td>";
+        foreach ($error[2] as $error_msg){
+          echo "$error_msg<br>";
+        }
+          echo "</td>
+              </tr>";
       }
-        echo "</td>
-            </tr>";
-    }
+    } 
   }
 
 

@@ -311,7 +311,7 @@ function doBootstrap() {
                     for ($i=0; $i<sizeof($bid_arr); $i++){
                         if ($bid_arr[$i]===''){
                             $skip_line = TRUE;
-                            $row_errors[] = "blank {$field[$i]}";
+                            $row_errors[] = "blank {$fields[$i]}";
                         }
                     }
                     if ($skip_line == False){

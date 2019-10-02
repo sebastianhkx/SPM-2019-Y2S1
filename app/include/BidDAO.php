@@ -148,10 +148,11 @@ class BidDAO {
             $studentObj = $studentDAO->retrieve($bid->userid);
             $courseDAO = new CourseDAO();
             $courseObj = $courseDAO->retrieveByCourseId($bid->course);
-            if (!empty($courseObj) && $studentObj->school != $courseObj->school){
-                $errors[] = 'not own school course';
+            if ($courseObj!=null and $studentObj!=null){
+                if (!empty($courseObj) && $studentObj->school != $courseObj->school){
+                    $errors[] = 'not own school course';
+                }
             }
-            
     }
 
         //retrieves list of current bids
@@ -220,10 +221,11 @@ class BidDAO {
         }
 
         //not enough edollars
-        if ($studentDAO->retrieve($bid->userid)->edollar<$bid->amount){
-            $errors[] = 'not enough e-dollars';
+        if ($studentDAO->retrieve($bid->userid)!=null){
+            if ($studentDAO->retrieve($bid->userid)->edollar<$bid->amount){
+                $errors[] = 'not enough e-dollars';
+            }
         }
-
 
         if (!empty($errors)){
             //ends here if there are any errors
