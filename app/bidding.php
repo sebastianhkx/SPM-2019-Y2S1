@@ -1,5 +1,19 @@
 <?php
 require_once 'include/common.php';
+
+$userid = $_SESSION['userid'];
+
+$student_dao = new StudentDAO();
+$bid_dao = new BidDAO();
+
+if (isset($_POST['submitbid'])) {
+  $course = $_POST['course']; // for repopulating form fields also
+  $section = $_POST['section'];
+  $amount = $_POST['bidamount'];
+
+  $bidded = new Bid($userid, $amount, $course, $section);
+  $errors = $bid_dao->add($bidded);
+}
 ?>
 <html>
     <style>
@@ -26,7 +40,7 @@ require_once 'include/common.php';
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
       <li class="active"><a href="bidding.php">Bidding</a></li>
-      <li><a href='dropBid.php'>Drop Bid</a></li>
+      <li><a href='dropbid.php'>Drop Bid</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -45,11 +59,6 @@ require_once 'include/common.php';
     echo "<h1>No active bidding round currently.</h1>";
   }
   echo "<hr>";
-
-  $userid = $_SESSION['userid'];
-
-  $student_dao = new StudentDAO();
-  $bid_dao = new BidDAO();
 
   $course = '';
   $section = '';
@@ -121,25 +130,16 @@ require_once 'include/common.php';
   <br>
   <?php
   // if user submits a new bid
-  if (isset($_POST['submitbid'])) {
-    $course = $_POST['course']; // for repopulating form fields also
-    $section = $_POST['section'];
-    $amount = $_POST['bidamount'];
-
-    $bidded = new Bid($userid, $amount, $course, $section);
-    $errors = $bid_dao->add($bidded);
-    if (is_array($errors)) {
-      echo "<font color='red'>Error!</font><br><ul>";
-      foreach($errors as $err) {
-        echo "<font color='red'><li>$err</li></font>";
-      }
-      echo "</ul>";
+  if (isset($errors)) {
+    echo "<font color='red'>Error!</font><br><ul>";
+    foreach($errors as $err) {
+      echo "<font color='red'><li>$err</li></font>";
     }
-    else {
-      header("Refresh:3"); //refreshes page after 3 secs
-      echo "<font color='green'>Bid was added successfully!<br>
-            e$ updated</font><br>";
-    }
+    echo "</ul>";
+  }
+  else {
+    echo "<font color='green'>Bid was added successfully!<br>
+          e$ updated</font><br>";
   }
   ?>
   <br>

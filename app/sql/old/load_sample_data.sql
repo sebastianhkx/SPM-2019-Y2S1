@@ -10,7 +10,7 @@ userid varchar(50) not null,
 password varchar(255) not null,
 name varchar(50) not null,
 school char(3) not null,
-edollar int not null,
+edollar float not null,
 CONSTRAINT student_pk primary key(userid)
 );
 

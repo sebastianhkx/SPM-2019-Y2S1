@@ -52,6 +52,7 @@ class BidDAO {
 
     public function retrieveByCourseSection($courseSection){
         //this takes in a array [course, section] and returns a array of bid objs
+        //this function is used for round clearing
         
         $sql = 'SELECT * FROM bid WHERE course=:course and section=:section';
 
@@ -92,177 +93,159 @@ class BidDAO {
         $conn = null; 
     }
 
-    public function add($bid_input){
-        // takes in new bid object
-        // returns array of errors if there is any, otherwise returns True
+    public function add($bid){
+        //takes in a bid object and returns array of errors if it fals bid validation
 
         $errors = [];
 
         //validation
+        $studentDAO = new StudentDAO();
+        if ($studentDAO->retrieve($bid->userid)==null){
+            $errors[] = "invalid userid";
+        }
 
-        if ($bid_input->amount < 10.00){
+        $edollar_array = explode('.',$bid->amount);//10.000 into ['10','000']
+        if (isset($edollar_array[1])){
+            $decimal_place = $edollar_array[1];
+        }
+        else{
+            $decimal_place = 0;
+        }
+        $roundStatusDAO = new RoundStatusDAO();
+        $current_round = $roundStatusDAO->retrieveCurrentActiveRound();//used for min amount and same school check
+        if ($current_round->round_num == 1){
+            $min_amount = 10;
+        }
+        else{
+            //round 2 min amount
+            //TODO currently set to 10
+            $min_amount = 10;
+        }
+        if ($bid->amount<$min_amount || strlen($decimal_place)>2){
+            //1st condition checks for bid > amount and 2nd condition checks for edollars decimal place
             $errors[] = "invalid amount";
-        }
+        } 
 
-        $student_dao = new StudentDAO();
-        $student = $student_dao->retrieve($bid_input->userid);
-        if ($bid_input->amount > $student->edollar){
-            $errors[] = "not enough e-dollar";
-        }
+        $courseDAO = new CourseDAO();
+        $sectionDAO = new SectionDAO();
 
-        // performs 2 validation checks
-        // 1. check valid course first
-        // 2. then check valid section
-        $course_and_section_valid = True;
-        $course_dao = new CourseDAO();
-        $course_exists = $course_dao->retrieveByCourseId($bid_input->course);
-        if ($course_exists == null){
+        $validCourse = TRUE;//used to determined if class and exam timetable checks should be done later
+        $validSection = TRUE;//used to determined if class and exam timetable checks should be done later
+        if (($courseDAO->retrieveByCourseId($bid->course))==null){
             $errors[] = "invalid course";
-            $course_and_section_valid = False;
+            $validCourse = FALSE;
+            $validSection = FALSE;
         }
-        else {
-            $section_dao = new SectionDAO();
-            $section_exists = $section_dao->retrieveBySection($bid_input);
-            if ($section_exists == null){
+        else{
+            if (($sectionDAO->retrieveBySection($bid)==null)){
                 $errors[] = "invalid section";
-                $course_and_section_valid = False;
-            }
+                $validSection = FALSE;
+            } 
         }
 
-        $round_status_dao = new RoundStatusDAO();
-        $round_status = $round_status_dao->retrieveCurrentActiveRound();
-        // var_dump($round_status);
-        if ($round_status == null) {
-            $errors[] = 'bidding round is not active';
-        }
-
-        else {
-            // $bidded_school = $bid_input->course
-            if ($round_status->round_num == 1 && $student->school != $course_exists->school) {
+        if ($current_round->round_num == 1){
+            //checks if school of bidded course is same as students school
+            $studentObj = $studentDAO->retrieve($bid->userid);
+            $courseDAO = new CourseDAO();
+            $courseObj = $courseDAO->retrieveByCourseId($bid->course);
+            if (!empty($courseObj) and $studentObj->school != $courseObj->school){
                 $errors[] = 'not own school course';
             }
         }
 
-        // performs 2 validation checks (but only if course + section combi is valid)
-        // firstly, if the student has already completed the course they're trying to bid
-        // if not completed, check if the student is eligible to bid in terms of prerequisite completions
-        if ($course_and_section_valid == True) {
-            $course_completed_dao = new CourseCompletedDAO();
-            $student_completed_course = $course_completed_dao->completed_course($bid_input->userid, $bid_input->course);
-            if ($student_completed_course) {
-                $errors[] = "course completed";
+        //retrieves list of current bids
+        $bidObj_array = $this->retrieveByUser($bid->userid);
+        if (!empty($bidObj_array)){
+            //has existing bids, does not enter if there are no existing bids as it would be unnecessary to check
+            //timetable clash
+            if ($validSection){
+                //checks if section is valid
+                $bidSectionObj = $sectionDAO->retrieveBySection($bid);
+                foreach ($bidObj_array as $bidObj){
+                    $existingBidSectionObj = $sectionDAO->retrieveBySection($bid);
+                    if ($bidObj->course != $bid->course and $bidSectionObj->day == $existingBidSectionObj->day and ($bidSectionObj->start == $existingBidSectionObj->start || $bidSectionObj->end == $existingBidSectionObj->end))
+                        //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
+                        //2nd condition checks if days clash, 3rd condition checks if start time clash, 4th checks if end time clash
+                        $errors[] = 'class timetable clash';
+                        break;
+                }
+                 //round 2 TODO check against course enrolled
             }
-            else {
-                $prerequisite_dao = new PrerequisiteDAO();
-                $prerequisite = $prerequisite_dao->retrievePrerequisite($bid_input->course);
-                if ($prerequisite != null){
-                    $course_completed = $course_completed_dao->retrieve($bid_input->userid) ;
-                    if (count($prerequisite) != count($course_completed)) {
-                        $errors[] = "incomplete prerequisites";
+            
+            
+            //exam clash
+            if ($validCourse){
+                //checks if course is valid
+                $bidCourseObj = $courseDAO->retrieveByCourseId($bid->course);
+                foreach ($bidObj_array as $bidObj){
+                    $existingBidCourseObj = $courseDAO->retrieveByCourseId($bidObj->course);
+                    //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
+                    //2nd condition checks if exam date clash, 3rd condition checks if exam start time clash, 4th checks if exam end time clash
+                    if ($bidObj->course != $bid->course and $bidCourseObj->exam_date == $existingBidCourseObj->exam_date and ($bidCourseObj->exam_start == $existingBidCourseObj->exam_start || $bidCourseObj->exam_end == $existingBidCourseObj->exam_end)){
+                        $errors[] = 'exam timetable clash';
+                        break;
                     }
                 }
+                //round 2 TODO check against course enrolled
             }
         }
-        
-        $student_current_bids = $this->retrieveByUser($bid_input->userid);
-        if (count($student_current_bids) >= 5){
-            $errors[] = "section limit reached";
-        }
-
-        if ($course_and_section_valid == True) {
-            // retrieve all the sections the student has bidded for
-            $bidding_section = $section_dao->retrieveBySection($bid_input);
-            $array_of_bidded_sections = [];
-            if (count($student_current_bids) > 0) {
-                foreach ($student_current_bids as $bid) {
-                    $array_of_bidded_sections[] = $section_dao->retrieveBySection($bid);
-                }
-            }
-            // check for class timetable clash
-            $class_time_clash = False;
-            foreach ($array_of_bidded_sections as $bidded_section) {
-                if ($bidded_section->day == $bidding_section->day and $bidded_section->start == $bidding_section->start and $bidded_section->end == $bidding_section->end) {
-                    $class_time_clash = True;
+      
+        //incomplete prereq
+        $prerequisiteDAO = new PrerequisiteDAO();
+        $bidPrerequisiteCodeArray = $prerequisiteDAO->retrievePrerequisite($bid->course);
+        if (!empty($bidPrerequisiteCodeArray)){
+            foreach ($bidPrerequisiteCodeArray as $prerequisiteCode){
+                if (completed_course($bid->userid, $prerequisiteCode)==FALSE){
+                    $errors[] = 'incomplete prerequisite';
                     break;
                 }
             }
-            if ($class_time_clash) {
-                $errors[] = "class timetable clash";
-            }
+        }
 
-            // retrieve all the courses the student has bidded for
-            $bidding_course = $course_dao->retrieveByCourseId($bid_input->course);
-            $array_of_bidded_courses = [];
-            if (count($student_current_bids) > 0) {
-                foreach ($student_current_bids as $bid) {
-                    $array_of_bidded_courses[] = $course_dao->retrieveByCourseId($bid->course);
-                }
-            }
-            // check for exam timetable clash
-            $exam_time_clash = False;
-            foreach ($array_of_bidded_courses as $bidded_course) {
-                if ($bidded_course->exam_date == $bidding_course->exam_date and $bidded_course->exam_start == $bidding_course->exam_start and $bidded_course->exam_end == $bidding_course->exam_end) {
-                    $exam_time_clash = True;
-                    break;
-                }
-            }
-            if ($exam_time_clash) {
-                $errors[] = "exam timetable clash";
+        //course completed
+        $courseCompletedDAO = new CourseCompletedDAO();
+        if ($courseCompletedDAO->completed_course($bid->userid, $bid->course)==TRUE){
+            $errors[] = 'course completed';
+        }
+
+        //bidded more than 5
+        $to_refund = 0;
+        $existingBid = $this->retrieveByUseridCourse($bid->userid, $bid->course);//null if no existing bid
+        if($existingBid == null ){
+            //does not have existing bid, doesnt not need to check for updating bid as bids submmitted would still be 5
+            if (sizeof($bidObj_array)>=5){
+                $errors[] = 'section limit reached';
             }
         }
+
+        //not enough edollars
+        if ($studentDAO->retrieve($bid->userid)->edollar<$bid->amount){
+            $errors[] = 'not enough e-dollars';
+        }
+
 
         if (!empty($errors)){
+            //ends here if there are any errors
             return $errors;
         }
 
-        // NEED TEST FIRST
-        //check for if the bid is too low( for round 2 only)
-        // $result_dao = new ResultDAO();
-        // $results = $result_dao->retrieveAll();
-        // $count=0
-        // for($results as $result){
-        //     if($result[5]==1){
-        //         if ($bid_input->course ==$result[2] && $bid_input->section ==$result[3] &&$bid_input->userid == $result[0]){
-        //             $errors=["course enrolled"];
-        //             $min_bid=$result[1];
-        //             if($bid_input->amount < $min_bid){
-        //                 $errors=["bid too low"];
-        //             }
-        //         }
-        //         if($bid_input->course ==$result[2] && $bid_input->section ==$result[3]) {
-        //             $count+=1;
-        //         }
-        //     }
-        // }
-        // $section_dao=new SectionDAO();
-        // $section=$section_dao->retrieveBySection($bid_input);
-        // $section_size=$section[7];
-        // if($count>=$section_size){
-        //     $errors[]="no vacancy";
-        // }
+        if($existingBid != null ){
+            //has existing bid drops existing bid, drop function automatically refunds
+            $this->drop($existingBid);
+        }
 
-        // update student's edollar
-        $to_refund = 0;
-        $amount_old = $this->checkExistingBid($bid_input);
-        if($amount_old != 0){
-            $to_refund = $amount_old - ($bid_input->amount);
-            $student_dao->addEdollar($bid_input->userid, $to_refund);
-            $sql = 'UPDATE bid SET amount=:amount WHERE userid=:userid AND course=:course AND section=:section' ;
-        }
-        else{
-            $student_dao->deductEdollar($bid_input->userid, $bid_input->amount);
-            $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
-        }
+        $studentDAO->deductEdollar($bid->userid, $bid->amount);
+        $sql = 'INSERT IGNORE into bid(userid, amount, course, section) values (:userid, :amount, :course, :section)';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':userid', $bid_input->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid_input->amount, PDO::PARAM_INT);
-        $stmt->bindParam(':course', $bid_input->course, PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid_input->section, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_INT);
+        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
 
         $isAddOk = FALSE;
         if ($stmt->execute()) {
@@ -271,8 +254,32 @@ class BidDAO {
 
         $stmt = null;
         $conn = null;
+    }
 
-        return $isAddOk;
+    public function retrieveByUseridCourse($userid, $course){
+        // returns bid 
+        $sql = 'SELECT * FROM bid WHERE userid=:userid AND course=:course';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = null;
+
+        if($row = $stmt->fetch()){
+            $result = new bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
     }
 
     public function drop($bid){
