@@ -84,7 +84,7 @@ class CourseDAO {
             // var_dump(date("G:i",strtotime($course->exam_start)));     
             $errors[]='invalid exam start';
         }
-        if($course->exam_end!=date("G:i",strtotime($course->exam_end))){
+        if($course->exam_end!=date("G:i",strtotime($course->exam_end)) || strtotime($course->exam_end)<=strtotime($course->exam_start)){
             $errors[]='invalid exam end';
         }
         else{
