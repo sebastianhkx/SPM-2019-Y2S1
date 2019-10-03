@@ -6,7 +6,7 @@ Student.csv:
 -row6 : 'invalid e-dollar'[negative value];
 -row28 : 'duplicate userid' [two same userid with row7];
 -row20 : 'blank userid','blank name','blank school','blank edollar';
-rows loaded: student.csv :21
+rows loaded: student.csv :20
 
 Course.csv:
 SampleData(2).zip errors
