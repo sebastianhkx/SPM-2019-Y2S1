@@ -60,7 +60,7 @@ SampleData(6).zip error:
 -row 8: 'invalid amount'[negative amount];
 -row 23: 'invalid section'[not found in section.csv];
 -row 24:'invalid userid'[not found in student.csv];
-row successfully loaded for bid.csv:  17
+row successfully loaded for bid.csv:  8
 
 bid.csv:
 SampleData(7).zip error:
@@ -71,6 +71,6 @@ SampleData(7).zip error:
 -row 16: 'incomplete prerequisite';
 -row 18: 'not enough e-dollar';
 -row 32: 'incomplete prerequisite';
-row successfully loaded for bid.csv:24
+row successfully loaded for bid.csv:15
 
 
