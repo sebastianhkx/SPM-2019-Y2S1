@@ -59,14 +59,14 @@ function isMissingOrEmpty($name) {
 
 // # this is better than empty when use with array, empty($var) returns FALSE even when
 // # $var has only empty cells
-// function isEmpty($var) {
-//     if (isset($var) && is_array($var))
-//         foreach ($var as $key => $value) {
-//             if (empty($value)) {
-//                unset($var[$key]);
-//             }
-//         }
+function isEmpty($var) {
+    if (isset($var) && is_array($var))
+        foreach ($var as $key => $value) {
+            if (empty($value)) {
+               unset($var[$key]);
+            }
+        }
 
-//     if (empty($var))
-//         return TRUE;
-// }
+    if (empty($var))
+        return TRUE;
+}
