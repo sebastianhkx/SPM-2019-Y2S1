@@ -128,7 +128,7 @@ function roundTwoResolve($courseSection){
     }
 
     foreach ($success_bids as $success_bid){
-        $resultObj = new Result($success_bid->userid, $success_bid->amount, $success_bid->course, $success_bid->section, 'success', 1);
+        $resultObj = new Result($success_bid->userid, $success_bid->amount, $success_bid->course, $success_bid->section, 'success', 2);
         $sectionObj = $sectionDAO->retrieveBySection($success_bid);
         $courseObj = $courseDAO->retrieveByCourseId($success_bid->course);
         $courseEnrolledObj = new CourseEnrolled($success_bid->userid, $success_bid->course, $success_bid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
@@ -141,7 +141,7 @@ function roundTwoResolve($courseSection){
     }
 
     foreach ($fail_bids as $fail_bid){
-        $resultObj = new Result($fail_bid->userid, $fail_bid->amount, $fail_bid->course, $fail_bid->section, 'fail', 1);
+        $resultObj = new Result($fail_bid->userid, $fail_bid->amount, $fail_bid->course, $fail_bid->section, 'fail', 2);
         //add to bidresult
         $resultDAO->add($resultObj);
         //refund edollars, commented out because drop bid method refunds
