@@ -427,4 +427,29 @@ class BidDAO {
         
         return $result;
     }
+
+    public function getRoundTwoSuccessfullPrice($bidObj, $vacancy){
+        #this function takes in a bid obj and vacancy integer, any bid amount > successfull price are bids that will succeed
+        $sql = 'SELECT amount from bid where course=:course and section=:section order by amount DESC limit 1 offset :vacancy';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidObj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidObj->section, PDO::PARAM_STR);
+        $stmt->bindParam(':vacancy', $vacancy, PDO::PARAM_INT);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = 0;
+
+        if ($row = $stmt->fetch()){
+            $result = $row['amount'];
+        }
+        
+        return $result;
+
+    }
 }

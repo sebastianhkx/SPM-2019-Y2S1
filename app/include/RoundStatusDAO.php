@@ -65,10 +65,27 @@ class RoundStatusDAO {
         $conn = null; 
     }
 
-    public function startRound($round_num) {
-        // takes in an int for round_num
+    public function startRound() {
         // return True for successful update, otherwise False
-        $sql = 'UPDATE round_status SET status = "started" WHERE round_num = :round_num';
+
+        $rounds = $this->retrieveAll();
+
+        $errors = [];
+        if ($rounds[1]->status == 'ended') {
+            $errors[] = 'round 2 ended';
+        }
+
+        if (!empty($errors)){
+            //ends here if there are any errors
+            return $errors;
+        }
+        
+        if ($rounds[0]->status == 'started') {
+            // ends here if round 1 is already active
+            return true;
+        }
+
+        $sql = 'UPDATE round_status SET status = "started" WHERE round_num = 2';
     
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -87,9 +104,28 @@ class RoundStatusDAO {
         return $isUpdateOk;
     }
 
-    public function stopRound($round_num) {
-        // takes in an int for round_num
+    public function stopRound() {
         // return True for successful update, otherwise False
+
+        $rounds = $this->retrieveAll();
+
+        $errors = [];
+        if ($rounds[0]->status != 'started' && $rounds[1]->status != 'started') {
+            $errors[] = 'round already ended';
+        }
+
+        if (!empty($errors)){
+            //ends here if there are any errors
+            return $errors;
+        }
+        
+        if ($rounds[0]->status == 'started') {
+            $round_num = 1;
+        }
+        elseif ($rounds[1]->status == 'started') {
+            $round_num = 2;
+        }
+
         $sql = 'UPDATE round_status SET status = "ended" WHERE round_num = :round_num';
 
         $connMgr = new ConnectionManager();      
