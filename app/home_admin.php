@@ -4,8 +4,8 @@ require_once 'include/common.php';
 // implement protect.php later
 
 $userid = $_SESSION['userid'];
-$r1_disabled = 'disabled';
-$r2_disabled = 'disabled';
+// $r1_disabled = 'disabled';
+// $r2_disabled = 'disabled';
 
 // bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
 ?>
@@ -37,22 +37,19 @@ $r2_disabled = 'disabled';
   <h3>Hello <?= $userid ?> and welcome back!</h3><br>
 <?php
 $roundstatus_dao = new RoundStatusDAO();
-if (!empty($round_status)){
-  $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
-// echo $round_status->round_num;
-// echo $round_status->status;
+if (empty($round_status)){
+  $round_status = $roundstatus_dao->retrieveAll();
+  var_dump($round_status);
 ?>
 <!-- Round 1 controls-->
   <form id='stop_r1' action="processclearing.php" method="post">
 	Round 1 Bidding: 
   <?php
-  if ($round_status->round_num ==  '1') {
-    $r1_disabled = '';
+  if ($round_status[0]->status == 'started') {
+    echo "<input type='submit' name='stop_r1' value='Stop'>";
   }
-  echo "
-  <input type='submit' name='submit' value='Stop' $r1_disabled >";
 
-  if ($round_status->round_num ==  '1' && $round_status->status == 'ended') {
+  if ($round_status[0]->status == 'ended') {
     echo "
     <a href='displayr1.php' target='_blank'> Click to see round 1 results </a><br><br>
     ";
@@ -60,19 +57,24 @@ if (!empty($round_status)){
   ?>
   </form>
 
-
 <!-- Round 2 controls-->
   <form id='stop_r2' action="processclearing.php" method="post">
 	Round 2 Bidding: 
   <?php
-  if ($round_status->round_num ==  '2') {
-    $r2_disabled = '';
+  if ($round_status[1]->status == 'pending') {
+    echo "<input type='submit' name='start_r2' value='Start'>";
+    // if (isset($_SESSION['errors'])) {
+    //   foreach ($errors as $error) {
+    //     echo "$error";
+    //   }
+    // }
   }
 
-  echo "
-  <input type='submit' name='submit' value='Stop' $r2_disabled >";
+  if ($round_status[1]->status == 'started') {
+    echo "<input type='submit' name='stop_r2' value='Stop'>";
+  }
   
-  if ($round_status->round_num ==  '2' && $round_status->status == 'ended') {
+  if ($round_status[1]->status == 'ended') {
     echo "
     <a href='displayr2.php' target='_blank' >Click to see round 2 results</a>
     ";
