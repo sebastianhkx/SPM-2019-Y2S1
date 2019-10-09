@@ -67,13 +67,11 @@ class SectionDAO {
         if( $section->day<1 || $section->day>7 ){
             $errors[]= 'invalid day';
         }
-        $start_array = ['8:30', '12:00', '15:30'];
-        $end_array=['11:45', '15:15', '18:45'];
 
-        if( $section->start!=date("G:i",strtotime($section->start)) || !in_array($section->start,$start_array) ){
+        if( $section->start!=date("G:i",strtotime($section->start)) ){
             $errors[]='invalid start';
         }
-        if($section->end!=date("G:i",strtotime($section->end))  || !in_array($section->end,$end_array)){
+        if($section->end!=date("G:i",strtotime($section->end))  || strtotime($section->end)<=strtotime($section->start)){
             $errors[]='invalid end';
         }
         else{
