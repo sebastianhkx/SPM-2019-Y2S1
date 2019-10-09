@@ -6,6 +6,8 @@ function roundOneClearing(){
     foreach ($courseSections as $courseSection){
         roundOneResolve($courseSection);
     }
+    //clears bid table after clearing
+    $bidDAO->deleteAll();
 }
 
 function roundOneResolve($courseSection){
@@ -23,7 +25,6 @@ function roundOneResolve($courseSection){
     $courseDAO = new CourseDAO();
     $courseEnrolledDAO = new CourseEnrolledDAO();
     $bidObjs = $bidDAO->retrieveByCourseSection($courseSection);
-    var_dump($bidObjs);
     $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
 
     $successBids = [];
@@ -75,18 +76,79 @@ function roundOneResolve($courseSection){
         $resultDAO->add($resultObj);
         //add to course_enrolled
         $courseEnrolledDAO->add($courseEnrolledObj);
-        //delete from bid table
-        $bidDAO->drop($successBid);
+        //delete from bid table, commented out because current drop bid method refunds
+        //$bidDAO->drop($successBid);
     }
     foreach ($failureBids as $failureBid){
         $resultObj = new Result($failureBid->userid, $failureBid->amount, $failureBid->course, $failureBid->section, 'fail', 1);
         //add to bidresult
         $resultDAO->add($resultObj);
-        //refund edollars
-        $studentDAO->addEdollar($failureBid->userid, $failureBid->amount);
+        //refund edollars, commented out because drop bid method refunds
+        //$studentDAO->addEdollar($failureBid->userid, $failureBid->amount);
         //delete from bid table
         $bidDAO->drop($failureBid);
     }
 }
 
+function roundTwoClearing(){
+    $bidDAO = new BidDAO();
+    $courseSections = $bidDAO->retrieveBiddedSections();
+    foreach ($courseSections as $courseSection){
+        roundTwoResolve($courseSection);
+    }
+    $bidDAO->deleteAll();
+}
+
+function roundTwoResolve($courseSection){
+    $bidDAO = new BidDAO();
+    $resultDAO = new ResultDAO();
+    $studentDAO = new StudentDAO();
+    $courseDAO = new courseDAO();
+    $sectionDAO = new SectionDAO();
+    $courseEnrolledDAO = new CourseEnrolledDAO();
+
+    $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
+    $bidObjs = $bidDAO->retrieveByCourseSection($courseSection); //retrieves all bids for the course, section
+    $courseEnrolledObjs = $resultDAO->retrieveByCourseSection($courseSection); //retrieves all courseEnrolled for the course,section
+    $size = $sectionObj->size;
+
+    $vacancy = $size - sizeof($courseEnrolledObjs);
+    $successfull_price = $bidDAO->getRoundTwoSuccessfullPrice($bidObj[0], $vacancy);
+
+    $success_bids = [];
+    $fail_bids = [];
+
+    foreach ($bidObjs as $bidObj){
+        if ($bidObj->amount>$successfull_price){
+            $success_bids[] = $bidObj;
+        }
+        else{
+            $fail_bids[] = $bidObj;
+        }
+    }
+
+    foreach ($success_bids as $success_bid){
+        $resultObj = new Result($success_bid->userid, $success_bid->amount, $success_bid->course, $success_bid->section, 'success', 1);
+        $sectionObj = $sectionDAO->retrieveBySection($success_bid);
+        $courseObj = $courseDAO->retrieveByCourseId($success_bid->course);
+        $courseEnrolledObj = new CourseEnrolled($success_bid->userid, $success_bid->course, $success_bid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
+        //add to bidresults
+        $resultDAO->add($resultObj);
+        //add to course_enrolled
+        $courseEnrolledDAO->add($courseEnrolledObj);
+        //delete from bid table, commmented out because drop bid refunds
+        //$bidDAO->drop($success_bid);
+    }
+
+    foreach ($fail_bids as $fail_bid){
+        $resultObj = new Result($fail_bid->userid, $fail_bid->amount, $fail_bid->course, $fail_bid->section, 'fail', 1);
+        //add to bidresult
+        $resultDAO->add($resultObj);
+        //refund edollars, commented out because drop bid method refunds
+        //$studentDAO->addEdollar($fail_bid->userid, $fail_bid->amount);
+        //delete from bid table
+        $bidDAO->drop($fail_bid);
+    }
+
+}
 ?>

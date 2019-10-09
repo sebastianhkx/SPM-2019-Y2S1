@@ -102,4 +102,25 @@ class CourseEnrolledDAO {
         $stmt->execute();
         $count = $stmt->rowCount();
     }
+
+    public function retrieveByCourseSection($courseSection){
+        //this takes in an array [course, section] and returns array of courseEnrolledObjs
+        $sql = "SELECT * from course_enrolled where course = :course and section = :section";
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $courseSection[0], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $courseSection[1], PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        $result = null;
+
+        while($row = $stmt->fetch()){
+            $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+        }
+        return $result;
+    }
 }
