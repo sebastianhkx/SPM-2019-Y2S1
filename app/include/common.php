@@ -33,18 +33,17 @@ session_start();
 // }
 
 
+function isMissingOrEmpty($name) {
+    if (!isset($_REQUEST[$name])) {
+        return "$name cannot be empty";
+    }
 
-// function isMissingOrEmpty($name) {
-//     if (!isset($_REQUEST[$name])) {
-//         return "$name cannot be empty";
-//     }
-
-//     // client did send the value over
-//     $value = $_REQUEST[$name];
-//     if (empty($value)) {
-//         return "$name cannot be empty";
-//     }
-// }
+    // client did send the value over
+    $value = $_REQUEST[$name];
+    if (empty($value)) {
+        return "$name cannot be empty";
+    }
+}
 
 // # check if an int input is an int and non-negative
 // function isNonNegativeInt($var) {

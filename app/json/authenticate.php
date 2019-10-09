@@ -6,7 +6,7 @@ require_once '../include/token.php';
 
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('username'), 
+$errors = [ isMissingOrEmpty ('userid'), 
             isMissingOrEmpty ('password') ];
 $errors = array_filter($errors);
 
@@ -18,28 +18,24 @@ if (!isEmpty($errors)) {
         ];
 }
 else{
-    $username = $_POST['username'];
+    $userid = $_POST['userid'];
     $password = $_POST['password'];
 
-# complete authenticate API
+    # check if userid and password are right. generate a token and return it in proper json format
 
-    # check if username and password are right. generate a token and return it in proper json format
-
-    # after you are sure that the $username and $password are correct, you can do 
-
-    # generate a secret token for the user based on their username
+    # generate a secret token for the user based on their userid
 
     # return the token to the user via JSON    
 		
     # return error message if something went wrong
-    $dao = new UserDAO();
-    $user = $dao->retrieve($username);
+    $dao = new AdminDAO();
+    $user = $dao->retrieve($userid);
 
     if ( $user != null && $user->authenticate($password) ) { 
-        $result = ["status"=>"success", "token"=>generate_token($username)];
+        $result = ["status"=>"success", "token"=>generate_token($userid)];
 
     } else {
-        $result = ["status" => "error", "messages" => ['invalid username/password']];
+        $result = ["status" => "error", "messages" => ['invalid userid/password']];
     }
 
 }
