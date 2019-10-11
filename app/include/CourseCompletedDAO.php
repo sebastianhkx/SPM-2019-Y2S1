@@ -172,6 +172,14 @@ class CourseCompletedDAO {
             return $errors;
         }
 
+        if (!$this->completed_prerequisite($courseCompleted->userid,$courseCompleted->code)){
+            $errors[] = "invalid course completed";
+        }
+
+        if(!empty($errors)){
+            return $errors;
+        }
+
         $sql = 'INSERT IGNORE into course_completed(userid, code) values (:userid, :code)';
 
         $connMgr = new ConnectionManager();      

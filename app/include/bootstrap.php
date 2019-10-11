@@ -111,6 +111,10 @@ function doBootstrap() {
                 $courseEnrolledDAO = new CourseEnrolledDAO();
                 $courseEnrolledDAO->deleteAll();
 
+                //sets round to one
+                $roundDAO = new RoundStatusDAO();
+                $roundDAO->setRound1();
+
 
                 // read each line from csv
                 //skip header
@@ -138,7 +142,7 @@ function doBootstrap() {
                         $row_errors = $studentDAO->add($studentObj);
                     }
                     if (!empty($row_errors)){
-                        $errors[] = [$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $student_success++;
@@ -167,7 +171,7 @@ function doBootstrap() {
                         $row_errors = $courseDAO->add($courseObj);
                     }
                     if(!empty($row_errors)){
-                        $errors[]=[$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $course_success++;
@@ -196,7 +200,7 @@ function doBootstrap() {
                         $row_errors = $sectionDAO->add($sectionObj);
                     }
                     if(!empty($row_errors)){
-                        $errors[]=[$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $section_success++;
@@ -228,7 +232,7 @@ function doBootstrap() {
                         $row_errors = $prerequisiteDAO->add($prerequisiteObj);
                     }
                     if (!empty($row_errors)){
-                        $errors[] = [$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $prerequisite_success++;
@@ -259,7 +263,7 @@ function doBootstrap() {
                         $row_errors = $course_completedDAO->add($course_completedObj);
                     }
                     if (!empty($row_errors)){
-                        $errors[] = [$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $course_completed_success++;
@@ -267,35 +271,35 @@ function doBootstrap() {
                 }
                 fclose($course_completed);
 
-                //redoes validation for prerequisite completion check
-                $course_completed = @fopen($course_completed_path, "r");
-                $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
-                $filename = "course_completed.csv";
-                $row_num = 1;
+                // //redoes validation for prerequisite completion check, commented out assuming course_completed supplied in correct order
+                // $course_completed = @fopen($course_completed_path, "r");
+                // $fields=fgetcsv($course_completed);//gets rid of headers for course_completed
+                // $filename = "course_completed.csv";
+                // $row_num = 1;
 
-                while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
-                    $course_completed_arr = array_map('trim', $course_completed_arr); //trims all cols in row
-                    $row_num++;
-                    $row_errors = [];
-                    $skip_line = FALSE;
-                    for ($i=0; $i<sizeof($course_completed_arr); $i++){
-                        if ($course_completed_arr[$i]===''){
-                            $skip_line = TRUE;
-                        }
-                    }
-                    if ($skip_line == False){
-                        $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
-                        $userid = $course_completedObj->userid;
-                        $code = $course_completedObj->code;
-                        //checks if course_completed row exists && checks if all prerequisites completed)
-                        if (!empty($course_completedDAO->completed_course($userid, $code)) && !$course_completedDAO->completed_prerequisite($userid, $code)){
-                            $course_completedDAO->delete($userid,$code);
-                            $errors[] = [$filename, $row_num, ["invalid course completed"]];
-                            $course_completed_success--;
-                        }
-                    }
-                }
-                fclose($course_completed);
+                // while ( ($course_completed_arr=fgetcsv($course_completed) )  !== false){
+                //     $course_completed_arr = array_map('trim', $course_completed_arr); //trims all cols in row
+                //     $row_num++;
+                //     $row_errors = [];
+                //     $skip_line = FALSE;
+                //     for ($i=0; $i<sizeof($course_completed_arr); $i++){
+                //         if ($course_completed_arr[$i]===''){
+                //             $skip_line = TRUE;
+                //         }
+                //     }
+                //     if ($skip_line == False){
+                //         $course_completedObj= new CourseCompleted($course_completed_arr[0],$course_completed_arr[1]);
+                //         $userid = $course_completedObj->userid;
+                //         $code = $course_completedObj->code;
+                //         //checks if all prerequisites completed)
+                //         if (!$course_completedDAO->completed_prerequisite($userid, $code)){
+                //             $course_completedDAO->delete($userid,$code);
+                //             $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
+                //             $course_completed_success--;
+                //         }
+                //     }
+                // }
+                // fclose($course_completed);
                 unlink($course_completed_path);
                 
 
@@ -319,7 +323,7 @@ function doBootstrap() {
                         $row_errors = $bidDAO->add($bidObj);
                     }
                     if (!empty($row_errors)){
-                        $errors[] = [$filename, $row_num, $row_errors];
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
                     }
                     else{
                         $bid_success++;
@@ -333,19 +337,23 @@ function doBootstrap() {
             }
         }
 
-        $roundDAO = new RoundStatusDAO();
-        $roundDAO->startRound(1);
-
         $lines_loaded = [
-                        "student.csv" => $student_success,
-                        "course.csv" => $course_success,
-                        "section.csv" => $section_success,
-                        "prerequisite.csv" => $prerequisite_success,
-                        "course_completed.csv" => $course_completed_success,
-                        "bid.csv" => $bid_success
+                        ["student.csv" => $student_success],
+                        ["course.csv" => $course_success],
+                        ["section.csv" => $section_success],
+                        ["prerequisite.csv" => $prerequisite_success],
+                        ["course_completed.csv" => $course_completed_success],
+                        ["bid.csv" => $bid_success]
                         ];
         
-        return [$lines_loaded, $errors];  
+        if (!empty($errors)){
+            $status = 'error';  
+        }
+        else{
+            $status = 'success';
+        }
+
+        return ['status'=>$status, 'num-record-loaded'=>$lines_loaded, 'error'=>$errors];  
     }
 
 

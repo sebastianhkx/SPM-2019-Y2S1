@@ -37,11 +37,11 @@ $userid = $_SESSION['userid'];
 
     require_once 'include/bootstrap.php';
     $msg = doBootstrap();
-    $lines_loaded = $msg[0];
-    $errors = $msg[1];
+    $lines_loaded = $msg['num-record-loaded'];
+    $errors = $msg['error'];
 ?>
 
-<table border='1'>
+<table border='1' class='table'>
   <tr>
     <th colspan='2'>Lines Loaded</th>
   </tr>
@@ -51,11 +51,13 @@ $userid = $_SESSION['userid'];
   </tr>
 <?php
   //displays lines loaded into a table
-  foreach ($lines_loaded as $file=>$lines){
-    echo "<tr>
-            <td>$file</td>
-            <td>$lines<td>
-          </tr>";
+  foreach ($lines_loaded as $file_lines){
+    foreach ($file_lines as $file=>$line){
+      echo "<tr> 
+      <td>$file</td>
+      <td>$line</td>
+      </tr>";
+    }
   }
 ?>
 </table>
@@ -63,7 +65,7 @@ $userid = $_SESSION['userid'];
 <hr>
 
 
-<table border='1'>
+<table border='1' class='table'>
 <?php
   //display errors
   if (empty($errors)){
@@ -87,10 +89,10 @@ $userid = $_SESSION['userid'];
       foreach ($errors as $error){
         echo "
               <tr>
-                <td>{$error[0]}</td>
-                <td>{$error[1]}</td>
+                <td>{$error['file']}</td>
+                <td>{$error['line']}</td>
                 <td>";
-        foreach ($error[2] as $error_msg){
+        foreach ($error['message'] as $error_msg){
           echo "$error_msg<br>";
         }
           echo "</td>
