@@ -65,6 +65,32 @@ class RoundStatusDAO {
         $conn = null; 
     }
 
+    public function setRound1(){
+        //to be used to set round to 1 when bootstrapping
+        $sql = 'UPDATE round_status SET status = "started" WHERE round_num = 1';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+        $count = $stmt->rowCount();
+
+        $sql = 'UPDATE round_status SET status = "pending" WHERE round_num = 2';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+        $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null; 
+
+    }
+
     public function startRound() {
         // return True for successful update, otherwise False
 

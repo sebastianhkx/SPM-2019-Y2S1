@@ -53,6 +53,15 @@
     $student_dao = new StudentDAO();
     $bid_dao = new BidDAO();
 
+    $errors = '';
+    if (isset($_POST['submitdrop'])){
+        $coursedrop = $_POST['coursedrop']; // for repopulating form fields also
+        $sectiondrop = $_POST['sectiondrop'];
+
+        $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
+        $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
+        $errors = $bid_dao->drop($bid_to_drop);
+    }
     $student = $student_dao->retrieve($userid); // student object
     $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
 
@@ -116,27 +125,19 @@
 
 <?php
     // if user drops a bid
-    if (isset($_POST['submitdrop'])){
-        $coursedrop = $_POST['coursedrop']; // for repopulating form fields also
-        $sectiondrop = $_POST['sectiondrop'];
-
-        $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
-        $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
-        $errors = $bid_dao->drop($bid_to_drop);
-        if (is_array($errors)) {
-        echo "<font color='red'>Error!</font><br>
-        <ul>";
-        foreach($errors as $err) {
-            echo "<font color='red'><li>$err</li></font>";
-        }
-        echo "</ul>";
-        }
-        else {
-        header("Refresh:3"); //refreshes page after 3 secs
-        echo "<font color='green'>Bid was dropped successfully!<br>
-                e$ updated</font>";
-        }
-    }    
+   
+    if (is_array($errors)) {
+    echo "<font color='red'>Error!</font><br>
+    <ul>";
+    foreach($errors as $err) {
+        echo "<font color='red'><li>$err</li></font>";
+    }
+    echo "</ul>";
+    }
+    elseif ($errors!='') {
+    echo "<font color='green'>Bid was dropped successfully!<br>
+            e$ updated</font>";
+    }   
 ?>
 </div>
 </body>

@@ -320,7 +320,7 @@ function doBootstrap() {
                     }
                     if ($skip_line == False){
                         $bidObj = new Bid($bid_arr[0],$bid_arr[1],$bid_arr[2],$bid_arr[3]);
-                        $row_errors = $bidDAO->add($bidObj);
+                        $row_errors = $bidDAO->bootstrapadd($bidObj);
                     }
                     if (!empty($row_errors)){
                         $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
