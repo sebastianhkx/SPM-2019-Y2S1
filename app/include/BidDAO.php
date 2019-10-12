@@ -452,4 +452,53 @@ class BidDAO {
         return $result;
 
     }
+
+    public function getminiamount($bidobj){
+        //this function takes in bid object to get the minimun amount of the bid from bidtable
+        $sql = 'SELECT MIN(amount) FROM `bid` WHERE section = :section AND course= : coutse "';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidObj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidObj->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = 0;
+
+        if ($row = $stmt->fetch()){
+            $result = $row['amount'];
+        }
+        
+        return $result;
+    }
+
+    public function addbidinfo($bidobj,$price,$vacancy){
+        // this function take in an bid object, the clearing price and vacancy
+        $sql = "INSERT IGNORE INTO r2_bid-info(course, section,amount,size) VALUES (:course, :section, :amount,:size )";
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidObj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidObj->section, PDO::PARAM_STR);
+        $stmt->bindParam(':size', $vacancy, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $price, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $isAddOk = FALSE;
+        if ($row = $stmt->fetch()){
+            $isAddOk = TRUE;
+        }
+        
+        return $isAddOk;
+    }
+
+    
 }

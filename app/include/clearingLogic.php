@@ -37,6 +37,8 @@ function roundOneResolve($courseSection){
             //adds all bids to success
             $successBids[] = $bidObj;
         }
+            //get the clearing price and the number of vacancy left
+            $clearingPrice = $bidDAO->getminiamount($bidObjs[0]);
     }
     else{
         $clearingPrice = $bidDAO->getClearingPrice($bidObjs[0], $vacancy-1);//vacancy-1 as index starts from 0
@@ -66,6 +68,10 @@ function roundOneResolve($courseSection){
             }
         }
     }
+
+
+    $vacancy = $vacancy- count($successBid);
+    $bidDAO->addbidinfo($bidObjs[0],$clearingPrice,$vacancy);
 
     foreach ($successBids as $successBid){
         $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->course, $successBid->section, 'success', 1);

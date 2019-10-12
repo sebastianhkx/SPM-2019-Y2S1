@@ -143,6 +143,33 @@ class ResultDAO {
         $stmt = null;
         $conn = null; 
     }
+
+    public function retrieveBySuccessfullyCourseEnrolled($courseEnrolled){
+        //takes in a CourseEnrolled Object
+        $sql = 'SELECT * FROM bid_result WHERE userid = :userid and course = :course and section = :section and result="success"';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $courseEnrolled->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $courseEnrolled->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $courseEnrolled->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = null;
+
+        while($row = $stmt->fetch()) {
+            $result = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
+    }
 }
 
 
