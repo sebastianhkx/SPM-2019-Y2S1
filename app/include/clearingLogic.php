@@ -115,7 +115,7 @@ function roundTwoResolve($courseSection){
 
     $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
     $bidObjs = $bidDAO->retrieveByCourseSection($courseSection); //retrieves all bids for the course, section
-    $courseEnrolledObjs = $resultDAO->retrieveByCourseSection($courseSection); //retrieves all courseEnrolled for the course,section
+    $courseEnrolledObjs = $courseEnrolledDAO->retrieveByCourseSection($courseSection); //retrieves all courseEnrolled for the course,section
     $size = $sectionObj->size;
 
     $vacancy = $size - sizeof($courseEnrolledObjs);
