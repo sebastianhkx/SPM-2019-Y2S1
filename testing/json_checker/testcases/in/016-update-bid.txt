@@ -1,0 +1,4 @@
+userid = gary.ng.2009
+amount = 20
+course = IS209
+section = S1

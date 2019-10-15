@@ -1,0 +1,4 @@
+userid = ben.ng.2009
+amount = 20
+course = IS201
+section = S11
