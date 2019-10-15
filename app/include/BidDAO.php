@@ -54,7 +54,7 @@ class BidDAO {
         //this takes in a array [course, section] and returns a array of bid objs
         //this function is used for round clearing
         
-        $sql = 'SELECT * FROM bid WHERE course=:course and section=:section';
+        $sql = 'SELECT * FROM bid WHERE course=:course and section=:section order by amount DESC';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -250,8 +250,9 @@ class BidDAO {
 
         //no vacancy check for round 2 JSON
         $courseEnrolledObjs = $courseEnrolledDAO->retrieveByCourseSection([$bid->course, $bid->section]);
+        //var_dump($courseEnrolledObjs);
         if ($courseEnrolledObjs != null){
-            $enrolled = sizeof($courseEnroleldObjs);
+            $enrolled = sizeof($courseEnrolledObjs);
         }
         else{
             $enrolled = 0;
@@ -489,6 +490,228 @@ class BidDAO {
 
     }
 
+    public function getr2bidinfo($bidobj){
+        $sql = 'SELECT * from r2_bid_info where course=:course and section=:section';
+
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidobj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidobj->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = [];
+        $status = FALSE;
+
+        if ($row = $stmt->fetch()){
+            $status = TRUE;
+            $result = array("course"=>$row["course"], "section"=>$row['section'], "amount"=>$row["amount"],"size"=>$row['size']);
+        }
+        return $result;
+    }
+
+    public function updateBidinfo($bidobj){
+        $result = $this->getr2bidinfo($bidobj);
+        $output = [];
+        $bids = $this->retrieveByCourseSection([$bidobj->course,$bidobj->section]);
+        $totalbids = count($bids);
+        $count = 0;
+        if($totalbids <= $result['size']){
+            foreach($bids as $bid){
+                $output[] = [$bid->amount,"Successful"];
+            }
+        }
+        if($totalbids == $result['size']){
+            $lowestprice = $this->getminimunprice($bidobj);
+            $result['amount'] = $lowestprice + 1;
+        }
+        if($totalbids > $result['size']){
+            foreach($bids as $bid){
+                if($bid->amount >= $result['amount']){
+                    $state = "Successful";
+                    $count += 1;
+                    $lowestprice = $bid->amount;
+                }
+                elseif($bid->amount == $result['amount']-1){
+                    $state = "Unsuccessful";
+                }
+                else{
+                    $state = 'Unsuccessful. Bid too low!';
+                }
+                $output[] = [$bid->amount,$state]; 
+            }
+            if($count == $result['size']){
+                $result['amount'] = $lowestprice + 1;
+            }
+            if($count < $result['size']){
+                $lowestprice = $output[$count][0];
+                $num_at_lowest_price = $this-> getBid($lowestprice,$result);
+                if($num_at_lowest_price + $count == $result['size']){
+                    for($i=$count;$i<$result['size'];$i++){
+                        $output[$i][1] = "Successful";
+                    }
+                }
+            }
+        }
+
+        //var_dump($result);
+        $sql = 'UPDATE r2_bid_info SET amount = :amount  WHERE course=:course AND section = :section';
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $result['course'], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $result['section'], PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $result['amount'], PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $output;
+    }
+
+    public function getminimunprice($bidobj){
+        $sql = 'SELECT MIN(amount) as minimum from bid where course=:course and section=:section order by amount DESC';
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidobj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidobj->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = 0;
+
+        if ($row = $stmt->fetch()){
+            $result = $row['minimum'];
+        }
+        return $result;
+    }
+
+    public function r2drop($bid){
+        // this takes in a bidded obj that user/admin want to drop
+        // returns array of errors if there is any, otherwise returns True
+
+        // validation
+        $errors = [];
+
+        $course_dao = new CourseDAO();
+        $course_exists = $course_dao->retrieveByCourseId($bid->course);
+        $section_dao = new SectionDAO();
+        $section_exists = $section_dao->retrieveBySection($bid);
+        if ($course_exists == null) {
+            $errors[] = "invalid course";
+        }
+        elseif ($section_exists == null) {
+            $errors[] = "invalid section";
+        }
+        else {
+            $matching_bid = False;
+            $current_bids = $this->retrieveByUser($bid->userid);
+            foreach ($current_bids as $current_bid) {
+                if ($current_bid->course == $section_exists->course && $current_bid->section == $section_exists->section) {
+                    $matching_bid = True;
+                    break;
+                }
+            }
+            if (!$matching_bid) {
+                $errors[] = "no such bid";
+            }
+        }
+
+        $round_status_dao = new RoundStatusDAO();
+        $round_status = $round_status_dao->retrieveCurrentActiveRound();
+        if ($round_status == null) {
+            $errors[] = 'round ended';
+        }
+
+        if (!empty($errors)){
+            return $errors;
+        }
+
+        // refund the student first before deleting bid if$ the bid is successful
+        $minimunPrice = ($this->getr2bidinfo($bid))['amount'];
+        if($minimunPrice <= $bid->amount){
+            $student_dao = new StudentDAO();
+            $to_refund = $this->checkExistingBid($bid);
+            $student_dao->addEdollar($bid->userid, $to_refund);
+        }
+
+        // delete the bid
+        $sql = 'DELETE from bid where userid=:userid AND course=:course AND section=:section';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
+        
+        $isDeleteOk = FALSE;
+        if ($stmt->execute()) {
+            $isDeleteOk = TRUE;
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $isDeleteOk;
+    }
+    
+    public function getBid($prv_clearingprice,$bidarray){
+        $sql = 'SELECT count(userid) as num from bid where course=:course and section=:section and amount = :amount';
+
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $bidarray['course'], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $bidarray['section'], PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $prv_clearingprice, PDO::PARAM_STR);
+
+        $result = 0;
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        // while ($row = $stmt->fetch()){
+        //     $result[] = new bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        // } 
+        if($row = $stmt->fetch()){
+            $result = $row['num'];
+        }
+
+        return $result;
+    }
+
+    public function addbidinfo($result_info){
+        // this function take in an bid object, the clearing price 
+        $sql = "INSERT IGNORE INTO r2_bid_info(course, section,amount,size) VALUES (:course, :section, :amount,:size)";
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $result_info[0], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $result_info[1], PDO::PARAM_STR);
+        $stmt->bindParam(':size', $result_info[3], PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $result_info[2], PDO::PARAM_INT);
+
+
+        $isAddOk = FALSE;
+        if ($stmt->execute()){
+            $isAddOk = TRUE;
+        }
+        
+        return $isAddOk;
+    }
+
+    
     public function bootstrapadd($bid){
         //takes in a bid object and returns array of errors if it fals bid validation
 

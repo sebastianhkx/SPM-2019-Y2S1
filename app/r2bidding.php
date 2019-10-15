@@ -5,7 +5,8 @@ $userid = $_SESSION['userid'];
 
 $student_dao = new StudentDAO();
 $bid_dao = new BidDAO();
-
+// $course_enrolled_dao = new CourseEnrolledDAO();
+$isOK = FALSE;
 if (isset($_POST['submitbid'])) {
   $course = $_POST['course']; // for repopulating form fields also
   $section = $_POST['section'];
@@ -13,6 +14,28 @@ if (isset($_POST['submitbid'])) {
 
   $bidded = new Bid($userid, $amount, $course, $section);
   $errors = $bid_dao->add($bidded);
+
+  if(empty($errors)){
+    //$info = $bid_dao->getr2bidinfo($bidded);
+    $bids_info = $bid_dao->updateBidinfo($bidded);
+    //$i = 0;
+    $isOK = TRUE;
+    // $state = "";
+    //var_dump($bids_info);
+    // foreach($bids_info as $bid){
+    //   if($bid[0] == $amount){
+    //     $state = $bid[1];
+    //   }
+    // }
+    //var_dump($state);
+    // if($state == "Unsuccessful" || $state == "Unsuccessful. Bid too low!"){
+    //   $student_dao -> addEdollar($userid, $amount);
+    //   echo "have got back money";
+    // }
+    $info = $bid_dao->getr2bidinfo($bidded);
+    //var_dump($info);
+  }
+
 }
 ?>
 <html>
@@ -39,8 +62,9 @@ if (isset($_POST['submitbid'])) {
     </div>
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
-      <li class="active"><a href="bidding.php">Bidding</a></li>
+      <li class="active"><a href="r2bidding.php">Bidding</a></li>
       <li><a href='dropbid.php'>Drop Bid</a></li>
+      <li><a href='dropsection.php'>Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -48,30 +72,13 @@ if (isset($_POST['submitbid'])) {
 
 <div class="container">
 <?php
-
-  // Displays the current active round
-  $roundstatus_dao = new RoundStatusDAO();
-  $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
-  if ($round_status != null) {
-    $round_num = $round_status->round_num;
-    if($round_num == 2){
-      header("location:r2bidding.php");
-      exit();
-    }
-    //echo "<h1>Current Round: $round_status->round_num</h1>";
-  }
-  else {
-    echo "<h1>No active bidding round currently.</h1>";
-  }
-  echo "<hr>";
-
   $course = '';
   $section = '';
   $amount = '';
 
   $student = $student_dao->retrieve($userid); // student object
-  $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
-
+  $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids 
+  echo "Current Round: 2 (Round start)";
   echo "<h2>Your info:</h2>";
   echo "<table border=1>
       <tr>
@@ -87,6 +94,33 @@ if (isset($_POST['submitbid'])) {
           <td>$student->edollar</td>
       </tr>
       </table><hr>";
+
+
+  if($isOK){
+    $totalbids = sizeof($bids_info);
+    echo "<h2>Information:</h2>
+        <p>Course:{$info['course']}</p>
+        <p>Section:{$info['section']}</p>
+        <p>Total Availdable Seats:{$info['size']}</p>
+        <p>Total Number Of Bids:$totalbids</p>
+        <p>Minimun Bid Value:{$info['amount']}</p>";
+
+    echo "<table border='1'>
+        <tr>
+            <th>No.</th>
+            <th>Bid Price</th>
+            <th>State</th>
+        </tr>";  
+    for($i=1;$i <= $totalbids;$i++){
+      $bid = $bids_info[$i-1];
+      echo "<tr>
+            <th>$i</th>
+            <th>{$bid[0]}</th>
+            <th>{$bid[1]}</th>
+          </tr>";
+    }
+      echo "</table><hr>";
+  }      
 
   echo "<h2>Your current bids:</h2>";
 
@@ -109,7 +143,6 @@ if (isset($_POST['submitbid'])) {
           <td>$bid->amount</td>
           <td>$bid->course</td>
           <td>$bid->section</td>
-          <td>Placeholder</td>
       </tr>";
   }
 
@@ -120,15 +153,22 @@ if (isset($_POST['submitbid'])) {
 <html>
 <body>
 
-  <h2>I want to bid for:</h2>
-  <form action="bidding.php" method="POST">
+  <h2>I want to search :</h2>
+  <form action="r2bidding.php" method="POST">
     <table>
       
-  <tr><td style='text-align:left'>Course: </td><td><input type="text" name="course" value="<?= $course ?>" required> </td></tr>
-  <tr><td style='text-align:left'>
-  Section: </td><td><input type="text" name="section" value="<?= $section ?>" required> </td></tr>
-  <tr><td style='text-align:left'>
-  Bid Amount: </td><td><input type="number" name="bidamount" placeholder="min 10.00" step="0.01" min="10.00" value="<?= $amount ?>" required>  </td></tr>
+  <tr>
+    <td style='text-align:left'>Course: </td>
+    <td><input type="text" name="course" value="<?= $course ?>" required> </td>
+    </tr>
+  <tr>
+    <td style='text-align:left'>Section: </td>
+    <td><input type="text" name="section" value="<?= $section ?>" required> </td>
+  </tr>
+  <tr>
+    <td style='text-align:left'>Bid Amount: </td>
+    <td><input type="number" name="bidamount" placeholder="min 10.00" step="0.01" min="10.00" value="<?= $amount ?>" required>  </td>
+  </tr>
 
   <tr><td><input type="submit" name='submitbid' value="Confirm Bid" ></td></tr>
 </table>

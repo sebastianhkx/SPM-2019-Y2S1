@@ -1,10 +1,11 @@
 Student.csv:
+SampleData(1).zip errors
 -row2 : 'blank password';
 -row3 : 'invalid userid' [exceed 128 characters];
 -row4 : 'invalid password' [exceed 128 characters];
 -row5 : 'invalid name'[exceed 100 characters] , 'invalid e-dollar'[value with more than 2 decimals];
 -row6 : 'invalid e-dollar'[negative value];
--row28 : 'duplicate userid' [two same userid with row7];
+-row8 : 'duplicate userid' [two same userid with row7];
 -row20 : 'blank userid','blank name','blank school','blank edollar';
 rows loaded: student.csv :20
 

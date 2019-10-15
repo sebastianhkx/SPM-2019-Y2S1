@@ -88,6 +88,28 @@ function roundOneResolve($courseSection){
         //delete from bid table
         $bidDAO->drop($failureBid);
     }
+    roundTwoBidInfo();
+}
+
+function roundTwoBidInfo(){
+    $sectionDAO = new SectionDAO();
+    $bidDAO = new BidDAO();
+    $courseEnrolledDAO = new CourseEnrolledDAO();
+    $resultDAO = new ResultDAO();
+    //empty table
+    $resultDAO->deleteInfo();
+    //get all course and section
+    $courseSections = $sectionDAO->retrieveAll();
+    foreach($courseSections as $courseSection){
+        $info = $courseEnrolledDAO->retrieveBycourseSection([$courseSection->course,$courseSection->section]);
+        //var_dump($info);
+        $size = $courseSection->size;
+        if($info != null){
+            $size = $courseSection->size - sizeof($info);
+        }
+        $result_info = [$courseSection->course,$courseSection->section,10,$size];
+        $bidDAO->addbidinfo($result_info);
+    }
 }
 
 function roundTwoClearing(){
