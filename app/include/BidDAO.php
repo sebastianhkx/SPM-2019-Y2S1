@@ -699,8 +699,9 @@ class BidDAO {
 
         $stmt->bindParam(':course', $result_info[0], PDO::PARAM_STR);
         $stmt->bindParam(':section', $result_info[1], PDO::PARAM_STR);
-        $stmt->bindParam(':size', $result_info[3], PDO::PARAM_INT);
-        $stmt->bindParam(':amount', $result_info[2], PDO::PARAM_INT);
+        $stmt->bindParam(':min_amount', $result_info[2], PDO::PARAM_INT);
+        $stmt->bindParam(':vacancy', $result_info[3], PDO::PARAM_INT);
+
 
 
         $isAddOk = FALSE;
