@@ -74,7 +74,7 @@ $userid = $_SESSION['userid'];
           </tr>";
   }
   elseif(is_array($errors)){
-    if (sizeof($errors)==1){
+    if (!is_array($errors[0])){
       echo "{$errors[0]}";
     }
     else{
