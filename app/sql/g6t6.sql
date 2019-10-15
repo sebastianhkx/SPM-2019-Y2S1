@@ -1,3 +1,7 @@
+# Initialise
+create schema g6t6;
+use g6t6;
+
 -- phpMyAdmin SQL Dump
 -- version 4.8.3
 -- https://www.phpmyadmin.net/
@@ -21,6 +25,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `g6t6`
 --
+#0 row(s) affected, 1 warning(s): 3090 Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
 
 -- --------------------------------------------------------
 
