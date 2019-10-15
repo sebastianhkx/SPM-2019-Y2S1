@@ -183,4 +183,52 @@ class R2BidDAO{
         return $isOK ;
     }
     
+    function searchCourseSection($bid){
+        //this function takes in a bid object to check if course and section exists
+        //return an index array incluing errors and an associative array of 
+        $section_dao = new SectionDAO();
+        $courseEnrolled_dao = new CourseEnrolledDAO(); 
+        $section = $section_dao->retrieveBySection($bid);
+        $result = [];
+        $errors = null;
+        if($section == null){
+            $errors[] = 'invalid course/section';
+        }
+        
+        if($errors == null){
+            $courseEnrolledObjs = $courseEnrolled_dao->retrieveByCourseSection([$bid->course, $bid->section]);
+            //var_dump($courseEnrolledObjs);
+            if ($courseEnrolledObjs != null){
+                $enrolled = sizeof($courseEnrolledObjs);
+            }
+            else{
+                $enrolled = 0;
+            }
+            $size = $section_dao->retrieveBySection($bid)->size;
+            if ($size-$enrolled<=0){
+                $errors[] = 'no vacancy';
+            }
+        }
+  
+        if($errors == null){
+            $result = $this->updateBidinfo($bid);
+        }
+        
+        return [$result,$errors];
+    }
+
+    function checkBidsStatus($bidsobj){
+        //this function take in an array of bid object and return an array of bid object and bid status
+        $result = [];
+
+        foreach($bidsobj as $bid){
+            $state = "Successful";
+            $bid_info = $this->updateBidinfo($bid);
+            if(!in_array(array($bid->amount,'Successful'),$bid_info)){
+                $state = "Unsuccessful";
+            }
+            $result[] = array('bid'=>$bid,'status'=>$state);
+        }
+        return $result;
+    }
 }

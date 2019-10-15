@@ -58,7 +58,7 @@ if (isset($_POST['submitbid'])) {
       header("location:r2bidding.php");
       exit();
     }
-    //echo "<h1>Current Round: $round_status->round_num</h1>";
+    echo "<h1>Current Round: $round_status->round_num</h1>";
   }
   else {
     echo "<h1>No active bidding round currently.</h1>";

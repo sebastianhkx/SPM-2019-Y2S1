@@ -8,21 +8,35 @@ $bid_dao = new BidDAO();
 $r2bid_dao = new R2BidDAO();
 // $course_enrolled_dao = new CourseEnrolledDAO();
 $isOK = FALSE;
+$course = '';
+$section = '';
+
 if (isset($_POST['submitbid'])) {
   $course = $_POST['course']; // for repopulating form fields also
   $section = $_POST['section'];
   $amount = $_POST['bidamount'];
-
   $bidded = new Bid($userid, $amount, $course, $section);
   $errors = $bid_dao->add($bidded);
-
   if(empty($errors)){
     //$info = $bid_dao->getr2bidinfo($bidded);
     $bids_info = $r2bid_dao->updateBidinfo($bidded);
     $isOK = TRUE;
     $info = $r2bid_dao->getr2bidinfo($bidded);
   }
+}
 
+
+if(isset($_POST['searchsection'])){
+  $course = $_POST['course']; // for repopulating form fields also
+  $section = $_POST['section'];
+  $bidded = new Bid($userid, 0, $course, $section);
+  $errors = $r2bid_dao->searchCourseSection($bidded);
+  if(empty($errors[1])){
+    $bids_info = $errors[0];
+    $isOK = True;
+  }
+  $errors = $errors[1];
+  $info = $r2bid_dao->getr2bidinfo($bidded);
 }
 ?>
 <html>
@@ -59,12 +73,14 @@ if (isset($_POST['submitbid'])) {
 
 <div class="container">
 <?php
-  $course = '';
-  $section = '';
   $amount = '';
-
   $student = $student_dao->retrieve($userid); // student object
   $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids 
+  $status = [];
+  if(!empty($bids)){
+    $status = $r2bid_dao->checkBidsStatus($bids);
+  }
+
   echo "Current Round: 2 (Round start)";
   echo "<h2>Your info:</h2>";
   echo "<table border=1>
@@ -91,22 +107,23 @@ if (isset($_POST['submitbid'])) {
         <p>Total Availdable Seats:{$info['vacancy']}</p>
         <p>Total Number Of Bids:$totalbids</p>
         <p>Minimun Bid Value:{$info['min_amount']}</p>";
-
-    echo "<table border='1'>
-        <tr>
-            <th>No.</th>
-            <th>Bid Price</th>
-            <th>State</th>
-        </tr>";  
-    for($i=1;$i <= $totalbids;$i++){
-      $bid = $bids_info[$i-1];
-      echo "<tr>
-            <th>$i</th>
-            <th>{$bid[0]}</th>
-            <th>{$bid[1]}</th>
-          </tr>";
+    if($totalbids != 0){
+      echo "<table border='1'>
+          <tr>
+              <th>No.</th>
+              <th>Bid Price</th>
+              <th>State</th>
+          </tr>";  
+      for($i=1;$i <= $totalbids;$i++){
+        $bid = $bids_info[$i-1];
+        echo "<tr>
+              <th>$i</th>
+              <th>{$bid[0]}</th>
+              <th>{$bid[1]}</th>
+            </tr>";
+      }
+        echo "</table><hr>";
     }
-      echo "</table><hr>";
   }      
 
   echo "<h2>Your current bids:</h2>";
@@ -121,15 +138,16 @@ if (isset($_POST['submitbid'])) {
           <th>Status</th>
       </tr>";
 
-  for ($i = 1; $i <= count($bids); $i++) {
-      $bid = $bids[$i-1];
+  for ($i = 1; $i <= count($status); $i++) {
+      $state = $status[$i-1];
       echo "
       <tr>
           <td>$i</td>
-          <td>$bid->userid</td>
-          <td>$bid->amount</td>
-          <td>$bid->course</td>
-          <td>$bid->section</td>
+          <td>{$state['bid']->userid}</td>
+          <td>{$state['bid']->amount}</td>
+          <td>{$state['bid']->course}</td>
+          <td>{$state['bid']->section}</td>
+          <td>{$state['status']}</td>
       </tr>";
   }
 
@@ -152,9 +170,11 @@ if (isset($_POST['submitbid'])) {
     <td style='text-align:left'>Section: </td>
     <td><input type="text" name="section" value="<?= $section ?>" required> </td>
   </tr>
+
+  <tr><td><input type="submit" name='searchsection' value="Search Section" ></td></tr>
   <tr>
     <td style='text-align:left'>Bid Amount: </td>
-    <td><input type="number" name="bidamount" placeholder="min 10.00" step="0.01" min="10.00" value="<?= $amount ?>" required>  </td>
+    <td><input type="number" name="bidamount" placeholder="min 10.00" step="0.01" min="10.00" value="<?= $amount ?>" >  </td>
   </tr>
 
   <tr><td><input type="submit" name='submitbid' value="Confirm Bid" ></td></tr>
