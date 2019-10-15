@@ -1,33 +1,61 @@
 <?php
-
 require_once '../include/common.php';
-require_once '../include/token.php';
+// require_once '../include/token.php';
 // require_once '../include/protect.php';
 
-$bid_dao = new BidDAO();
-$userid = $_SESSION['userid'];
+$errors = [ isMissingOrEmpty ('userid'),
+            isMissingOrEmpty ('amount'),
+            isMissingOrEmpty ('course'),
+            isMissingOrEmpty ('section')];
+$errors = array_filter($errors);
 
-if (isset($_POST['submitbid'])) {
-    $course = $_POST['course'];
-    $section = $_POST['section'];
-    $amount = $_POST['bidamount'];
+if (!isEmpty($errors)) {
+    $result = [
+        "status" => "error",
+        "messages" => array_values($errors)
+        ];
 }
 
-$bidded = new Bid($userid, $amount, $course, $section);
-$update_bid = $bid_dao->add($bidded);
+else {
+    $userid = $_REQUEST['userid'];
+    $amount = $_REQUEST['amount'];
+    $course = $_REQUEST['course'];
+    $section = $_REQUEST['section'];
+    // $userid = 'ben.ng.2009';
+    // $course = 'IS108';
+    // $section = 'S1';
+    // $amount = '20';
 
-    if ( $update_bid == true ) { 
+    $bid_dao = new BidDAO();
+    $bidded = new Bid($userid, $amount, $course, $section);
+    $update_bid = $bid_dao->add($bidded);
+
+    if (is_array($update_bid)) { 
         $result = [
-            "status"=>"success"
-        ];
-    } 
-    
-    else {
-        $result = [
-            "status" => "error", 
+            "status"=>"error",
             "message" => $update_bid
         ];
     }
+    
+    else {
+        $result = [
+            "status" => "success"
+        ];
+    }
+
+        // if ( $update_bid == true ) { 
+        //     $result = [
+        //         "status"=>"success"
+        //     ];
+        // }
+        
+        // else {
+        //     $result = [
+        //         "status" => "error", 
+        //         "message" => $update_bid
+        //     ];
+        // }
+}
 
 header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT);

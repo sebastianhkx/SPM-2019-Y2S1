@@ -197,7 +197,7 @@ class BidDAO {
         if (!empty($bidPrerequisiteCodeArray)){
             foreach ($bidPrerequisiteCodeArray as $prerequisiteCode){
                 if ($courseCompletedDAO->completed_course($bid->userid, $prerequisiteCode)==FALSE){
-                    $errors[] = 'incomplete prerequisite';
+                    $errors[] = 'incomplete prerequisites';
                     break;
                 }
             }
@@ -597,7 +597,7 @@ class BidDAO {
         if (!empty($bidPrerequisiteCodeArray)){
             foreach ($bidPrerequisiteCodeArray as $prerequisiteCode){
                 if ($courseCompletedDAO->completed_course($bid->userid, $prerequisiteCode)==FALSE){
-                    $errors[] = 'incomplete prerequisite';
+                    $errors[] = 'incomplete prerequisites';
                     break;
                 }
             }
