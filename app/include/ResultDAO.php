@@ -170,21 +170,6 @@ class ResultDAO {
 
         return $result;
     }
-
-    public function deleteInfo(){
-        $sql = 'TRUNCATE TABLE r2_bid_info';
-
-        $connMgr = new ConnectionManager();      
-        $conn = $connMgr->getConnection();
-
-        $stmt = $conn->prepare($sql);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute();
-        $count = $stmt->rowCount();
-
-        $stmt = null;
-        $conn = null; 
-    }
 }
 
 
