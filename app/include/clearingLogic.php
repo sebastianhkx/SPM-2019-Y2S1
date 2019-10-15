@@ -93,11 +93,10 @@ function roundOneResolve($courseSection){
 
 function roundTwoBidInfo(){
     $sectionDAO = new SectionDAO();
-    $bidDAO = new BidDAO();
+    $r2bidDAO = new R2BidDAO();
     $courseEnrolledDAO = new CourseEnrolledDAO();
-    $resultDAO = new ResultDAO();
     //empty table
-    $resultDAO->deleteInfo();
+    $r2bidDAO->deleteInfo();
     //get all course and section
     $courseSections = $sectionDAO->retrieveAll();
     foreach($courseSections as $courseSection){
@@ -108,7 +107,7 @@ function roundTwoBidInfo(){
             $size = $courseSection->size - sizeof($info);
         }
         $result_info = [$courseSection->course,$courseSection->section,10,$size];
-        $bidDAO->addbidinfo($result_info);
+        $r2bidDAO->addbidinfo($result_info);
     }
 }
 

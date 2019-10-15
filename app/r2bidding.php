@@ -5,6 +5,7 @@ $userid = $_SESSION['userid'];
 
 $student_dao = new StudentDAO();
 $bid_dao = new BidDAO();
+$r2bid_dao = new R2BidDAO();
 // $course_enrolled_dao = new CourseEnrolledDAO();
 $isOK = FALSE;
 if (isset($_POST['submitbid'])) {
@@ -17,23 +18,9 @@ if (isset($_POST['submitbid'])) {
 
   if(empty($errors)){
     //$info = $bid_dao->getr2bidinfo($bidded);
-    $bids_info = $bid_dao->updateBidinfo($bidded);
-    //$i = 0;
+    $bids_info = $r2bid_dao->updateBidinfo($bidded);
     $isOK = TRUE;
-    // $state = "";
-    //var_dump($bids_info);
-    // foreach($bids_info as $bid){
-    //   if($bid[0] == $amount){
-    //     $state = $bid[1];
-    //   }
-    // }
-    //var_dump($state);
-    // if($state == "Unsuccessful" || $state == "Unsuccessful. Bid too low!"){
-    //   $student_dao -> addEdollar($userid, $amount);
-    //   echo "have got back money";
-    // }
-    $info = $bid_dao->getr2bidinfo($bidded);
-    //var_dump($info);
+    $info = $r2bid_dao->getr2bidinfo($bidded);
   }
 
 }
@@ -101,9 +88,9 @@ if (isset($_POST['submitbid'])) {
     echo "<h2>Information:</h2>
         <p>Course:{$info['course']}</p>
         <p>Section:{$info['section']}</p>
-        <p>Total Availdable Seats:{$info['size']}</p>
+        <p>Total Availdable Seats:{$info['vacancy']}</p>
         <p>Total Number Of Bids:$totalbids</p>
-        <p>Minimun Bid Value:{$info['amount']}</p>";
+        <p>Minimun Bid Value:{$info['min_amount']}</p>";
 
     echo "<table border='1'>
         <tr>
