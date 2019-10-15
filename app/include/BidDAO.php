@@ -547,9 +547,9 @@ class BidDAO {
                 $result['amount'] = $lowestprice + 1;
             }
             if($count < $result['size']){
-                $lowestprice = $output[$count][0];
-                $num_at_lowest_price = $this-> getBid($lowestprice,$result);
-                if($num_at_lowest_price + $count == $result['size']){
+                $lowestprice = $output[$result['size']-1][0];
+                $num_morethan_lowest_price = $this-> getBid($lowestprice,$result);
+                if($num_morethan_lowest_price == $result['size']){
                     for($i=$count;$i<$result['size'];$i++){
                         $output[$i][1] = "Successful";
                     }
@@ -591,81 +591,9 @@ class BidDAO {
         }
         return $result;
     }
-
-    public function r2drop($bid){
-        // this takes in a bidded obj that user/admin want to drop
-        // returns array of errors if there is any, otherwise returns True
-
-        // validation
-        $errors = [];
-
-        $course_dao = new CourseDAO();
-        $course_exists = $course_dao->retrieveByCourseId($bid->course);
-        $section_dao = new SectionDAO();
-        $section_exists = $section_dao->retrieveBySection($bid);
-        if ($course_exists == null) {
-            $errors[] = "invalid course";
-        }
-        elseif ($section_exists == null) {
-            $errors[] = "invalid section";
-        }
-        else {
-            $matching_bid = False;
-            $current_bids = $this->retrieveByUser($bid->userid);
-            foreach ($current_bids as $current_bid) {
-                if ($current_bid->course == $section_exists->course && $current_bid->section == $section_exists->section) {
-                    $matching_bid = True;
-                    break;
-                }
-            }
-            if (!$matching_bid) {
-                $errors[] = "no such bid";
-            }
-        }
-
-        $round_status_dao = new RoundStatusDAO();
-        $round_status = $round_status_dao->retrieveCurrentActiveRound();
-        if ($round_status == null) {
-            $errors[] = 'round ended';
-        }
-
-        if (!empty($errors)){
-            return $errors;
-        }
-
-        // refund the student first before deleting bid if$ the bid is successful
-        $minimunPrice = ($this->getr2bidinfo($bid))['amount'];
-        if($minimunPrice <= $bid->amount){
-            $student_dao = new StudentDAO();
-            $to_refund = $this->checkExistingBid($bid);
-            $student_dao->addEdollar($bid->userid, $to_refund);
-        }
-
-        // delete the bid
-        $sql = 'DELETE from bid where userid=:userid AND course=:course AND section=:section';
-
-        $connMgr = new ConnectionManager();      
-        $conn = $connMgr->getConnection();
-
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
-        
-        $isDeleteOk = FALSE;
-        if ($stmt->execute()) {
-            $isDeleteOk = TRUE;
-        }
-
-        $stmt = null;
-        $conn = null; 
-
-        return $isDeleteOk;
-    }
     
     public function getBid($prv_clearingprice,$bidarray){
-        $sql = 'SELECT count(userid) as num from bid where course=:course and section=:section and amount = :amount';
+        $sql = 'SELECT count(userid) as num from bid where course=:course and section=:section and amount >= :amount';
 
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
