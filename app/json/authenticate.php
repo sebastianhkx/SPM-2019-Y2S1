@@ -14,7 +14,7 @@ $errors = array_filter($errors);
 if (!isEmpty($errors)) {
     $result = [
         "status" => "error",
-        "messages" => array_values( $errors)
+        "messages" => array_values($errors)
         ];
 }
 else{
@@ -32,12 +32,15 @@ else{
     $user = $dao->retrieve($userid);
 
     if ( $user != null && $user->authenticate($password) ) { 
-        $result = ["status"=>"success", "token"=>generate_token($userid)];
-
-    } else {
-        $result = ["status" => "error", "messages" => ['invalid userid/password']];
+        $result = ["status"=>"success", 
+                    "token"=>generate_token($userid)
+                ];
+    } 
+    else {
+        $result = ["status" => "error", 
+                    "messages" => ['invalid userid/password']
+                ];
     }
-
 }
 
 header('Content-Type: application/json');
