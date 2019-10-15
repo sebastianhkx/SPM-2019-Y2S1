@@ -294,6 +294,8 @@ class BidDAO {
 
         $stmt = null;
         $conn = null;
+
+        return $isAddOk;
     }
 
     public function retrieveByUseridCourse($userid, $course){
