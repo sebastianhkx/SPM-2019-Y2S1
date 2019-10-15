@@ -45,7 +45,7 @@ $userid = $_SESSION['userid'];
       exit;
     }
     
-    if (isset($_POST['start_r2'])) {
+    elseif (isset($_POST['start_r1']) || isset($_POST['start_r2'])) {
       $roundstatus_dao->startRound();
       header("Location: home_admin.php");
       exit;

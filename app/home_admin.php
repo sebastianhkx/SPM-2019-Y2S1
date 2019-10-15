@@ -45,6 +45,9 @@ if (empty($round_status)){
   <form id='stop_r1' action="processclearing.php" method="post">
 	Round 1 Bidding: 
   <?php
+  if ($round_status[0]->status == 'pending'){
+    echo "<input type='submit' name='start_r1' value='Start'>";
+  }
   if ($round_status[0]->status == 'started') {
     echo "<input type='submit' name='stop_r1' value='Stop'>";
   }
