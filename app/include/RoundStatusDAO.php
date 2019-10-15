@@ -111,8 +111,13 @@ class RoundStatusDAO {
             return true;
         }
 
-        $sql = 'UPDATE round_status SET status = "started" WHERE round_num = 2';
-    
+        if ($rounds[0]->status == 'pending'){
+            $sql = 'UPDATE round_status SET status = "started" WHERE round_num = 1';
+        }
+        elseif ($rounds[1]->status == 'pending'){
+            $sql = 'UPDATE round_status SET status = "started" WHERE round_num = 2';
+        }
+   
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
