@@ -133,7 +133,7 @@ class BidDAO {
             } 
         }
         if (!empty($errors)){
-            return $errors;
+            return sort($errors);
         }
 
         //logic validation starts here, does not enter if there are any errors with input as return is called
@@ -348,7 +348,7 @@ class BidDAO {
         }
 
         if (!empty($errors)){
-            return $errors;
+            return sort($errors);
         }
 
         // logical validation starts here, does not enter if there are input validation errors

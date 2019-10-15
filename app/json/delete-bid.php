@@ -3,7 +3,6 @@ require_once '../include/common.php';
 // require_once '../include/protect.php';
 
 $errors = [ isMissingOrEmpty ('userid'),
-            isMissingOrEmpty ('amount'),
             isMissingOrEmpty ('course'),
             isMissingOrEmpty ('section')];
 $errors = array_filter($errors);
@@ -16,19 +15,20 @@ if (!isEmpty($errors)) {
 }
 
 else {
+    $bid_dao = new BidDAO();
+
     $userid = $_REQUEST['userid'];
-    $amount = $_REQUEST['amount'];
     $course = $_REQUEST['course'];
     $section = $_REQUEST['section'];
 
-    $bid_dao = new BidDAO();
-    $bidded = new Bid($userid, $amount, $course, $section);
-    $update_bid = $bid_dao->add($bidded);
+    $bid_to_drop_temp = new Bid($userid, 0, $course, $section); // the current drop bid method doesn't need amount. might need to revisit the method.
+    $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $course, $section);
+    $drop_bid = $bid_dao->drop($bid_to_drop);
 
-    if (is_array($update_bid)) { 
+    if (is_array($drop_bid)) { 
         $result = [
             "status"=>"error",
-            "message" => $update_bid
+            "message" => $drop_bid
         ];
     }
     
