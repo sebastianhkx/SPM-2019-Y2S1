@@ -40,6 +40,7 @@ $userid = $_SESSION['userid'];
 
     if (isset($_POST['stop_r1']) || isset($_POST['stop_r2'])) {
       $roundstatus_dao->stopRound();
+      roundOneClearing();
       header("Location: home_admin.php");
       exit;
     }
@@ -50,7 +51,7 @@ $userid = $_SESSION['userid'];
       exit;
     }
 
-    roundOneClearing();
+    // roundOneClearing();
     
 ?>
 </table>

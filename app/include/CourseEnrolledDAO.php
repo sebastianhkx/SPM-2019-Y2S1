@@ -119,8 +119,28 @@ class CourseEnrolledDAO {
         $result = null;
 
         while($row = $stmt->fetch()){
-            $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         return $result;
     }
+
+    public function r2dropSection($sectionobj){
+        $sql = 'UPDATE r2_bid_info SET size =size + 1 WHERE course=:course AND section = :section';
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $sectionobj->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $sectionobj->section, PDO::PARAM_STR);
+
+        $isOK = FALSE;
+        if($stmt->execute()){
+            $isOK = TRUE;
+        }
+        $stmt = null;
+        $conn = null; 
+
+        return $isOK ;
+    }
+
 }

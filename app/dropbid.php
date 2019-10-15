@@ -27,6 +27,7 @@
       <li><a href="home.php">Home</a></li>
       <li><a href="bidding.php">Bidding</a></li>
       <li class="active"><a href='dropbid.php'>Drop Bid</a></li>
+      <li><a href='dropsection.php'>Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -60,6 +61,7 @@
 
         $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
         $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
+        //$errors = $bid_dao->drop($bid_to_drop);
         $errors = $bid_dao->drop($bid_to_drop);
     }
     $student = $student_dao->retrieve($userid); // student object

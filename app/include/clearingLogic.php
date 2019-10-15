@@ -37,8 +37,6 @@ function roundOneResolve($courseSection){
             //adds all bids to success
             $successBids[] = $bidObj;
         }
-            //get the clearing price and the number of vacancy left
-            $clearingPrice = $bidDAO->getminiamount($bidObjs[0]);
     }
     else{
         $clearingPrice = $bidDAO->getClearingPrice($bidObjs[0], $vacancy-1);//vacancy-1 as index starts from 0
@@ -69,10 +67,6 @@ function roundOneResolve($courseSection){
         }
     }
 
-
-    $vacancy = $vacancy- count($successBid);
-    $bidDAO->addbidinfo($bidObjs[0],$clearingPrice,$vacancy);
-
     foreach ($successBids as $successBid){
         $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->course, $successBid->section, 'success', 1);
         $sectionObj = $sectionDAO->retrieveBySection($successBid);
@@ -93,6 +87,28 @@ function roundOneResolve($courseSection){
         //$studentDAO->addEdollar($failureBid->userid, $failureBid->amount);
         //delete from bid table
         $bidDAO->drop($failureBid);
+    }
+    roundTwoBidInfo();
+}
+
+function roundTwoBidInfo(){
+    $sectionDAO = new SectionDAO();
+    $bidDAO = new BidDAO();
+    $courseEnrolledDAO = new CourseEnrolledDAO();
+    $resultDAO = new ResultDAO();
+    //empty table
+    $resultDAO->deleteInfo();
+    //get all course and section
+    $courseSections = $sectionDAO->retrieveAll();
+    foreach($courseSections as $courseSection){
+        $info = $courseEnrolledDAO->retrieveBycourseSection([$courseSection->course,$courseSection->section]);
+        //var_dump($info);
+        $size = $courseSection->size;
+        if($info != null){
+            $size = $courseSection->size - sizeof($info);
+        }
+        $result_info = [$courseSection->course,$courseSection->section,10,$size];
+        $bidDAO->addbidinfo($result_info);
     }
 }
 

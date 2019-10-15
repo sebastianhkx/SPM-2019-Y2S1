@@ -4,9 +4,21 @@ require_once 'include/common.php';
 // implement protect.php later
 
 $userid = $_SESSION['userid'];
+$courseEnrolledDAO = new CourseEnrolledDAO;
+$resultDAO = new ResultDAO();
+$studentDAO = new StudentDAO();
 
 if (isset($_POST["dropped_section"])){
-    var_dump($_POST["dropped_section"]);
+    //var_dump($_POST["dropped_section"]);
+    $drop_sections = $_POST['dropped_section'];
+    foreach($drop_sections as $dropsection){
+      $courseEnrolled = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropsection);
+      $status = $courseEnrolledDAO->delete($courseEnrolled);
+      $courseEnrolledDAO->r2dropSection($courseEnrolled);
+      $result = $resultDAO->retrieveByCourseEnrolled($courseEnrolled);
+      $resultDAO->delete($result);
+      $studentDAO->addEdollar($result->userid, $result->amount);
+    }
 }
 
 // bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
@@ -29,7 +41,7 @@ if (isset($_POST["dropped_section"])){
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
 
-      <li><a href="bidding.php">Bidding</a></li>
+      <li><a href="r2bidding.php">Bidding</a></li>
       <li><a href='dropbid.php'>Drop Bid</a></li>
       <li class="active"><a href="#">Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
@@ -41,17 +53,17 @@ if (isset($_POST["dropped_section"])){
 
 <?php
 //gets lists of course enrolled
-$courseEnrolledDAO = new CourseEnrolledDAO;
 $course_enrolled = $courseEnrolledDAO->retrieveByUserid($_SESSION['userid']);
-var_dump($course_enrolled);
-var_dump($_SESSION);
+//var_dump($course_enrolled);
+//var_dump($_SESSION);
 $resultDAO = new ResultDAO;
 
-
+$display = "No course enrolled!";
 if (!empty($course_enrolled)){
+  $display = "";
 ?>
 <form method='post' action='dropsection.php'>
-    <table border='1'>
+    <table border='2'>
         <tr>
             <th>Course</th>
             <th>Section</th>
@@ -67,7 +79,7 @@ if (!empty($course_enrolled)){
 <?php
 foreach ($course_enrolled as $course){
     $bid_result = $resultDAO->retrieveByCourseEnrolled($course);
-    var_dump($bid_result);
+    //var_dump($bid_result);
     $amount = $bid_result->amount;
     echo 
 "
@@ -87,14 +99,12 @@ foreach ($course_enrolled as $course){
 }
 
 ?>
-
-        <tr>
-            <td align='right' colspan='10'><input type='submit' value='Drop Bids'></td>
-        </tr>
     </table>
+        <br><input type='submit' value='Drop Bids'>
 </form>
 <?php
 }//closes if (!empty($course_enrolled)){
+echo $display;
 ?>
 </div>
 

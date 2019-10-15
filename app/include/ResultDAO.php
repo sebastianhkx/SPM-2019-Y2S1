@@ -105,7 +105,7 @@ class ResultDAO {
 
     public function delete($result){
         //takes in Result obj
-        $sql = 'DELETE from bid_result where userid = :userid and course = :course and result = :result and round = :round';
+        $sql = 'DELETE from bid_result where userid = :userid and course = :course and section=:section and result = :result and round_num = :round_num';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -116,7 +116,7 @@ class ResultDAO {
         $stmt->bindParam(':course', $result->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $result->section, PDO::PARAM_STR);
         $stmt->bindParam(':result', $result->result, PDO::PARAM_STR);
-        $stmt->bindParam(':round', $result->round, PDO::PARAM_STR);
+        $stmt->bindParam(':round_num', $result->round_num, PDO::PARAM_STR);
         
         $isDeleteOk = FALSE;
         if ($stmt->execute()) {
@@ -169,6 +169,21 @@ class ResultDAO {
         $conn = null; 
 
         return $result;
+    }
+
+    public function deleteInfo(){
+        $sql = 'TRUNCATE TABLE r2_bid_info';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $count = $stmt->rowCount();
+
+        $stmt = null;
+        $conn = null; 
     }
 }
 
