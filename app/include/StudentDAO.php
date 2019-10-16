@@ -3,7 +3,7 @@
 class StudentDAO {
 
     public function retrieveAll(){
-        $sql = 'SELECT userid, password, name, school, edollar FROM student';
+        $sql = 'SELECT * FROM student';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -15,7 +15,7 @@ class StudentDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'],['edollar']);
+            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], (int)$row['edollar']);
         }
 
         $stmt = null;
