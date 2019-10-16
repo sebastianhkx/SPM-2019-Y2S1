@@ -70,6 +70,11 @@ if ( !isset($_SESSION['userid']) ) {
         </body>
     </html>
     <?php
+
+    if ( isset($_GET['error']) ) {
+        echo "<font color='red'>{$_GET['error']}</font>";
+    }
+
     if ( isset($_POST['userid']) && isset($_POST['password']) ) {
         $userid = $_POST['userid'];
         $password = $_POST['password'];

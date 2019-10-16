@@ -1,8 +1,7 @@
 <?php
 require_once 'include/common.php';
 require_once 'include/clearingLogic.php';
-
-// implement protect.php later
+require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
 
