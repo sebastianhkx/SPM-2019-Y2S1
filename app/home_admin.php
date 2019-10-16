@@ -1,7 +1,6 @@
 <?php
 require_once 'include/common.php';
-
-// implement protect.php later
+require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
 // $r1_disabled = 'disabled';
