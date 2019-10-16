@@ -15,7 +15,7 @@ class SectionDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], $row['size']);
+            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], (int)$row['size']);
         }
         
         $stmt = null;
