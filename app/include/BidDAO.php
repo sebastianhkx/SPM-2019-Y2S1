@@ -94,7 +94,7 @@ class BidDAO {
     }
 
     public function add($bid){
-        //takes in a bid object and returns array of errors if it fals bid validation
+        //takes in a bid object and returns array of errors if it fails bid validation
 
         $errors = [];
 

@@ -2,6 +2,7 @@
 class R2BidDAO{
 
     public function getr2bidinfo($bidobj){
+        //this function take in a bid object and return an object with section's minimum and vacancy
         $sql = 'SELECT * from r2_bid_info where course=:course and section=:section';
 
         $connMgr = new ConnectionManager();
@@ -15,27 +16,26 @@ class R2BidDAO{
         $stmt->execute();
 
         $result = [];
-        $status = FALSE;
 
         if ($row = $stmt->fetch()){
-            $status = TRUE;
-            $result = array("course"=>$row["course"], "section"=>$row['section'], "min_amount"=>$row["min_amount"],"vacancy"=>$row['vacancy']);
+            $result = new R2Bid($row['course'],$row['section'],$row['min_amount'],$row['vacancy']);
+            //$result = array("course"=>$row["course"], "section"=>$row['section'], "min_amount"=>$row["min_amount"],"vacancy"=>$row['vacancy']);
         }
         return $result;
     }
 
-    public function addbidinfo($result_info){
-        // this function take in an bid object, the clearing price 
+    public function addbidinfo($r2Bid){
+        // this function take in an object for R2 bid info 
         $sql = "INSERT IGNORE INTO r2_bid_info(course, section,min_amount,vacancy) VALUES (:course, :section, :min_amount,:vacancy)";
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':course', $result_info[0], PDO::PARAM_STR);
-        $stmt->bindParam(':section', $result_info[1], PDO::PARAM_STR);
-        $stmt->bindParam(':min_amount', $result_info[2], PDO::PARAM_INT);
-        $stmt->bindParam(':vacancy', $result_info[3], PDO::PARAM_INT);
+        $stmt->bindParam(':course', $r2Bid->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $r2Bid->section, PDO::PARAM_STR);
+        $stmt->bindParam(':min_amount', $r2Bid->min_amount, PDO::PARAM_INT);
+        $stmt->bindParam(':vacancy', $r2Bid->vacancy, PDO::PARAM_INT);
 
 
 
@@ -47,15 +47,17 @@ class R2BidDAO{
         return $isAddOk;
     }
 
-    public function getBid($prv_clearingprice,$bidarray){
+    public function getBid($prv_clearingprice,$r2bid){
+        // this function take in a bid object and a clearing price to get the total number of bids that more than or equal to the clearing price
+        // return a number
         $sql = 'SELECT count(userid) as num from bid where course=:course and section=:section and amount >= :amount';
 
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':course', $bidarray['course'], PDO::PARAM_STR);
-        $stmt->bindParam(':section', $bidarray['section'], PDO::PARAM_STR);
+        $stmt->bindParam(':course', $r2bid->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $r2bid->section, PDO::PARAM_STR);
         $stmt->bindParam(':amount', $prv_clearingprice, PDO::PARAM_STR);
 
         $result = 0;
@@ -70,6 +72,7 @@ class R2BidDAO{
     }
 
     public function getminimunprice($bidobj){
+        //this function take in a bid object and return the minimun amount for that section 
         $sql = 'SELECT MIN(amount) as minimum from bid where course=:course and section=:section order by amount DESC';
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -90,29 +93,33 @@ class R2BidDAO{
     }
 
     public function updateBidinfo($bidobj){
+        //this function take in a bid object to get total bids for the section with status
+        //output = [[bid_amount1,'status1'],[bid_amount2,status2]]
+        $courseEnrolled_dao =  new CourseEnrolledDAO;
         $bid_dao = new BidDAO();
-        $result = $this->getr2bidinfo($bidobj);
+        $r2Bid_info = $this->getr2bidinfo($bidobj);
         $output = [];
+        //bids have been sorted based on amount in desc
         $bids = $bid_dao->retrieveByCourseSection([$bidobj->course,$bidobj->section]);
         $totalbids = count($bids);
-        $count = 0;
-        if($totalbids <= $result['vacancy']){
+        $count = 0; 
+        if($totalbids <= $r2Bid_info->vacancy){
             foreach($bids as $bid){
                 $output[] = [$bid->amount,"Successful"];
             }
         }
-        if($totalbids == $result['vacancy']){
+        if($totalbids == $r2Bid_info->vacancy){
             $lowestprice = $this->getminimunprice($bidobj);
-            $result['min_amount'] = $lowestprice + 1;
+            $r2Bid_info->min_amount = $lowestprice + 1;
         }
-        if($totalbids > $result['vacancy']){
+        if($totalbids > $r2Bid_info->vacancy){
             foreach($bids as $bid){
-                if($bid->amount >= $result['min_amount']){
+                if($bid->amount >= $r2Bid_info->min_amount ){
                     $state = "Successful";
                     $count += 1;
                     $lowestprice = $bid->amount;
                 }
-                elseif($bid->amount == $result['min_amount']-1){
+                elseif($bid->amount == $r2Bid_info->min_amount - 1){
                     $state = "Unsuccessful";
                 }
                 else{
@@ -120,14 +127,14 @@ class R2BidDAO{
                 }
                 $output[] = [$bid->amount,$state]; 
             }
-            if($count == $result['vacancy']){
-                $result['min_amount'] = $lowestprice + 1;
+            if($count == $r2Bid_info->vacancy){
+                $r2Bid_info->min_amount = $lowestprice + 1;
             }
-            if($count < $result['vacancy']){
-                $lowestprice = $output[$result['vacancy']-1][0];
-                $num_morethan_lowest_price = $this-> getBid($lowestprice,$result);
-                if($num_morethan_lowest_price == $result['vacancy']){
-                    for($i=$count;$i<$result['vacancy'];$i++){
+            if($count < $r2Bid_info->vacancy){
+                $lowestprice = $output[$r2Bid_info->vacancy - 1][0];
+                $num_morethan_lowest_price = $this-> getBid($lowestprice,$r2Bid_info);
+                if($num_morethan_lowest_price == $r2Bid_info->vacancy){
+                    for($i=$count;$i < $r2Bid_info->vacancy;$i++){
                         $output[$i][1] = "Successful";
                     }
                 }
@@ -140,9 +147,9 @@ class R2BidDAO{
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':course', $result['course'], PDO::PARAM_STR);
-        $stmt->bindParam(':section', $result['section'], PDO::PARAM_STR);
-        $stmt->bindParam(':min_amount', $result['min_amount'], PDO::PARAM_INT);
+        $stmt->bindParam(':course', $r2Bid_info->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $r2Bid_info->section, PDO::PARAM_STR);
+        $stmt->bindParam(':min_amount', $r2Bid_info->min_amount, PDO::PARAM_INT);
 
         $stmt->execute();
 
@@ -150,6 +157,7 @@ class R2BidDAO{
     }
 
     public function deleteInfo(){
+        //this function is used to empty the r2_bid_info table
         $sql = 'TRUNCATE TABLE r2_bid_info';
 
         $connMgr = new ConnectionManager();      
@@ -165,6 +173,7 @@ class R2BidDAO{
     }
 
     public function r2dropSection($sectionobj){
+        //this function take in a section object to reset the vacancy for that section
         $sql = 'UPDATE r2_bid_info SET vacancy = vacancy + 1 WHERE course=:course AND section = :section';
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -230,5 +239,25 @@ class R2BidDAO{
             $result[] = array('bid'=>$bid,'status'=>$state);
         }
         return $result;
+    }
+
+    function checkCourseEnrolled($bid){
+        //this function take in a bid object to check number of course enrolled
+        $courseEnrolled_dao =  new CourseEnrolledDAO;
+        $bid_dao = new BidDAO();
+        $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
+        $bids = $bid_dao->retrieveByUser($bid->userid);
+        $errors = [];
+        $availablebid = 5 - sizeof($coursesEnrolled);
+        if(sizeof($coursesEnrolled) == 5){
+            $errors[] = 'More than 5 courses enrolled';
+        }
+        if(empty($errors) && $availablebid == sizeof($bids)){
+            $errors[] = 'Section limit reached';
+        }
+        if (empty($errors)){
+            $errors = $bid_dao->add($bid);
+        }
+        return $errors;
     }
 }

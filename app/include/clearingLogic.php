@@ -106,7 +106,7 @@ function roundTwoBidInfo(){
         if($info != null){
             $size = $courseSection->size - sizeof($info);
         }
-        $result_info = [$courseSection->course,$courseSection->section,10,$size];
+        $result_info = new R2Bid($courseSection->course,$courseSection->section,10,$size);
         $r2bidDAO->addbidinfo($result_info);
     }
 }
