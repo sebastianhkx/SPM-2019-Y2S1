@@ -17,7 +17,7 @@ class RoundStatusDAO {
         $result = null;
 
         while ($row = $stmt->fetch()) {
-            $result[] = new RoundStatus($row['round_num'], $row['status']);
+            $result[] = new RoundStatus((int)$row['round_num'], $row['status']);
         }
 
         $stmt = null;
@@ -41,7 +41,7 @@ class RoundStatusDAO {
         $result = null;
 
         if ($row = $stmt->fetch()) {
-            $result = new RoundStatus($row['round_num'], $row['status']);
+            $result = new RoundStatus((int)$row['round_num'], $row['status']);
         }
 
         $stmt = null;
