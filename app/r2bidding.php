@@ -10,21 +10,20 @@ $r2bid_dao = new R2BidDAO();
 $isOK = FALSE;
 $course = '';
 $section = '';
+$status = [];
 
 if (isset($_POST['submitbid'])) {
   $course = $_POST['course']; // for repopulating form fields also
   $section = $_POST['section'];
   $amount = $_POST['bidamount'];
   $bidded = new Bid($userid, $amount, $course, $section);
-  $errors = $bid_dao->add($bidded);
-  if(empty($errors)){
-    //$info = $bid_dao->getr2bidinfo($bidded);
+  $errors = $r2bid_dao->checkCourseEnrolled($bidded);
+  if(!is_array($errors)){
     $bids_info = $r2bid_dao->updateBidinfo($bidded);
     $isOK = TRUE;
-    $info = $r2bid_dao->getr2bidinfo($bidded);
+    $info_obj = $r2bid_dao->getr2bidinfo($bidded);
   }
 }
-
 
 if(isset($_POST['searchsection'])){
   $course = $_POST['course']; // for repopulating form fields also
@@ -36,7 +35,7 @@ if(isset($_POST['searchsection'])){
     $isOK = True;
   }
   $errors = $errors[1];
-  $info = $r2bid_dao->getr2bidinfo($bidded);
+  $info_obj = $r2bid_dao->getr2bidinfo($bidded);
 }
 ?>
 <html>
@@ -76,7 +75,6 @@ if(isset($_POST['searchsection'])){
   $amount = '';
   $student = $student_dao->retrieve($userid); // student object
   $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids 
-  $status = [];
   if(!empty($bids)){
     $status = $r2bid_dao->checkBidsStatus($bids);
   }
@@ -102,11 +100,11 @@ if(isset($_POST['searchsection'])){
   if($isOK){
     $totalbids = sizeof($bids_info);
     echo "<h2>Information:</h2>
-        <p>Course:{$info['course']}</p>
-        <p>Section:{$info['section']}</p>
-        <p>Total Availdable Seats:{$info['vacancy']}</p>
+        <p>Course:{$info_obj->course}</p>
+        <p>Section:{$info_obj->section}</p>
+        <p>Total Availdable Seats:{$info_obj->vacancy}</p>
         <p>Total Number Of Bids:$totalbids</p>
-        <p>Minimun Bid Value:{$info['min_amount']}</p>";
+        <p>Minimun Bid Value:{$info_obj->min_amount}</p>";
     if($totalbids != 0){
       echo "<table border='1'>
           <tr>
@@ -190,11 +188,10 @@ if(isset($_POST['searchsection'])){
       }
       echo "</ul>";
     }
-    else {
-      echo "<font color='green'>Bid was added successfully!<br>
-            e$ updated</font><br>";
-    
-    }
+    // else {
+    //   echo "<font color='green'>Bid was added successfully!<br>
+    //         e$ updated</font><br>";
+    // }
   }
   
   ?>
