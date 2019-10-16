@@ -38,9 +38,16 @@ $userid = $_SESSION['userid'];
 
     $roundstatus_dao = new RoundStatusDAO();
 
-    if (isset($_POST['stop_r1']) || isset($_POST['stop_r2'])) {
+    if (isset($_POST['stop_r1'])) {
       $roundstatus_dao->stopRound();
       roundOneClearing();
+      header("Location: home_admin.php");
+      exit;
+    }
+
+    elseif (isset($_POST['stop_r2'])){
+      $roundstatus_dao->stopRound();
+      roundTwoClearing();
       header("Location: home_admin.php");
       exit;
     }
