@@ -128,13 +128,13 @@ function roundTwoResolve($courseSection){
     $sectionDAO = new SectionDAO();
     $courseEnrolledDAO = new CourseEnrolledDAO();
 
-    $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
     $bidObjs = $bidDAO->retrieveByCourseSection($courseSection); //retrieves all bids for the course, section
+    $sectionObj = $sectionDAO->retrieveBySection($bidObjs[0]);
     $courseEnrolledObjs = $courseEnrolledDAO->retrieveByCourseSection($courseSection); //retrieves all courseEnrolled for the course,section
     $size = $sectionObj->size;
 
     $vacancy = $size - sizeof($courseEnrolledObjs);
-    $successfull_price = $bidDAO->getRoundTwoSuccessfullPrice($bidObj[0], $vacancy);
+    $successfull_price = $bidDAO->getRoundTwoSuccessfullPrice($bidObjs[0], $vacancy);
 
     $success_bids = [];
     $fail_bids = [];
@@ -147,6 +147,7 @@ function roundTwoResolve($courseSection){
             $fail_bids[] = $bidObj;
         }
     }
+
 
     foreach ($success_bids as $success_bid){
         $resultObj = new Result($success_bid->userid, $success_bid->amount, $success_bid->course, $success_bid->section, 'success', 2);
