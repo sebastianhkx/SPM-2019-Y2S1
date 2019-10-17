@@ -111,6 +111,9 @@ function doBootstrap() {
                 $courseEnrolledDAO = new CourseEnrolledDAO();
                 $courseEnrolledDAO->deleteAll();
 
+                $r2bidDAO = new R2BidDAO();
+                $r2bidDAO->deleteAll();
+
                 //sets round to one
                 $roundDAO = new RoundStatusDAO();
                 $roundDAO->setRound1();
