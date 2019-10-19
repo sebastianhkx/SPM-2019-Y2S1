@@ -6,15 +6,16 @@ require_once '../include/token.php';
 
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('userid'), 
-            isMissingOrEmpty ('password') ];
+$errors = [ isMissingOrEmpty ('password'),
+            isMissingOrEmpty ('userid')
+             ];
 $errors = array_filter($errors);
 
 
 if (!isEmpty($errors)) {
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 else{

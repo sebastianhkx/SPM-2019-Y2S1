@@ -2,16 +2,17 @@
 require_once '../include/common.php';
 // require_once '../include/protect.php';
 
-$errors = [ isMissingOrEmpty ('userid'),
-            isMissingOrEmpty ('amount'),
+$errors = [ isMissingOrEmpty ('amount'),
             isMissingOrEmpty ('course'),
-            isMissingOrEmpty ('section')];
+            isMissingOrEmpty ('section'),
+            isMissingOrEmpty ('userid')
+            ];
 $errors = array_filter($errors);
 
 if (!isEmpty($errors)) {
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 
