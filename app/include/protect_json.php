@@ -2,26 +2,25 @@
 require_once 'token.php';
 require_once 'common.php';
 
-
-$token = '';
 header('Content-Type: application/json');
-if  (isset($_REQUEST['token'])) {
-	//token present
-	$token = $_REQUEST['token'];
-	if ($token == ''){
-		//token blank
-		echo json_encode(['status'=>'error', 'message'=>['blank token']],JSON_PRETTY_PRINT);
-		exit();
-	}
-	# check if token is not valid
-	elseif (verify_token($token)==FALSE){
-		echo json_encode(['status'=>'error', 'message'=>['invalid token']],JSON_PRETTY_PRINT);
-		exit();
-	}
+
+$errors = [ isMissingOrEmpty ('token')];
+$errors = array_filter($errors);
+
+if (!isEmpty($errors)) {
+    $result = [
+        "status" => "error",
+        "messages" => array_values($errors)
+		];
+	echo json_encode($result, JSON_PRETTY_PRINT);
+	exit();
 }
 else{
-	//token missing
-	echo json_encode(['status'=>'error', 'message'=>['missing token']],JSON_PRETTY_PRINT);
+	$token = $_REQUEST['token'];
+}
+# check if token is not valid
+if (verify_token($token)==FALSE){
+	echo json_encode(['status'=>'error', 'message'=>['invalid token']],JSON_PRETTY_PRINT);
 	exit();
 }
 

@@ -6,7 +6,7 @@ require_once '../include/token.php';
 
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('userid'), 
+$errors = [ isMissingOrEmpty ('username'), 
             isMissingOrEmpty ('password') ];
 $errors = array_filter($errors);
 
@@ -18,7 +18,7 @@ if (!isEmpty($errors)) {
         ];
 }
 else{
-    $userid = $_POST['userid'];
+    $userid = $_POST['username'];
     $password = $_POST['password'];
 
     # check if userid and password are right. generate a token and return it in proper json format
