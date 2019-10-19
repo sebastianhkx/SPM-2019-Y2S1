@@ -67,6 +67,34 @@ class CourseEnrolledDAO {
     }
 
     public function delete($courseEnrolled){
+        //validation before deleting
+        $courseDAO = new CourseDAO();
+        $studentDAO = new StudentDAO();
+        $sectionDAO = new SectionDAO();
+        $roundStatusDAO = new RoundStatusDAO();
+        
+        $message = [];
+
+        if ($courseDAO->retrieveByCourseId($courseEnrolled->course)==null){
+            $message[] = 'invalid course';
+        }
+        else{
+            if ($sectionDAO->retrieveSection($courseEnrolled->course, $courseEnrolled->section)==null){
+                $message[] = 'invalid section';
+            }
+        }
+
+        if ($studentDAO->retrieve($courseEnrolled->userid)==null){
+            $message[] = 'invalid userid';
+        }
+
+        if ($roundStatusDAO->retrieveCurrentActiveRound()==null){
+            $message[] = 'round not active';
+        }
+        
+        if (!empty($message)){
+            return ['status'=>'error', 'message'=>$message];
+        }
         //takes in a CourseEnrolled object
         $sql = 'DELETE from course_enrolled where userid = :userid and course = :course and section = :section';
 
@@ -87,7 +115,12 @@ class CourseEnrolledDAO {
         $stmt = null;
         $conn = null; 
 
-        return $isDeleteOk;
+        if ($isDeleteOk){
+            return ['status'=>'success'];
+        }
+        else{
+            return ['status'=>'error', 'message'=>['no such enrollment record']];
+        }
     }
 
     ## truncate tables when bootstraping
