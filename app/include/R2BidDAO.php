@@ -245,19 +245,60 @@ class R2BidDAO{
         //this function take in a bid object to check number of course enrolled
         $courseEnrolled_dao =  new CourseEnrolledDAO;
         $bid_dao = new BidDAO();
+        $course_dao = new CourseDAO();
+        $section_dap = new SectionDAO();
+
         $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
         $bids = $bid_dao->retrieveByUser($bid->userid);
         $errors = [];
         $availablebid = 5 - sizeof($coursesEnrolled);
+
         if(sizeof($coursesEnrolled) == 5){
-            $errors[] = 'More than 5 courses enrolled';
+            $errors[] = 'more than 5 courses enrolled';
         }
+
         if(empty($errors) && $availablebid == sizeof($bids)){
-            $errors[] = 'Section limit reached';
+            $errors[] = 'section limit reached';
         }
+
+        //check class time table and exam timetable for current bid and course enrolled
+        //exam clash
+        $course_bid = $course_dao->retrieveByCourseId($bid->course);
+        $new_start = $course_bid->exam_start;
+        $new_end = $course_bid->exam_end;
+        foreach ($coursesEnrolled as $bidObj){
+            $existingBidCourseObj = $course_dao->retrieveByCourseId($bidObj->course);
+            $existingStart = $existingBidCourseObj->exam_start;
+            $existingEnd = $existingBidCourseObj->exam_end;
+            //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
+            //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+            if ($bidObj->course != $bid->course && $course_bid->exam_date == $existingBidCourseObj->exam_date && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd))){
+                $errors[] = 'exam timetable clash';
+                break;
+            }
+        }
+
+        //class clash
+        $section_bid = $section_dao->retrieveBySection($bid);
+        $new_start = $section_bid->start;
+        $new_end = $section_bid->end;
+        foreach ($coursesEnrolled as $bidObj){
+            $existingBidSectionObj = $sectionDAO->retrieveBySection($bidObj);//existing bid
+            $existingStart = $existingBidSectionObj->start;
+            $existingEnd = $existingBidSectionObj->end;
+            if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd)))
+                //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
+                //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+                $errors[] = 'class timetable clash';
+                break;
+        }
+
+
+
         if (empty($errors)){
             $errors = $bid_dao->add($bid);
         }
+
         return $errors;
     }
 
