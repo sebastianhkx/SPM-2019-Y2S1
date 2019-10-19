@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
 DROP TABLE IF EXISTS `bid`;
 CREATE TABLE IF NOT EXISTS `bid` (
   `userid` varchar(50) NOT NULL,
-  `amount` int(11) NOT NULL,
+  `amount` float NOT NULL,
   `course` varchar(10) NOT NULL,
   `section` varchar(3) NOT NULL,
   PRIMARY KEY (`userid`,`course`,`section`),
@@ -189,7 +189,7 @@ DROP TABLE IF EXISTS `r2_bid_info`;
 CREATE TABLE IF NOT EXISTS `r2_bid_info` (
 	`course` varchar(10) NOT NULL,
 	`section` varchar(3) NOT NULL,
-    `min_amount` int(11) NOT NULL,
+    `min_amount` float NOT NULL,
     `vacancy` int(11) NOT NULL,
   PRIMARY KEY (`course`, `section`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
