@@ -37,7 +37,13 @@ $userid = $_SESSION['userid'];
     require_once 'include/bootstrap.php';
     $msg = doBootstrap();
     $lines_loaded = $msg['num-record-loaded'];
-    $errors = $msg['error'];
+    if (array_key_exists('error', $msg)) {
+      $errors = $msg['error'];
+    }
+    else {
+      $errors = [];
+    }
+    
 ?>
 
 <table border='1' class='table'>

@@ -31,7 +31,7 @@ else{
     } 
     else {
         $result = ["status" => "error", 
-                    "messages" => ['invalid userid']
+                    "message" => ['invalid userid']
                 ];
     }
 }
