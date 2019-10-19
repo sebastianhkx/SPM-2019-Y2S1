@@ -140,7 +140,7 @@ class BidDAO {
         $roundStatusDAO = new RoundStatusDAO();
         $current_round = $roundStatusDAO->retrieveCurrentActiveRound();
 
-        if ($current_round->round_num == 1){
+        if ($current_round != null && $current_round->round_num == 1){
             //same school validation bootstrap + JSON
             $studentObj = $studentDAO->retrieve($bid->userid);
             $courseDAO = new CourseDAO();
@@ -230,7 +230,7 @@ class BidDAO {
         }
 
         //bid too low for round 2 JSON
-        if ($current_round->round_num==2){
+        if ($current_round != null && $current_round->round_num==2){
             $min = 10; //change this to check min in round 2
             if ($bid->amount < $min){
                 $errors[] = 'bid too low';
