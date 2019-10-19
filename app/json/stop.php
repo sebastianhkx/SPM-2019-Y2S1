@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-// require_once '../include/protect.php';
+require_once '../include/protect_json.php';
 
 $round_status_dao = new RoundStatusDAO();
 $stop = $round_status_dao->stopRound();

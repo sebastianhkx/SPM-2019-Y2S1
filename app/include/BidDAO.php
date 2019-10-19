@@ -331,11 +331,6 @@ class BidDAO {
         // input validation starts here
         $errors = [];
 
-        $studentDAO = new StudentDAO();
-        if ($studentDAO->retrieve($bid->userid)==null){
-            $errors[] = "invalid userid";
-        }
-
         $course_dao = new CourseDAO();
         $course_exists = $course_dao->retrieveByCourseId($bid->course);
         $section_dao = new SectionDAO();
@@ -345,6 +340,11 @@ class BidDAO {
         }
         elseif ($section_exists == null) {
             $errors[] = "invalid section";
+        }
+
+        $studentDAO = new StudentDAO();
+        if ($studentDAO->retrieve($bid->userid)==null){
+            $errors[] = "invalid userid";
         }
 
         if (!empty($errors)){

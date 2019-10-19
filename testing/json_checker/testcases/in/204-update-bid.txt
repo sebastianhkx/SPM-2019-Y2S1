@@ -1,4 +1,4 @@
-userid = ben.ng.2009
+userid = parker.ng.2009
 amount = 10
 course = ECON001
 section = S1
