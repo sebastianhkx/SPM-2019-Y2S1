@@ -231,7 +231,8 @@ class BidDAO {
 
         //bid too low for round 2 JSON
         if ($current_round != null && $current_round->round_num==2){
-            $min = 10; //change this to check min in round 2
+            $r2BidDAO = new R2BidDAO();
+            $min = $r2BidDAO->getminimunprice($bid);
             if ($bid->amount < $min){
                 $errors[] = 'bid too low';
             }
@@ -241,6 +242,44 @@ class BidDAO {
         $courseEnrolledDAO = new CourseEnrolledDAO();
         if ($courseEnrolledDAO->retrieveByUseridCourse($bid->userid, $bid->course)!=null){
             $errors[] = 'course enrolled';
+
+            //check for timetable and exam clash against enrolled
+            $courseEnrolledObj_array = $courseEnrolledDAO->retrieveByUserid($bid->userid);
+            if (!empty($courseEnrolledObj_array)){
+                //has existing bids, does not enter if there are no existing bids as it would be unnecessary to check
+                //timetable clash BOOTSTRAP + JSON
+                $bidSectionObj = $sectionDAO->retrieveBySection($bid);//new bid
+                $newStart = $bidSectionObj->start;
+                $newEnd = $bidSectionObj->end;
+                foreach ($courseEnrolledObj_array as $courseEnrolledObj){
+                    $existingBidSectionObj = $sectionDAO->retrieveBySection($courseEnrolledObj);//existing bid
+                    $existingStart = $existingBidSectionObj->start;
+                    $existingEnd = $existingBidSectionObj->end;
+                    if ($courseEnrolledObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
+                        //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
+                        //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+                        $errors[] = 'class timetable clash';
+                        break;
+                }
+                
+                
+                //exam clash BOOTSTRAP + JSON
+                $bidCourseObj = $courseDAO->retrieveByCourseId($bid->course);
+                $newStart = $bidCourseObj->exam_start;
+                $newEnd = $bidCourseObj->exam_end;
+                foreach ($courseEnrolledObj_array as $courseEnrolledObj){
+                    $existingBidCourseObj = $courseDAO->retrieveByCourseId($courseEnrolledObj->course);
+                    $existingStart = $existingBidCourseObj->exam_start;
+                    $existingEnd = $existingBidCourseObj->exam_end;
+                    //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
+                    //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+                    if ($courseEnrolledObj->course != $bid->course && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
+                        $errors[] = 'exam timetable clash';
+                        break;
+                    }
+                }
+                    
+            }
         }
 
         //round ended (no active round) JSON
@@ -294,7 +333,8 @@ class BidDAO {
 
         $stmt = null;
         $conn = null;
-
+        //update min bid in round 2
+        
         return $isAddOk;
     }
 
@@ -671,5 +711,17 @@ class BidDAO {
 
         $stmt = null;
         $conn = null;
+    }
+
+    public function bidStatus($bid){
+        $r2BidDAO = new R2BidDAO();
+        $vacancy = $r2BidDAO->getr2bidinfo($bid)->vacancy;
+        $price = $this->getRoundTwoSuccessfullPrice($bid, $vacancy);
+        if ($bid->amount > $price){
+            return 'Successfull';
+        }
+        else{
+            return 'Unsuccessfull. Bid too low';
+        }
     }
 }

@@ -84,7 +84,7 @@ class R2BidDAO{
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        $result = 0;
+        $result = 10;
 
         if ($row = $stmt->fetch()){
             $result = $row['minimum'];
@@ -246,7 +246,7 @@ class R2BidDAO{
         $courseEnrolled_dao =  new CourseEnrolledDAO;
         $bid_dao = new BidDAO();
         $course_dao = new CourseDAO();
-        $section_dap = new SectionDAO();
+        $section_dao = new SectionDAO();
 
         $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
         $bids = $bid_dao->retrieveByUser($bid->userid);
@@ -283,7 +283,7 @@ class R2BidDAO{
         $new_start = $section_bid->start;
         $new_end = $section_bid->end;
         foreach ($coursesEnrolled as $bidObj){
-            $existingBidSectionObj = $sectionDAO->retrieveBySection($bidObj);//existing bid
+            $existingBidSectionObj = $section_dao->retrieveBySection($bidObj);//existing bid
             $existingStart = $existingBidSectionObj->start;
             $existingEnd = $existingBidSectionObj->end;
             if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd)))

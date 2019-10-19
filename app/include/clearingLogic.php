@@ -8,6 +8,7 @@ function roundOneClearing(){
     }
     //clears bid table after clearing
     $bidDAO->deleteAll();
+    roundTwoBidInfo();
 }
 
 function roundOneResolve($courseSection){
@@ -88,7 +89,6 @@ function roundOneResolve($courseSection){
         //delete from bid table
         $bidDAO->drop($failureBid);
     }
-    roundTwoBidInfo();
 }
 
 function roundTwoBidInfo(){
