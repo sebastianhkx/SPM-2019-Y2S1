@@ -73,7 +73,7 @@ class R2BidDAO{
 
     public function getminimunprice($bidobj){
         //this function take in a bid object and return the minimun amount for that section 
-        $sql = 'SELECT MIN(amount) as minimum from bid where course=:course and section=:section order by amount DESC';
+        $sql = 'SELECT min_amount from r2_bid_info where course=:course and section=:section order by min_amount DESC';
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
@@ -87,59 +87,12 @@ class R2BidDAO{
         $result = 10;
 
         if ($row = $stmt->fetch()){
-            $result = $row['minimum'];
+            $result = $row['min_amount'];
         }
         return $result;
     }
 
-    public function updateBidinfo($bidobj){
-        //this function take in a bid object to get total bids for the section with status
-        //output = [[bid_amount1,'status1'],[bid_amount2,status2]]
-        $courseEnrolled_dao =  new CourseEnrolledDAO;
-        $bid_dao = new BidDAO();
-        $r2Bid_info = $this->getr2bidinfo($bidobj);
-        $output = [];
-        //bids have been sorted based on amount in desc
-        $bids = $bid_dao->retrieveByCourseSection([$bidobj->course,$bidobj->section]);
-        $totalbids = count($bids);
-        $count = 0; 
-        if($totalbids <= $r2Bid_info->vacancy){
-            foreach($bids as $bid){
-                $output[] = [$bid->amount,"Successful"];
-            }
-        }
-        if($totalbids == $r2Bid_info->vacancy){
-            $lowestprice = $this->getminimunprice($bidobj);
-            $r2Bid_info->min_amount = $lowestprice + 1;
-        }
-        if($totalbids > $r2Bid_info->vacancy){
-            foreach($bids as $bid){
-                if($bid->amount >= $r2Bid_info->min_amount ){
-                    $state = "Successful";
-                    $count += 1;
-                    $lowestprice = $bid->amount;
-                }
-                elseif($bid->amount == $r2Bid_info->min_amount - 1){
-                    $state = "Unsuccessful";
-                }
-                else{
-                    $state = 'Unsuccessful. Bid too low!';
-                }
-                $output[] = [$bid->amount,$state]; 
-            }
-            if($count == $r2Bid_info->vacancy){
-                $r2Bid_info->min_amount = $lowestprice + 1;
-            }
-            if($count < $r2Bid_info->vacancy){
-                $lowestprice = $output[$r2Bid_info->vacancy - 1][0];
-                $num_morethan_lowest_price = $this-> getBid($lowestprice,$r2Bid_info);
-                if($num_morethan_lowest_price == $r2Bid_info->vacancy){
-                    for($i=$count;$i < $r2Bid_info->vacancy;$i++){
-                        $output[$i][1] = "Successful";
-                    }
-                }
-            }
-        }
+    public function updateBidinfo($r2Bid_info){
 
         //var_dump($result);
         $sql = 'UPDATE r2_bid_info SET min_amount = :min_amount  WHERE course=:course AND section = :section';
@@ -151,7 +104,9 @@ class R2BidDAO{
         $stmt->bindParam(':section', $r2Bid_info->section, PDO::PARAM_STR);
         $stmt->bindParam(':min_amount', $r2Bid_info->min_amount, PDO::PARAM_INT);
 
-        $stmt->execute();
+        $output = $stmt->execute();
+
+        // var_dump($output);
 
         return $output;
     }

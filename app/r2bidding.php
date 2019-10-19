@@ -9,6 +9,7 @@ $bid_dao = new BidDAO();
 $course = '';
 $section = '';
 $errors = '';
+// var_dump($_SESSION);
 if (isset($_SESSION['course'])){
   $course = $_SESSION['course'];
   unset($_SESSION['course']);
