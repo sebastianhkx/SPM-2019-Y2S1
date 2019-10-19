@@ -12,12 +12,10 @@ if (isset($_POST["dropped_section"])){
     //var_dump($_POST["dropped_section"]);
     $drop_sections = $_POST['dropped_section'];
     foreach($drop_sections as $dropsection){
-      // $courseEnrolled = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropsection);
-      // $status = $courseEnrolledDAO->delete($courseEnrolled);
       $errors = $r2bidDAO->r2dropSection($dropsection,$userid);
-      // $result = $resultDAO->retrieveByCourseEnrolled($courseEnrolled);
-      // $resultDAO->delete($result);
-      // $studentDAO->addEdollar($result->userid, $result->amount);
+    }
+    else{
+      $message = $error['message'];
     }
 }
 
@@ -74,12 +72,13 @@ if (!empty($course_enrolled)){
             <th>Exam Start Time</th>
             <th>Exam End Time</th>
             <th>Amount</th>
-            <th>Tick to drop</th>
+            <th>Drop</th>
         </tr>
 <?php
+// var_dump($course_enrolled);
 foreach ($course_enrolled as $course){
     $bid_result = $resultDAO->retrieveByCourseEnrolled($course);
-    //var_dump($bid_result);
+    // var_dump($bid_result);
     $amount = $bid_result->amount;
     echo 
 "
@@ -93,7 +92,7 @@ foreach ($course_enrolled as $course){
             <td>$course->exam_start</td>
             <td>$course->exam_end</td>
             <td>$amount</td>
-            <td> <input type='checkbox' name='dropped_section[]' value=$course->course> </td>
+            <td> <input type='radio' name='dropped_section' value=$course->course> </td>
         </tr>
 ";
 }
@@ -104,7 +103,20 @@ foreach ($course_enrolled as $course){
 </form>
 <?php
 }//closes if (!empty($course_enrolled)){
-echo $display;
+if (isset($message)){
+  // var_dump($message);
+  if ($message == ''){
+    echo "<font color='green'>Bid was dropped successfully!<br>
+            e$ updated</font><br>";
+  }
+  else{
+    echo "<font color='red'>Error!</font><br><ul>";
+      foreach($message as $err) {
+        echo "<font color='red'><li>$err</li></font>";
+      }
+    echo "</ul>";
+  }
+}
 ?>
 </div>
 
