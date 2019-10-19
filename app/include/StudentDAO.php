@@ -15,7 +15,7 @@ class StudentDAO {
         $result = array();
 
         while($row = $stmt->fetch()) {
-            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], (int)$row['edollar']);
+            $result[] = new Student($row['userid'], $row['password'], $row['name'], $row['school'], (float)$row['edollar']);
         }
 
         $stmt = null;
