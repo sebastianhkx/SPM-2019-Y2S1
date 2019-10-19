@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-// require_once '../include/protect.php';
+require_once '../include/protect_json.php';
 
 $bid_dao = new BidDAO();
 $course_dao = new CourseDAO();
