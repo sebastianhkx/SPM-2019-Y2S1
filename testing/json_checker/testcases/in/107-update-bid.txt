@@ -1,4 +1,4 @@
 userid = ben.ng.2009
 amount = 20
-course = IS207
+course = IS103
 section = S1

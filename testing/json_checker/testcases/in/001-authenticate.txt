@@ -1,2 +1,2 @@
-userid = admin
+username = admin
 password = adminbios

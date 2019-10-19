@@ -106,7 +106,7 @@ class RoundStatusDAO {
             return $errors;
         }
         
-        if ($rounds[0]->status == 'started') {
+        if ($rounds[0]->status == 'started' or $rounds[1]->status == 'started') {
             // ends here if round 1 is already active
             return true;
         }

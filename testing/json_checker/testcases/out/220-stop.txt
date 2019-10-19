@@ -1,4 +1,3 @@
 {
- "status": "error",
- "message":["round 2 ended"]
+ "status": "success"
 }
