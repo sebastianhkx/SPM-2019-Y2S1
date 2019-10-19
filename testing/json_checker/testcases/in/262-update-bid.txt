@@ -1,4 +1,0 @@
-userid = ben.ng.2009
-amount = 8.2
-course = IS105
-section = S1
