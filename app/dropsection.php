@@ -4,20 +4,20 @@ require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
 $courseEnrolledDAO = new CourseEnrolledDAO;
-$resultDAO = new ResultDAO();
-$studentDAO = new StudentDAO();
+//$resultDAO = new ResultDAO();
+//$studentDAO = new StudentDAO();
 $r2bidDAO = new R2BidDAO();
 
 if (isset($_POST["dropped_section"])){
     //var_dump($_POST["dropped_section"]);
     $drop_sections = $_POST['dropped_section'];
     foreach($drop_sections as $dropsection){
-      $courseEnrolled = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropsection);
-      $status = $courseEnrolledDAO->delete($courseEnrolled);
-      $r2bidDAO->r2dropSection($courseEnrolled);
-      $result = $resultDAO->retrieveByCourseEnrolled($courseEnrolled);
-      $resultDAO->delete($result);
-      $studentDAO->addEdollar($result->userid, $result->amount);
+      // $courseEnrolled = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropsection);
+      // $status = $courseEnrolledDAO->delete($courseEnrolled);
+      $errors = $r2bidDAO->r2dropSection($dropsection,$userid);
+      // $result = $resultDAO->retrieveByCourseEnrolled($courseEnrolled);
+      // $resultDAO->delete($result);
+      // $studentDAO->addEdollar($result->userid, $result->amount);
     }
 }
 

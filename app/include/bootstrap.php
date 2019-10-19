@@ -341,12 +341,12 @@ function doBootstrap() {
         }
 
         $lines_loaded = [
-                        ["student.csv" => $student_success],
+                        ["bid.csv" => $bid_success],
                         ["course.csv" => $course_success],
-                        ["section.csv" => $section_success],
+                        ["course_completed.csv" => $course_completed_success]
                         ["prerequisite.csv" => $prerequisite_success],
-                        ["course_completed.csv" => $course_completed_success],
-                        ["bid.csv" => $bid_success]
+                        ["section.csv" => $section_success],
+                        ["student.csv" => $student_success],
                         ];
         
         if (!empty($errors)){
