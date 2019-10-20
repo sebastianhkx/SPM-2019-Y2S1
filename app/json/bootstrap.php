@@ -5,6 +5,9 @@ require_once '../include/bootstrap.php';
 //dont need common.php as bootstrap.php already require_once it
 
 $msg = doBootstrap();
+if(empty($msg['error'])){
+    array_pop($msg);
+}
 
 header('Content-Type: application/json');
 echo json_encode($msg, JSON_PRETTY_PRINT);
