@@ -1,0 +1,3 @@
+userid = parker.ng.2009
+course = ECON001
+section = S1

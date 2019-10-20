@@ -1,16 +1,16 @@
 <?php
 require_once '../include/common.php';
-// require_once '../include/protect.php';
+// require_once '../include/protect_json.php';
 
-$errors = [ isMissingOrEmpty ('userid'),
-            isMissingOrEmpty ('course'),
-            isMissingOrEmpty ('section')];
+$errors = [ isMissingOrEmpty ('course'),
+            isMissingOrEmpty ('section'),
+            isMissingOrEmpty ('userid')];
 $errors = array_filter($errors);
 
 if (!isEmpty($errors)) {
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 

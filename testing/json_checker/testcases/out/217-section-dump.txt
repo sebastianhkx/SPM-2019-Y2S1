@@ -1,0 +1,37 @@
+{
+    "status": "success",
+    "students": [
+        {
+            "userid": "ben.ng.2012",
+            "amount": 11.0,
+        },
+        {
+            "userid": "calvin.ng.2012",
+            "amount": 12.0,
+        },
+        {
+            "userid": "dawn.ng.2012",
+            "amount": 13.0,
+        },
+        {
+            "userid": "fred.ng.2012",
+            "amount": 16.0,
+        },
+        {
+            "userid": "harry.ng.2012",
+            "amount": 18.0,
+        },
+        {
+            "userid": "ian.ng.2012",
+            "amount": 17.0,
+        },
+        {
+            "userid": "kelly.ng.2012",
+            "amount": 15.0,
+        },
+        {
+            "userid": "olivia.ng.2012",
+            "amount": 19.0
+        }
+    ]
+}

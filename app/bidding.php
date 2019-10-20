@@ -42,6 +42,7 @@ if (isset($_POST['submitbid'])) {
       <li><a href="home.php">Home</a></li>
       <li class="active"><a href="bidding.php">Bidding</a></li>
       <li><a href='dropbid.php'>Drop Bid</a></li>
+      <li><a href='dropsection.php'>Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
     </ul>
   </div>
@@ -110,7 +111,7 @@ if (isset($_POST['submitbid'])) {
           <td>$bid->amount</td>
           <td>$bid->course</td>
           <td>$bid->section</td>
-          <td>Placeholder</td>
+          <td>Pending</td>
       </tr>";
   }
 

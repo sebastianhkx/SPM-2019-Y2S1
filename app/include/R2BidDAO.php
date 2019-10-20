@@ -73,7 +73,7 @@ class R2BidDAO{
 
     public function getminimunprice($bidobj){
         //this function take in a bid object and return the minimun amount for that section 
-        $sql = 'SELECT MIN(amount) as minimum from bid where course=:course and section=:section order by amount DESC';
+        $sql = 'SELECT min_amount from r2_bid_info where course=:course and section=:section order by min_amount DESC';
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
@@ -84,62 +84,15 @@ class R2BidDAO{
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
 
-        $result = 0;
+        $result = 10;
 
         if ($row = $stmt->fetch()){
-            $result = $row['minimum'];
+            $result = $row['min_amount'];
         }
         return $result;
     }
 
-    public function updateBidinfo($bidobj){
-        //this function take in a bid object to get total bids for the section with status
-        //output = [[bid_amount1,'status1'],[bid_amount2,status2]]
-        $courseEnrolled_dao =  new CourseEnrolledDAO;
-        $bid_dao = new BidDAO();
-        $r2Bid_info = $this->getr2bidinfo($bidobj);
-        $output = [];
-        //bids have been sorted based on amount in desc
-        $bids = $bid_dao->retrieveByCourseSection([$bidobj->course,$bidobj->section]);
-        $totalbids = count($bids);
-        $count = 0; 
-        if($totalbids <= $r2Bid_info->vacancy){
-            foreach($bids as $bid){
-                $output[] = [$bid->amount,"Successful"];
-            }
-        }
-        if($totalbids == $r2Bid_info->vacancy){
-            $lowestprice = $this->getminimunprice($bidobj);
-            $r2Bid_info->min_amount = $lowestprice + 1;
-        }
-        if($totalbids > $r2Bid_info->vacancy){
-            foreach($bids as $bid){
-                if($bid->amount >= $r2Bid_info->min_amount ){
-                    $state = "Successful";
-                    $count += 1;
-                    $lowestprice = $bid->amount;
-                }
-                elseif($bid->amount == $r2Bid_info->min_amount - 1){
-                    $state = "Unsuccessful";
-                }
-                else{
-                    $state = 'Unsuccessful. Bid too low!';
-                }
-                $output[] = [$bid->amount,$state]; 
-            }
-            if($count == $r2Bid_info->vacancy){
-                $r2Bid_info->min_amount = $lowestprice + 1;
-            }
-            if($count < $r2Bid_info->vacancy){
-                $lowestprice = $output[$r2Bid_info->vacancy - 1][0];
-                $num_morethan_lowest_price = $this-> getBid($lowestprice,$r2Bid_info);
-                if($num_morethan_lowest_price == $r2Bid_info->vacancy){
-                    for($i=$count;$i < $r2Bid_info->vacancy;$i++){
-                        $output[$i][1] = "Successful";
-                    }
-                }
-            }
-        }
+    public function updateBidinfo($r2Bid_info){
 
         //var_dump($result);
         $sql = 'UPDATE r2_bid_info SET min_amount = :min_amount  WHERE course=:course AND section = :section';
@@ -151,7 +104,9 @@ class R2BidDAO{
         $stmt->bindParam(':section', $r2Bid_info->section, PDO::PARAM_STR);
         $stmt->bindParam(':min_amount', $r2Bid_info->min_amount, PDO::PARAM_INT);
 
-        $stmt->execute();
+        $output = $stmt->execute();
+
+        // var_dump($output);
 
         return $output;
     }
@@ -245,19 +200,60 @@ class R2BidDAO{
         //this function take in a bid object to check number of course enrolled
         $courseEnrolled_dao =  new CourseEnrolledDAO;
         $bid_dao = new BidDAO();
+        $course_dao = new CourseDAO();
+        $section_dao = new SectionDAO();
+
         $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
         $bids = $bid_dao->retrieveByUser($bid->userid);
         $errors = [];
         $availablebid = 5 - sizeof($coursesEnrolled);
+
         if(sizeof($coursesEnrolled) == 5){
-            $errors[] = 'More than 5 courses enrolled';
+            $errors[] = 'more than 5 courses enrolled';
         }
+
         if(empty($errors) && $availablebid == sizeof($bids)){
-            $errors[] = 'Section limit reached';
+            $errors[] = 'section limit reached';
         }
+
+        //check class time table and exam timetable for current bid and course enrolled
+        //exam clash
+        $course_bid = $course_dao->retrieveByCourseId($bid->course);
+        $new_start = $course_bid->exam_start;
+        $new_end = $course_bid->exam_end;
+        foreach ($coursesEnrolled as $bidObj){
+            $existingBidCourseObj = $course_dao->retrieveByCourseId($bidObj->course);
+            $existingStart = $existingBidCourseObj->exam_start;
+            $existingEnd = $existingBidCourseObj->exam_end;
+            //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
+            //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+            if ($bidObj->course != $bid->course && $course_bid->exam_date == $existingBidCourseObj->exam_date && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd))){
+                $errors[] = 'exam timetable clash';
+                break;
+            }
+        }
+
+        //class clash
+        $section_bid = $section_dao->retrieveBySection($bid);
+        $new_start = $section_bid->start;
+        $new_end = $section_bid->end;
+        foreach ($coursesEnrolled as $bidObj){
+            $existingBidSectionObj = $section_dao->retrieveBySection($bidObj);//existing bid
+            $existingStart = $existingBidSectionObj->start;
+            $existingEnd = $existingBidSectionObj->end;
+            if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd)))
+                //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
+                //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+                $errors[] = 'class timetable clash';
+                break;
+        }
+
+
+
         if (empty($errors)){
             $errors = $bid_dao->add($bid);
         }
+
         return $errors;
     }
 

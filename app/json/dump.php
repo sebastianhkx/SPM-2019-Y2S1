@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-// require_once '../include/protect.php';
+// require_once '../include/protect_json.php';
 
 $bid_dao = new BidDAO();
 $course_dao = new CourseDAO();
@@ -13,14 +13,12 @@ $round_status_dao = new RoundStatusDAO();
 $section_dao = new SectionDAO();
 $student_dao = new StudentDAO();
 
-// var_dump($course_dao->retrieveAll());
-
 // if ( $student != null ) { 
     $result = ["status" => "success", 
                 "course" => $course_dao->retrieveAll(),
                 "section" => $section_dao->retrieveAll(),
                 "student" => $student_dao->retrieveAll(),
-                // "prerequisite" => $prerequisite_dao->retrieveAll(),
+                "prerequisite" => $prerequisite_dao->retrieveAll(),
                 "completed-course" => $course_completed_dao->retrieveAll()
             ];
 // } 
