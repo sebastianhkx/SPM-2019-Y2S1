@@ -127,11 +127,11 @@ class R2BidDAO{
         $conn = null; 
     }
 
-    public function r2dropSection($drop_section,$userid){
+    public function r2dropSection($userid,$drop_course,$drop_section){
         //this function take in a section object to reset the vacancy for that section
-        $errors = [];
+        $errors = null;
         $courseEnrolled_dao = new CourseEnrolledDAO();
-        $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_section);
+        $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_course);
 
         //check userid exist
         $student_dao = new StudentDAO();
@@ -149,14 +149,14 @@ class R2BidDAO{
 
         //course code not exist
         $course_dao = new CourseDAO();
-        $course = $course_dao->retrieveByCourseId($drop_section);
+        $course = $course_dao->retrieveByCourseId($drop_course);
         if($course == null){
             $errors[] = "invalid course";
         }
         else{
             //check section exist
             $section_dao = new SectionDAO();
-            $section = $section_dao -> retrieveSection($drop_section,$course_enrolled->section);
+            $section = $section_dao -> retrieveSection($drop_course,$drop_section);
             if($section == null){
                 $errors[] = "invalid section";
             }

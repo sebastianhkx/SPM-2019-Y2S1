@@ -152,7 +152,7 @@ class BidDAO {
             }
         }
 
-        //retrieves list of current bids
+        //retrieves list of current bids //round 1
         $bidObj_array = $this->retrieveByUser($bid->userid);
         if (!empty($bidObj_array)){
             //has existing bids, does not enter if there are no existing bids as it would be unnecessary to check
@@ -243,7 +243,7 @@ class BidDAO {
         $courseEnrolledDAO = new CourseEnrolledDAO();
         if ($courseEnrolledDAO->retrieveByUseridCourse($bid->userid, $bid->course)!=null){
             $errors[] = 'course enrolled';
-
+        }
             //check for timetable and exam clash against enrolled
             $courseEnrolledObj_array = $courseEnrolledDAO->retrieveByUserid($bid->userid);
             if (!empty($courseEnrolledObj_array)){
@@ -281,7 +281,7 @@ class BidDAO {
                 }
                     
             }
-        }
+        
 
         //round ended (no active round) JSON
         if ($current_round==null){
