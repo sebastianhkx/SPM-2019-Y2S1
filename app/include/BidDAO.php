@@ -335,19 +335,21 @@ class BidDAO {
         $stmt = null;
         $conn = null;
         //update min bid in round 2
-        $r2BidDAO = new R2BidDAO();
-        $r2Info = $r2BidDAO->getr2bidinfo($bid);
-        $vacancy = $r2Info->vacancy;
-        $oldMin = $r2Info->min_amount;
-        $newMin = $this->getRoundTwoSuccessfullPrice($bid, $vacancy-1)+1;
-        // var_dump($newMin,'new', $oldMin);
-        // var_dump('test', 10>'15');
-        if ($newMin > $oldMin){
-            $bidInfoObj = new R2Bid($bid->course, $bid->section, $newMin, $vacancy);
-            // var_dump($bidInfoObj);
-            $r2BidDAO->updateBidinfo($bidInfoObj);
+        //if current round is 2
+        if($current_round->round_num == 2){
+            $r2BidDAO = new R2BidDAO();
+            $r2Info = $r2BidDAO->getr2bidinfo($bid);
+            $vacancy = $r2Info->vacancy;
+            $oldMin = $r2Info->min_amount;
+            $newMin = $this->getRoundTwoSuccessfullPrice($bid, $vacancy-1)+1;
+            // var_dump($newMin,'new', $oldMin);
+            // var_dump('test', 10>'15');
+            if ($newMin > $oldMin){
+                $bidInfoObj = new R2Bid($bid->course, $bid->section, $newMin, $vacancy);
+                // var_dump($bidInfoObj);
+                $r2BidDAO->updateBidinfo($bidInfoObj);
+            }
         }
-        
         return $isAddOk;
     }
 
