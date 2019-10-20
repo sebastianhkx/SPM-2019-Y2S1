@@ -346,17 +346,15 @@ function doBootstrap() {
                         ["course_completed.csv" => $course_completed_success],
                         ["prerequisite.csv" => $prerequisite_success],
                         ["section.csv" => $section_success],
-                        ["student.csv" => $student_success],
+                        ["student.csv" => $student_success]
                         ];
         
-        if (!empty($errors)){
-            $status = 'error';  
+        if (!empty($errors)) {
+            return ['status'=>'error', 'num-record-loaded'=>$lines_loaded, 'error'=>$errors];
         }
-        else{
-            $status = 'success';
+        else {
+            return ['status'=>'success', 'num-record-loaded'=>$lines_loaded];
         }
-
-        return ['status'=>$status, 'num-record-loaded'=>$lines_loaded, 'error'=>$errors];  
     }
 
 
