@@ -24,12 +24,12 @@ else {
     $r2bid_dao = new R2BidDAO();
     $courseEnrolled_dao = new CourseEnrolledDAO;
     // $courseEnrolled = $courseEnrolled_dao->retrieveByUseridCourse($userid, $course);
-    $drop_section = $r2bid_dao->r2dropSection($course,$userid);
+    $drop_bid = $r2bid_dao->r2dropSection($userid,$course,$section);
 
     if (is_array($drop_bid)) { 
         $result = [
             "status"=>"error",
-            "message" => $drop_section
+            "message" => $drop_bid
         ];
     }
     
