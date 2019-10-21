@@ -14,7 +14,28 @@ class Student {
         $this->school = $school;
         $this->edollar = $edollar;
     }
-    
+
+    public function getUserid(){
+        return $this->userid;
+    }
+
+    public function getPassword(){
+        return $this->password;
+    }
+    public function getName(){
+        return $this->name;
+    }
+    public function getSchool(){
+        return $this->school;
+    }
+    public function getEdollar(){
+        return $this->edollar;
+    }
+
+    public function getEdollarJSON(){
+        return number_format($this->edollar,1);
+}
+
     public function authenticate($enteredPwd) {
         return password_verify($enteredPwd, $this->password);
     }
