@@ -28,7 +28,7 @@ SampleData(3).zip errors
 -row 5: 'invalid start'[Not a time value];
 -row 6: 'invalid instructor' [exceed 100 characters];
 -row 7: 'invalid venue'[exceed 100 characters];
--row 8: 'invalid start'[start time is later than end time];
+-row 8: 'invalid end'[start time is later than end time];
 -row 9:'invalid size'[negative value];
 -row 10: 'invalid day'[incorrect format];
 -row 16: 'blank course','blank section','blank instructor';
@@ -59,19 +59,20 @@ SampleData(6).zip error:
 -row 6: 'blank code','blank section';
 -row 7: 'invalid amount'[amount less than 10];
 -row 8: 'invalid amount'[negative amount];
--row 23: 'invalid section'[not found in section.csv];
--row 24:'invalid userid'[not found in student.csv];
+-row 14: 'invalid section'[not found in section.csv];
+-row 15:'invalid userid'[not found in student.csv];
 row successfully loaded for bid.csv:  8
 
 bid.csv:
 SampleData(7).zip error:
--row 31: 'section limit reached'[same user has more than 5bids];
 -row 2: 'course completed';
 -row 4: 'class tiemtable clash' [clash with row 3];-check
--row 10: 'exam timetable clash' [clash with row 9];-check
--row 16: 'incomplete prerequisite';
--row 18: 'not enough e-dollar';
--row 32: 'incomplete prerequisite';
+-row 10: 'exam timetable clash' [clash with row 9];
+-row 12: 'invalid amount'[more than 2 decial point];
+-row 16: 'incomplete prerequisite','not own school';
+-row 17: 'not enough e-dollar', 'not own school';
+-row 23: 'section limit reached'[same user has more than 5bids];
+-row 24: 'incomplete prerequisite';
 row successfully loaded for bid.csv:15
 
 

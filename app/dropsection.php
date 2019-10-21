@@ -4,24 +4,38 @@ require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
 $courseEnrolledDAO = new CourseEnrolledDAO;
-$resultDAO = new ResultDAO();
-$studentDAO = new StudentDAO();
 $r2bidDAO = new R2BidDAO();
+
+$page = "";
+$message = "";
+
+//check round number
+$roundstatus_dao = new RoundStatusDAO();
+$round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+if($round_status != null){
+
+  if($round_status->round_num == 1){
+    $page = "bidding.php";
+    $message =  "no course enrolled!";
+  }
+  else{
+    $page = "r2bidding.php";
+  }
+  $round_active = TRUE;
+
+}
+else{
+  $message =  "round not active";
+  $round_active = FALSE;
+}
 
 if (isset($_POST["dropped_section"])){
     //var_dump($_POST["dropped_section"]);
-  $dropsection = $_POST['dropped_section'];
-    $courseEnrolled = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropsection);
-    $error = $courseEnrolledDAO->delete($courseEnrolled);
-    $message = '';
-    // var_dump($error);
-    if ($error['status']=='success'){
-      $r2bidDAO->r2dropSection($courseEnrolled);
-      $result = $resultDAO->retrieveByCourseEnrolled($courseEnrolled);
-      $studentDAO->addEdollar($result->userid, $result->amount);
-    }
-    else{
-      $message = $error['message'];
+    $drop_courses = $_POST['dropped_section'];
+    $errors = [];
+    foreach($drop_courses as $dropcourse){
+      $section = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropcourse);
+      $errors[] = $r2bidDAO->r2dropSection($userid,$dropcourse,$section->section);
     }
 }
 
@@ -44,8 +58,7 @@ if (isset($_POST["dropped_section"])){
     </div>
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
-
-      <li><a href="r2bidding.php">Bidding</a></li>
+      <li><a href=<?=$page?>>Bidding</a></li>
       <li><a href='dropbid.php'>Drop Bid</a></li>
       <li class="active"><a href="#">Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
@@ -62,9 +75,9 @@ $course_enrolled = $courseEnrolledDAO->retrieveByUserid($_SESSION['userid']);
 //var_dump($_SESSION);
 $resultDAO = new ResultDAO;
 
-$display = "No course enrolled!";
-if (!empty($course_enrolled)){
-  $display = "";
+$message =  "no course enrolled!";
+if (!empty($course_enrolled) && $round_active){
+  $message = "";
 ?>
 <form method='post' action='dropsection.php'>
     <table border='2'>
@@ -98,7 +111,7 @@ foreach ($course_enrolled as $course){
             <td>$course->exam_start</td>
             <td>$course->exam_end</td>
             <td>$amount</td>
-            <td> <input type='radio' name='dropped_section' value=$course->course> </td>
+            <td> <input type='radio' name='dropped_section[]' value={$course->course}> </td>
         </tr>
 ";
 }
@@ -109,19 +122,22 @@ foreach ($course_enrolled as $course){
 </form>
 <?php
 }//closes if (!empty($course_enrolled)){
-if (isset($message)){
+if (isset($errors) && $round_active){
   // var_dump($message);
-  if ($message == ''){
+  if (is_array($errors)){
     echo "<font color='green'>Bid was dropped successfully!<br>
             e$ updated</font><br>";
   }
   else{
     echo "<font color='red'>Error!</font><br><ul>";
-      foreach($message as $err) {
+      foreach($errors as $err) {
         echo "<font color='red'><li>$err</li></font>";
       }
     echo "</ul>";
   }
+}
+else{
+  echo "<font color='red'>$message</font><br><ul>";
 }
 ?>
 </div>

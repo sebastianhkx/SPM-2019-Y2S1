@@ -127,8 +127,60 @@ class R2BidDAO{
         $conn = null; 
     }
 
-    public function r2dropSection($sectionobj){
+    public function r2dropSection($userid,$drop_course,$drop_section){
         //this function take in a section object to reset the vacancy for that section
+        $errors = null;
+        $courseEnrolled_dao = new CourseEnrolledDAO();
+        $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_course);
+
+        //check userid exist
+        $student_dao = new StudentDAO();
+        $student = $student_dao->retrieve($userid);
+        if(empty($student)){
+            $errors[] = "invalid userid";
+        }
+
+        //check if round active
+        $round_dao = new RoundStatusDAO();
+        $round = $round_dao->retrieveCurrentActiveRound();
+        if($round == null){
+            $errors[] = 'round not active';
+        }
+
+        //course code not exist
+        $course_dao = new CourseDAO();
+        $course = $course_dao->retrieveByCourseId($drop_course);
+        if($course == null){
+            $errors[] = "invalid course";
+        }
+        else{
+            //check section exist
+            $section_dao = new SectionDAO();
+            $section = $section_dao -> retrieveSection($drop_course,$drop_section);
+            if($section == null){
+                $errors[] = "invalid section";
+            }
+        }
+
+        //not exist
+        // $courseEnrolled_dao = new CourseEnrolledDAO();
+        // $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($sectionobj->userid,$section->course);
+        if(empty($course_enrolled)){
+            $errors[] = "no such enrollment record";
+        }
+
+        if(!empty($errors)){
+            return $errors;
+        }
+
+        $courseEnrolled_dao -> delete($course_enrolled);
+        $result_dao = new ResultDAO();
+        $student_dao = new StudentDAO();
+        $result = $result_dao->retrieveByCourseEnrolled($course_enrolled);
+        $result_dao->delete($result);
+        $student_dao->addEdollar($result->userid, $result->amount);
+
+
         $sql = 'UPDATE r2_bid_info SET vacancy = vacancy + 1 WHERE course=:course AND section = :section';
         $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
@@ -247,8 +299,6 @@ class R2BidDAO{
                 $errors[] = 'class timetable clash';
                 break;
         }
-
-
 
         if (empty($errors)){
             $errors = $bid_dao->add($bid);

@@ -1,43 +1,39 @@
 <?php
 require_once '../include/common.php';
-// require_once '../include/protect.php';
+require_once '../include/protect_json.php';
 
-$errors = [ isMissingOrEmpty ('userid'),
-            isMissingOrEmpty ('amount'),
+$errors = [ 
             isMissingOrEmpty ('course'),
+            isMissingOrEmpty ('userid'),
             isMissingOrEmpty ('section')];
+            
 $errors = array_filter($errors);
 
 if (!isEmpty($errors)) {
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 
 else {
     $userid = $_REQUEST['userid'];
-    $amount = $_REQUEST['amount'];
     $course = $_REQUEST['course'];
     $section = $_REQUEST['section'];
 
-    $bid_dao = new BidDAO();
     $r2bid_dao = new R2BidDAO();
-    $bidded = new Bid($userid, $amount, $course, $section);
-    // $update_bid = $bid_dao->add($bidded);
-    $update_bid = $r2bid_dao->checkCourseEnrolled($bidded);
-    $errors = $r2bid_dao->checkBidsStatus([$bidded]);
-    
-    if (is_array($update_bid) || ) { 
+    $courseEnrolled_dao = new CourseEnrolledDAO;
+    // $courseEnrolled = $courseEnrolled_dao->retrieveByUseridCourse($userid, $course);
+    $drop_bid = $r2bid_dao->r2dropSection($userid,$course,$section);
 
+    if (is_array($drop_bid)) { 
         $result = [
             "status"=>"error",
-            "message" => $update_bid
+            "message" => $drop_bid
         ];
     }
     
     else {
-
         $result = [
             "status" => "success"
         ];

@@ -1,6 +1,17 @@
 <?php
     require_once 'include/common.php';
     require_once 'include/protect.php';
+    $page ="bidding.php";
+    $roundstatus_dao = new RoundStatusDAO();
+    $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+    if($round_status != null){
+        if($round_status->round_num == 1){
+            $page = "bidding.php";
+        }
+        else{
+            $page = "r2bidding.php";
+        }
+    }
 ?>
 <html>
     <style>
@@ -26,7 +37,7 @@
     </div>
     <ul class="nav navbar-nav">
       <li><a href="home.php">Home</a></li>
-      <li><a href="bidding.php">Bidding</a></li>
+      <li><a href=<?=$page?>>Bidding</a></li>
       <li class="active"><a href='dropbid.php'>Drop Bid</a></li>
       <li><a href='dropsection.php'>Drop Section</a></li>
       <li><a href='logout.php'>Log Out</a></li>
@@ -93,7 +104,6 @@
             <th>Amount</th>
             <th>Course</th>
             <th>Section</th>
-            <th>Status</th>
         </tr>";
   
     for ($i = 1; $i <= count($bids); $i++) {
@@ -105,7 +115,6 @@
             <td>$bid->amount</td>
             <td>$bid->course</td>
             <td>$bid->section</td>
-            <td>Placeholder</td>
         </tr>";
     }
   
