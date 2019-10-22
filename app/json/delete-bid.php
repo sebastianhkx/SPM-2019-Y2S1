@@ -4,9 +4,9 @@ require_once '../include/common.php';
 
 $input = JSON_DECODE($_REQUEST['r'],true);
 
-$errors = [ isMissingOrEmpty ($input, 'course'),
-            isMissingOrEmpty ($input, 'section'),
-            isMissingOrEmpty ($input, 'userid')];
+$errors = [ isMissingOrEmptyJson ($input, 'course'),
+            isMissingOrEmptyJson ($input, 'section'),
+            isMissingOrEmptyJson ($input, 'userid')];
 $errors = array_filter($errors);
 
 if (!isEmpty($errors)) {

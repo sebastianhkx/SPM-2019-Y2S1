@@ -33,13 +33,25 @@ session_start();
 // }
 
 
-function isMissingOrEmpty($input, $name) {
+function isMissingOrEmptyJson($input, $name) {
     if (!isset($input[$name])) {
         return "missing $name";
     }
 
     // client did send the value over
     $value = $input[$name];
+    if (empty($value)) {
+        return "blank $name";
+    }
+}
+
+function isMissingOrEmpty($name) {
+    if (!isset($_REQUEST[$name])) {
+        return "missing $name";
+    }
+
+    // client did send the value over
+    $value = $_REQUEST[$name];
     if (empty($value)) {
         return "blank $name";
     }
