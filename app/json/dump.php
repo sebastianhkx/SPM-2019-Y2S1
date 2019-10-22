@@ -62,7 +62,7 @@ foreach($student_dao->retrieveAll() as $one_student){
 $bidDisplay=[];
 $round_status=$round_status_dao->retrieveall();
 foreach($round_status as $one_status){
-    if(($one_status->round_num='1' && $one_status->status=="started") || $one_status->round_num='2' && $one_status->status=="started"){
+    if(($one_status->round_num='1' && $one_status->status=="started") || ($one_status->round_num='2' && $one_status->status=="started")){
         foreach($bid_dao->retrieveAll()as $one_bid){
             $bidDisplay[]=[
                 "userid"=>$one_bid->getuserid(),
