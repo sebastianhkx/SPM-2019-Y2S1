@@ -4,6 +4,7 @@ class CourseEnrolled {
     public $userid;
     public $course;
     public $section;
+    public $amount;
 
     public $day;
     public $start;
@@ -14,10 +15,11 @@ class CourseEnrolled {
     public $exam_end;
 
     
-    public function __construct($userid, $course, $section, $day, $start, $end, $exam_date, $exam_start, $exam_end) {
+    public function __construct($userid, $course, $section, $amount, $day, $start, $end, $exam_date, $exam_start, $exam_end) {
         $this->userid = $userid;
         $this->course = $course;
         $this->section = $section;
+        $this->amount = $amount;
 
         $this->day = $day;
         $this->start = $start;

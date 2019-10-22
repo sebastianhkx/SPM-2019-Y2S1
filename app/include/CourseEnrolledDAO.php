@@ -3,7 +3,7 @@
 class CourseEnrolledDAO {
 
     public function add($course_enrolled) {
-        $sql = "INSERT IGNORE INTO course_enrolled(userid, course, section, day, start, end, exam_date, exam_start, exam_end) values(:userid, :course, :section, :day, :start, :end, :exam_date, :exam_start, :exam_end)";
+        $sql = "INSERT IGNORE INTO course_enrolled(userid, course, section, amount, day, start, end, exam_date, exam_start, exam_end) values(:userid, :course, :section, :amount, :day, :start, :end, :exam_date, :exam_start, :exam_end)";
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -12,6 +12,7 @@ class CourseEnrolledDAO {
         $stmt->bindParam(':userid', $course_enrolled->userid, PDO::PARAM_STR);
         $stmt->bindParam(':course', $course_enrolled->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $course_enrolled->section, PDO::PARAM_STR);
+        $stmt->bindParam(':amount', $course_enrolled->amount, PDO::PARAM_INT);
         $stmt->bindParam(':day', $course_enrolled->day, PDO::PARAM_INT);
         $stmt->bindParam(':start', $course_enrolled->start, PDO::PARAM_STR);
         $stmt->bindParam(':end', $course_enrolled->userid, PDO::PARAM_STR);
@@ -41,7 +42,7 @@ class CourseEnrolledDAO {
         $result = [];
 
         while($row = $stmt->fetch()){
-            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'],$row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         return $result;
     }
@@ -61,7 +62,7 @@ class CourseEnrolledDAO {
         $result = null;
 
         while($row = $stmt->fetch()){
-            $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+            $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         return $result;
     }
@@ -152,7 +153,7 @@ class CourseEnrolledDAO {
         $result = null;
 
         while($row = $stmt->fetch()){
-            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
+            $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
         return $result;
     }

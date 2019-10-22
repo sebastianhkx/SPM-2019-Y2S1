@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `course_enrolled` (
   `userid` varchar(50) NOT NULL,
   `course` varchar(10) NOT NULL,
   `section` varchar(3) NOT NULL,
+  `amount` int(5) NOT NULL,
   `day` int(1) NOT NULL,
   `start` time NOT NULL,
   `end` time NOT NULL,
