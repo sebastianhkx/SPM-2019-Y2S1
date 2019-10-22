@@ -1,0 +1,8 @@
+{
+    "status": "success",
+    "userid": "ben.ng.2009",
+    "password": "$2y$10$VARk8IksDgqLNWaynBqMKe44XOqyPj7HWe5l94u0Zi9Um95vxD32K",
+    "name": "Ben NG",
+    "school": "SIS",
+    "edollar": "189"
+}

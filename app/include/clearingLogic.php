@@ -72,7 +72,7 @@ function roundOneResolve($courseSection){
         $resultObj = new Result($successBid->userid, $successBid->amount, $successBid->course, $successBid->section, 'success', 1);
         $sectionObj = $sectionDAO->retrieveBySection($successBid);
         $courseObj = $courseDAO->retrieveByCourseId($successBid->course);
-        $courseEnrolledObj = new CourseEnrolled($successBid->userid, $successBid->course, $successBid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
+        $courseEnrolledObj = new CourseEnrolled($successBid->userid, $successBid->course, $successBid->section, $successBid->amount, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
         //add to bidresults
         $resultDAO->add($resultObj);
         //add to course_enrolled
@@ -153,7 +153,7 @@ function roundTwoResolve($courseSection){
         $resultObj = new Result($success_bid->userid, $success_bid->amount, $success_bid->course, $success_bid->section, 'success', 2);
         $sectionObj = $sectionDAO->retrieveBySection($success_bid);
         $courseObj = $courseDAO->retrieveByCourseId($success_bid->course);
-        $courseEnrolledObj = new CourseEnrolled($success_bid->userid, $success_bid->course, $success_bid->section, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
+        $courseEnrolledObj = new CourseEnrolled($success_bid->userid, $success_bid->course, $success_bid->section, $success_bid->amount, $sectionObj->day, $sectionObj->start, $sectionObj->end, $courseObj->exam_date, $courseObj->exam_start, $courseObj->exam_end);
         //add to bidresults
         $resultDAO->add($resultObj);
         //add to course_enrolled
