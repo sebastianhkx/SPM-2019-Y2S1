@@ -111,7 +111,11 @@ class StudentDAO {
         $conn = $connMgr->getConnection();
         $stmt = $conn->prepare($sql);
 
-        $student->password = password_hash($student->password, PASSWORD_DEFAULT);
+        // $student->password = password_hash($student->password, PASSWORD_DEFAULT);
+
+        ## Non hashed student password
+        $student->password = $student->password;
+
 
         $stmt->bindParam(':userid', $student->userid, PDO::PARAM_STR);
         $stmt->bindParam(':password', $student->password, PDO::PARAM_STR);

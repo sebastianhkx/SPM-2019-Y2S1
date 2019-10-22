@@ -2,10 +2,13 @@
 require_once '../include/common.php';
 // require_once '../include/protect_json.php';
 
-$errors = [ isMissingOrEmpty ('amount'),
-            isMissingOrEmpty ('course'),
-            isMissingOrEmpty ('section'),
-            isMissingOrEmpty ('userid')
+$input = JSON_DECODE($_REQUEST['r'], true);
+// var_dump($input);
+
+$errors = [ isMissingOrEmpty ($input, 'amount'),
+            isMissingOrEmpty ($input, 'course'),
+            isMissingOrEmpty ($input, 'section'),
+            isMissingOrEmpty ($input, 'userid')
             ];
 $errors = array_filter($errors);
 
@@ -17,10 +20,10 @@ if (!isEmpty($errors)) {
 }
 
 else {
-    $userid = $_REQUEST['userid'];
-    $amount = $_REQUEST['amount'];
-    $course = $_REQUEST['course'];
-    $section = $_REQUEST['section'];
+    $userid = $input['userid'];
+    $amount = $input['amount'];
+    $course = $input['course'];
+    $section = $input['section'];
 
     $bid_dao = new BidDAO();
     $bidded = new Bid($userid, $amount, $course, $section);
