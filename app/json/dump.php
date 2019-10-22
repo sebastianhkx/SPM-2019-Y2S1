@@ -14,6 +14,7 @@ $section_dao = new SectionDAO();
 $student_dao = new StudentDAO();
 
 
+
 //$new_result = [];
 
 
@@ -57,15 +58,73 @@ foreach($student_dao->retrieveAll() as $one_student){
 }
 
 
+
+$bidDisplay=[];
+$round_status=$round_status_dao->retrieveall();
+foreach($round_status as $one_status){
+    if(($one_status->round_num='1' && $one_status->status=="started") || $one_status->round_num='2' && $one_status->status=="started"){
+        foreach($bid_dao->retrieveAll()as $one_bid){
+            $bidDisplay[]=[
+                "userid"=>$one_bid->getuserid(),
+                "amount"=>$one_bid->getAmountJSON(),
+                "course"=>$one_bid->getCourse(),
+                "section"=>$one_bid->getSection()
+            ];
+        }
+    }
+    else{
+        foreach($result_dao->retrieveall() as $one_result){
+            $bidDisplay[]=[
+                "userid"=>$one_result->getUserid(),
+                "course"=>$one_result->getCourse(),
+                "section"=>$one_result->getSection(),
+                "amount"=>$one_result->getAmountJSON()
+            ];
+        }
+    }
+}
+
+
+
+$section_studentDisplay=[];
+$round_status=$round_status_dao->retrieveall();
+foreach($round_status as $one_status){
+    if($one_status->round_num=="1"){
+        if($one_status->status="ended"){
+            foreach($result_dao->retrieveall() as $one_result){
+                $section_studentDisplay[]=[
+                    "userid"=>$one_result->getUserid(),
+                    "course"=>$one_result->getCourse(),
+                    "section"=>$one_result->getSection(),
+                    "amount"=>$one_result->getAmountJSON()
+                ];
+            }
+        }
+        else{
+            $section_studentDisplay=[];
+        }
+    }
+    elseif($one_status->round_num=='2'){
+        foreach($result_dao->retrieveall() as $one_result){
+            $section_studentDisplay[]=[
+                "userid"=>$one_result->getUserid(),
+                "course"=>$one_result->getCourse(),
+                "section"=>$one_result->getSection(),
+                "amount"=>$one_result->getAmountJSON()
+            ];
+        }
+    }
+}
+
 // if ( $student != null ) { 
     $result = ["status" => "success", 
                 "course"=> $courseDisplay,
                 "section"=> $sectionDisplay,
                 "student"=>$studentDisplay,
                 "prerequisite" => $prerequisite_dao->retrieveAll(),
-                "Bid"=>$bid_dao->retrieveAll(),
-                "completed-course" => $course_completed_dao->retrieveAll()
-                //"section-student"=>
+                "Bid"=>$bidDisplay,
+                "completed-course" => $course_completed_dao->retrieveAll(),
+                "section-student"=>$section_studentDisplay
             ];
 // } 
 
@@ -117,7 +176,4 @@ foreach($student_dao->retrieveAll() as $one_student){
   header('Content-Type: application/json');
   echo json_encode($result, JSON_PRETTY_PRINT);
  
-
-
-
 ?>
