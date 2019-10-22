@@ -36,8 +36,15 @@ class Student {
         return number_format($this->edollar,1);
 }
 
+    ## Hashed pw auth
+    // public function authenticate($enteredPwd) {
+    //     return password_verify($enteredPwd, $this->password);
+    // }
+
     public function authenticate($enteredPwd) {
-        return password_verify($enteredPwd, $this->password);
+        if ($enteredPwd === $this->password) {
+            return TRUE;
+        }
     }
 }
 

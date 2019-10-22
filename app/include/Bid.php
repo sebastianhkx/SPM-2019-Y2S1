@@ -12,6 +12,18 @@ class Bid {
         $this->course = $course;
         $this->section = $section;
     }
+    public function getUserid(){
+        return $this->userid;
+    }
+    public function getCourse(){
+        return $this->course;
+    }
+    public function getSection(){
+        return $this->section;
+    }
+    public function getAmountJSON(){
+        return number_format($this->amount,1);
+}
 }
 
 ?>
