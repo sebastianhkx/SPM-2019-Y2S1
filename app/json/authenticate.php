@@ -4,7 +4,6 @@ require_once '../include/common.php';
 require_once '../include/token.php';
 // require_once '../include/protect.php';
 
-
 // isMissingOrEmpty(...) is in common.php
 $errors = [ isMissingOrEmpty ('userid'), 
             isMissingOrEmpty ('password') ];
@@ -22,11 +21,8 @@ else{
     $password = $_POST['password'];
 
     # check if userid and password are right. generate a token and return it in proper json format
-
     # generate a secret token for the user based on their userid
-
     # return the token to the user via JSON    
-		
     # return error message if something went wrong
     $dao = new AdminDAO();
     $user = $dao->retrieve($userid);

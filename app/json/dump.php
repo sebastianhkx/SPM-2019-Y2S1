@@ -13,6 +13,7 @@ $round_status_dao = new RoundStatusDAO();
 $section_dao = new SectionDAO();
 $student_dao = new StudentDAO();
 
+
 // if ( $student != null ) { 
     $result = ["status" => "success", 
                 "course" => $course_dao->retrieveAll(),
@@ -30,4 +31,7 @@ $student_dao = new StudentDAO();
 header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT);
  
+
+
+
 ?>
