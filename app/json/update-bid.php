@@ -5,10 +5,10 @@ require_once '../include/common.php';
 $input = JSON_DECODE($_REQUEST['r'], true);
 // var_dump($input);
 
-$errors = [ isMissingOrEmpty ($input, 'amount'),
-            isMissingOrEmpty ($input, 'course'),
-            isMissingOrEmpty ($input, 'section'),
-            isMissingOrEmpty ($input, 'userid')
+$errors = [ isMissingOrEmptyJson ($input, 'amount'),
+            isMissingOrEmptyJson ($input, 'course'),
+            isMissingOrEmptyJson ($input, 'section'),
+            isMissingOrEmptyJson ($input, 'userid')
             ];
 $errors = array_filter($errors);
 

@@ -5,9 +5,9 @@ require_once '../include/protect_json.php';
 $input = JSON_DECODE($_REQUEST['r'],TRUE);
 
 $errors = [ 
-            isMissingOrEmpty ($input, 'course'),
-            isMissingOrEmpty ($input, 'userid'),
-            isMissingOrEmpty ($input, 'section')];
+            isMissingOrEmptyJson ($input, 'course'),
+            isMissingOrEmptyJson ($input, 'userid'),
+            isMissingOrEmptyJson ($input, 'section')];
             
 $errors = array_filter($errors);
 
