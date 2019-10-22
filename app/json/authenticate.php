@@ -5,7 +5,7 @@ require_once '../include/token.php';
 // require_once '../include/protect.php';
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('userid'), 
+$errors = [ isMissingOrEmpty ('username'), 
             isMissingOrEmpty ('password') ];
 $errors = array_filter($errors);
 
@@ -17,7 +17,7 @@ if (!isEmpty($errors)) {
         ];
 }
 else{
-    $userid = $_POST['userid'];
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
     # check if userid and password are right. generate a token and return it in proper json format
@@ -25,16 +25,24 @@ else{
     # return the token to the user via JSON    
     # return error message if something went wrong
     $dao = new AdminDAO();
-    $user = $dao->retrieve($userid);
+    $user = $dao->retrieve($username);
 
-    if ( $user != null && $user->authenticate($password) ) { 
+    $invalid_errors = [];
+    if ($user == null) {
+        $invalid_errors[] = "invalid username";
+    }
+    elseif ($user->authenticate($password) == false) {
+        $invalid_errors[] = "invalid password";
+    }
+
+    if ( empty($invalid_errors) ) { 
         $result = ["status"=>"success", 
-                    "token"=>generate_token($userid)
+                    "token"=>generate_token($username)
                 ];
     } 
     else {
         $result = ["status" => "error", 
-                    "messages" => ['invalid userid/password']
+                    "message" => $invalid_errors
                 ];
     }
 }
