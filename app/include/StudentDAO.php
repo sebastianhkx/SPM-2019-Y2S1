@@ -26,7 +26,8 @@ class StudentDAO {
 
     public function retrieve($userid){
         $sql = 'SELECT userid, password, name, school, edollar FROM student where BINARY userid = :userid';
-        
+        // $sql = 'SELECT * FROM student where userid=:userid';
+
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
 
@@ -35,12 +36,17 @@ class StudentDAO {
         $stmt->bindParam(":userid", $userid, PDO::PARAM_STR);
         $stmt->execute();
         
+        $result = array();
+
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
         }
 
         $stmt = null;
         $conn = null; 
+
+        return $result;
+
     }
 
     public function deleteAll(){

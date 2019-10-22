@@ -7,24 +7,20 @@ require_once '../include/common.php';
 $assoc = TRUE;
 
 $jsonStr = $_REQUEST['r'];
-$userid = json_decode($jsonStr, $assoc);
+$userid = json_decode($jsonStr, $assoc)['userid'];
 
 $errors = [ isMissingOrEmpty ($userid) ];
 $errors = array_filter($errors);
 
 
-if (!isEmpty($errors)) {
-    $result = [
-        "status" => "error",
-        "message" => array_values($errors)
-        ];
-}
-else{
+// if (!isEmpty($errors)) {
+//     $result = [
+//         "status" => "error",
+//         "message" => array_values($errors)
+//         ];
+// }
+// else{
     // $userid = $_REQUEST['userid'];
-
-
-    // 
-
 
     $student_dao = new StudentDAO();
     $student = $student_dao->retrieve($userid);
@@ -43,10 +39,9 @@ else{
                     "message" => ['invalid userid']
                 ];
     }
-}
+// }
 
-// var_dump($result);
-// header('Content-Type: application/json');
-// echo json_encode($result, JSON_PRETTY_PRINT);
+header('Content-Type: application/json');
+echo json_encode($result, JSON_PRETTY_PRINT);
  
 ?>
