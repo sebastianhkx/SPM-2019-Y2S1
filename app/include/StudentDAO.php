@@ -39,7 +39,7 @@ class StudentDAO {
         $result = array();
 
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return new Student($row['userid'], $row['password'], $row['name'], $row['school'], $row['edollar']);
+            return new Student($row['userid'], $row['password'], $row['name'], $row['school'], (float)$row['edollar']);
         }
 
         $stmt = null;

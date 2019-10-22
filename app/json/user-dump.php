@@ -14,10 +14,10 @@ $errors = array_filter($errors);
 
 
 // if (!isEmpty($errors)) {
-//     $result = [
-//         "status" => "error",
-//         "message" => array_values($errors)
-//         ];
+    // $result = [
+    //     "status" => "error",
+    //     "message" => array_values($errors)
+    //     ];
 // }
 // else{
     // $userid = $_REQUEST['userid'];
@@ -31,7 +31,7 @@ $errors = array_filter($errors);
                     "password" => $student->password,
                     "name" => $student->name,
                     "school" => $student->school,
-                    "edollar" => $student->edollar
+                    "edollar" => $student->getEdollarJSON()
                 ];
     } 
     else {
