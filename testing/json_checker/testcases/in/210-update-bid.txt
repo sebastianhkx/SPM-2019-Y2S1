@@ -1,4 +1,1 @@
-userid = parker.ng.2009
-amount = 20
-course = IS200
-section = S1
+r={ "userid": "parker.ng.2009", "amount": 20, "course": "IS200", "section": "S1"}
