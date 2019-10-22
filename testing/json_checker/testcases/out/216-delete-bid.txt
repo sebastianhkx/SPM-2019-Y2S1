@@ -1,3 +1,4 @@
 {
- "status": "success"
+ "status": "error",
+ "message":["no such bid"]
 }
