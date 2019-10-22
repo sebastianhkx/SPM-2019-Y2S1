@@ -1,11 +1,13 @@
 <?php
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
+
+$input = JSON_DECODE($_REQUEST['r'],TRUE);
 
 $errors = [ 
-            isMissingOrEmpty ('course'),
-            isMissingOrEmpty ('userid'),
-            isMissingOrEmpty ('section')];
+            isMissingOrEmptyJson ($input, 'course'),
+            isMissingOrEmptyJson ($input, 'userid'),
+            isMissingOrEmptyJson ($input, 'section')];
             
 $errors = array_filter($errors);
 
@@ -17,9 +19,9 @@ if (!isEmpty($errors)) {
 }
 
 else {
-    $userid = $_REQUEST['userid'];
-    $course = $_REQUEST['course'];
-    $section = $_REQUEST['section'];
+    $userid = $input['userid'];
+    $course = $input['course'];
+    $section = $input['section'];
 
     $r2bid_dao = new R2BidDAO();
     $courseEnrolled_dao = new CourseEnrolledDAO;

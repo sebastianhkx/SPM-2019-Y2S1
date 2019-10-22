@@ -2,9 +2,11 @@
 require_once '../include/common.php';
 // require_once '../include/protect_json.php';
 
-$errors = [ isMissingOrEmpty ('course'),
-            isMissingOrEmpty ('section'),
-            isMissingOrEmpty ('userid')];
+$input = JSON_DECODE($_REQUEST['r'],true);
+
+$errors = [ isMissingOrEmptyJson ($input, 'course'),
+            isMissingOrEmptyJson ($input, 'section'),
+            isMissingOrEmptyJson ($input, 'userid')];
 $errors = array_filter($errors);
 
 if (!isEmpty($errors)) {
@@ -17,9 +19,9 @@ if (!isEmpty($errors)) {
 else {
     $bid_dao = new BidDAO();
 
-    $userid = $_REQUEST['userid'];
-    $course = $_REQUEST['course'];
-    $section = $_REQUEST['section'];
+    $userid = $input['userid'];
+    $course = $input['course'];
+    $section = $input['section'];
 
     $bid_to_drop_temp = new Bid($userid, 0, $course, $section); // the current drop bid method doesn't need amount. might need to revisit the method.
     $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $course, $section);
