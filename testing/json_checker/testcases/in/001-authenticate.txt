@@ -1,2 +1,1 @@
-userid = admin
-password = adminbios
+r={ "userid": "admin", "password": "adminbios" }
