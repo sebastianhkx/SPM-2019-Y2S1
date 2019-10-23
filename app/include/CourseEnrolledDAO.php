@@ -128,7 +128,7 @@ class CourseEnrolledDAO {
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE course_enrolled';
 
-        $connMgr = new ConnectionManager();      
+        $connMgr = new ConnectionManager();
         $conn = $connMgr->getConnection();
 
         $stmt = $conn->prepare($sql);
