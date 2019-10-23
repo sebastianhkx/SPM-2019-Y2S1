@@ -75,6 +75,32 @@ class ResultDAO {
         return $result;
     }
 
+    public function retrieveByCourseSection($courseSection) {
+        //takes in a CourseSection array
+        $sql = 'SELECT * FROM bid_result WHERE course = :course and section = :section';
+
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $courseSection[0], PDO::PARAM_STR);
+        $stmt->bindParam(':section', $courseSection[1], PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = null;
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
+    }
+
     public function add($result){
         //takes in a result object and updates tha table
         $sql = 'INSERT IGNORE INTO bid_result(userid, amount, course, section, result, round_num) values (:userid, :amount, :course, :section, :result, :round_num)';
