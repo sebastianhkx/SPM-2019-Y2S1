@@ -4,11 +4,22 @@ require_once '../include/common.php';
 // require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
-// $errors = [ isMissingOrEmpty ('course'),
-//             isMissingOrEmpty ('section') 
-//         ];
-// $errors = array_filter($errors);
 
+
+
+$assoc = TRUE;
+
+$jsonStr = $_REQUEST['r'];
+$arr= array(
+    json_decode($jsonStr, $assoc)['course'],
+    json_decode($jsonStr, $assoc)['section']
+);
+
+
+$errors = [ isMissingOrEmpty ('course'),
+            isMissingOrEmpty ('section') 
+        ];
+$errors = array_filter($errors);
 
 // if (!isEmpty($errors)) {
 //     $result = [
@@ -17,75 +28,76 @@ require_once '../include/common.php';
 //         ];
 // }
 // else{
-    // $course = $_REQUEST['course'];
-    // $section = $_REQUEST['section'];
+     $courseSection = $arr;
 
-    // // invalid course/section validation
-    // $invalid_errors = [];
 
-    // $courseDAO = new CourseDAO();
-    // $sectionDAO = new SectionDAO();
-    // if (($courseDAO->retrieveByCourseId($course))==null){
-    //     $invalid_errors[] = "invalid course";
-    // }
-    // else{
-    //     if (($sectionDAO->retrieveSection($course, $section)==null)){
-    //         $invalid_errors[] = "invalid section";
-    //     } 
-    // }
 
-    $bid_dao = new BidDAO();
+     $course=$courseSection[0];
+     $section=$courseSection[1];
+
+    // invalid course/section validation
+    $invalid_errors = [];
+
+    $courseDAO = new CourseDAO();
+    $sectionDAO = new SectionDAO();
+    if (($courseDAO->retrieveByCourseId($course))==null){
+        $invalid_errors[] = "invalid course";
+    }
+    else{
+        if (($sectionDAO->retrieveSection($course, $section)==null)){
+            $invalid_errors[] = "invalid section";
+        } 
+    }
+    
+    
     $round_status_dao = new RoundStatusDAO();
     $result_dao = new ResultDAO();
 
+    
+    $results = $result_dao->retrieveByCourseSection($courseSection);
 
     $bidDisplay=[];
     $round_status=$round_status_dao->retrieveall();
-    foreach($round_status as $one_status){
-        if(($one_status->round_num='1' && $one_status->status=="started") || ($one_status->round_num='2' && $one_status->status=="started")){
-            $bids=$bid_dao->retrieveAll();
-            for ($i=1; $i <count($bids) ; $i++) { 
-                $one_bid=$bids[$i];
+    if(($round_status[0]->status=="started") || ($round_status[1]->status=="started")){
+        for ($i=1; $i <count($results) ; $i++) { 
+            $one_bid=$results[$i];
+            $bidDisplay[]=[
+                "row"=>$i,
+                "userid"=>$one_bid->getUserid(),
+                "amount"=>$one_bid->getAmountJSON(),
+                "result"=>'-'
+            ];
+        }
+    }
+    else{
+        for ($i=1; $i <count($results) ; $i++) { 
+                $one_bid=$results[$i];
                 $bidDisplay[]=[
                     "row"=>$i,
                     "userid"=>$one_bid->getUserid(),
                     "amount"=>$one_bid->getAmountJSON(),
-                    "result"=>'-'
+                    "result"=>$one_bid->getResult()
                 ];
-            }
-        }
-        else{
-            foreach($result_dao->retrieveall() as $one_result){
-                $bids=$bid_dao->retrieveAll();
-                for ($i=1; $i <count($bids) ; $i++) { 
-                    $one_bid=$bids[$i];
-                    $bidDisplay[]=[
-                        "row"=>$i,
-                        "userid"=>$one_bid->getUserid(),
-                        "amount"=>$one_bid->getAmountJSON(),
-                        "result"=>$one_bid->getResult()
-                    ];
-                }
-            }
         }
     }
 
-    foreach($bidDisplay as $key=>$value){
-        $amount[$key] = $value['amount'];
-        $userid[$key] = $value['userid'];
-    }
-    array_multisort($amount, SORT_DESC, $userid, SORT_ASC, $bidDisplay);
-    if ( empty($invalid_errors) ) { 
-        $result = ["status" => "success", 
-                    "bids"  => $bidDisplay
-                ];
-    } 
-    else {
-        $result = ["status" => "error", 
-                    "messages" => $invalid_errors
-                ];
-    }
-// }
+foreach($bidDisplay as $key=>$value){
+    $amount[$key] = $value['amount'];
+    $userid[$key] = $value['userid'];
+}
+
+array_multisort($amount, SORT_DESC,SORT_NUMERIC, $userid,SORT_ASC,SORT_STRING,$bidDisplay);
+if ( empty($invalid_errors) ) { 
+    $result = ["status" => "success", 
+                "bids"  => $bidDisplay
+            ];
+} 
+else {
+    $result = ["status" => "error", 
+                "messages" => $invalid_errors
+            ];
+}
+//}
 
 header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT);
