@@ -558,7 +558,6 @@ class BidDAO {
         return $result;
 
     }
-
     
     public function bootstrapadd($bid){
         //takes in a bid object and returns array of errors if it fals bid validation
