@@ -29,9 +29,6 @@ $errors = array_filter($errors);
 // }
 // else{
      $courseSection = $arr;
-
-
-
      $course=$courseSection[0];
      $section=$courseSection[1];
 
@@ -87,6 +84,8 @@ foreach($bidDisplay as $key=>$value){
 }
 
 array_multisort($amount, SORT_DESC,SORT_NUMERIC, $userid,SORT_ASC,SORT_STRING,$bidDisplay);
+
+
 if ( empty($invalid_errors) ) { 
     $result = ["status" => "success", 
                 "bids"  => $bidDisplay
