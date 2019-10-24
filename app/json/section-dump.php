@@ -3,11 +3,19 @@
 require_once '../include/common.php';
 // require_once '../include/protect_json.php';
 
+
+$assoc = TRUE;
+
+$jsonStr = $_REQUEST['r'];
+$arr= array(
+    json_decode($jsonStr, $assoc)['course'],
+    json_decode($jsonStr, $assoc)['section']
+);
 // isMissingOrEmpty(...) is in common.php
-// $errors = [ isMissingOrEmpty ('course'),
-//             isMissingOrEmpty ('section') 
-//         ];
-// $errors = array_filter($errors);
+$errors = [ isMissingOrEmpty ('course'),
+            isMissingOrEmpty ('section') 
+        ];
+$errors = array_filter($errors);
 
 
 // if (!isEmpty($errors)) {
@@ -17,8 +25,9 @@ require_once '../include/common.php';
 //         ];
 // }
 // else{
-    $course = $_REQUEST['course'];
-    $section = $_REQUEST['section'];
+    $courseSection = $arr;
+    $course=$courseSection[0];
+    $section=$courseSection[1];
 
     // invalid course/section validation
     $invalid_errors = [];
@@ -35,10 +44,18 @@ require_once '../include/common.php';
     }
 
     $course_enrolled_dao = new CourseEnrolledDAO();
-
+    $course_enrolled=$course_enrolled_dao->retrieveByCourseSection($courseSection);
+    $studentDisplay=[];
+    foreach($course_enrolled as $one_course_enrolled){
+        $studentDisplay[]=[
+            "userid"=>$one_course_enrolled->getUserid(),
+            "amount"=>$one_course_enrolled->getAmountJSON()
+        ];
+    }
+    asort($studentDisplay);
     if ( empty($invalid_errors) ) { 
         $result = ["status" => "success", 
-                    // "students" => $course_enrolled_dao->retrieveByCourseSection([$course, $section])[0]
+                   "students" =>$studentDisplay
                 ];
     } 
     else {

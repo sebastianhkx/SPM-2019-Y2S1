@@ -31,7 +31,15 @@ class Result
     }
     public function getAmountJSON(){
         return number_format($this->amount,1);
-}
+    }
+    public function getResult(){
+        if ($this->result=="success"){
+            return "in";
+        }
+        else{
+            return "out";
+        }
+    }
 
   
 

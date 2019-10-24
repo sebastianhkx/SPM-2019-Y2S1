@@ -29,6 +29,15 @@ class CourseEnrolled {
         $this->exam_start = $exam_start;
         $this->exam_end = $exam_end;
     }
+
+
+    public function getUserid(){
+        return $this->userid;
+    }
+
+    public function getAmountJSON(){
+        return number_format($this->amount,1);
+}
     
 }
 
