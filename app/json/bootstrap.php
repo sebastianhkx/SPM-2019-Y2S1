@@ -6,6 +6,29 @@ require_once '../include/bootstrap.php';
 
 $msg = doBootstrap();
 
+//sorts file loaded by alpha order asc
+if(array_key_exists('num-record-loaded',$msg)){
+    $sorted_names = [];
+    foreach ($msg['num-record-loaded'] as $fileline){
+        foreach($fileline as $name=>$num){
+            $sorted_names[] = $name;
+        }
+    }
+    sort($sorted_names);
+    $sorted_num_record_loaded;
+    foreach ($sorted_names as $name){
+        foreach ($msg['num-record-loaded'] as $fileline){
+          foreach ($fileline as $filename=>$num){
+            if ($name === $filename){
+              $sorted_num_record_loaded[] = $fileline;
+              break;
+            }
+          } 
+        }
+    }
+    $msg['num-record-loaded'] = $sorted_num_record_loaded;
+}
+
 if(array_key_exists('error',$msg)){
     $errors = $msg['error'];
     $sort_errors = [];

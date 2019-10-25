@@ -30,6 +30,7 @@ else {
     $update_bid = $bid_dao->add($bidded);
 
     if (is_array($update_bid)) { 
+        sort($update_bid);
         $result = [
             "status"=>"error",
             "message" => $update_bid

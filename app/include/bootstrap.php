@@ -121,39 +121,6 @@ function doBootstrap() {
 
                 // read each line from csv
                 //skip header
-                $fields= fgetcsv($student);
-                $filename = 'student.csv';
-                $row_num = 1;
-                // var_dump($student);
-
-                //processes student.csv
-                while ( ($student_arr=fgetcsv($student) )  !== false){
-                    // var_dump($student_arr);
-                    $student_arr = array_map('trim', $student_arr);//trims all cols in row
-                    $row_num++;
-                    $row_errors = [];
-                    $skip_line = FALSE;
-                    for ($i=0; $i<sizeof($student_arr); $i++){
-                        if ($student_arr[$i] === ''){
-                            $skip_line = TRUE;
-                            $row_errors[] = "blank {$fields[$i]}";
-                        }
-                    }
-                    if ($skip_line==FALSE){
-                        //enters this if no empty values in row
-                        $studentObj = new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
-                        $row_errors = $studentDAO->add($studentObj);
-                    }
-                    if (!empty($row_errors)){
-                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
-                    }
-                    else{
-                        $student_success++;
-                    }
-                }
-                fclose($student);
-                unlink($student_path);
-                
                 //processes course csv
                 $fields= fgetcsv($course);
                 $filename = 'course.csv';
@@ -212,6 +179,40 @@ function doBootstrap() {
                
                 fclose($section);
                 unlink($section_path);
+
+                //processess student.csv
+                $fields= fgetcsv($student);
+                $filename = 'student.csv';
+                $row_num = 1;
+                // var_dump($student);
+
+                //processes student.csv
+                while ( ($student_arr=fgetcsv($student) )  !== false){
+                    // var_dump($student_arr);
+                    $student_arr = array_map('trim', $student_arr);//trims all cols in row
+                    $row_num++;
+                    $row_errors = [];
+                    $skip_line = FALSE;
+                    for ($i=0; $i<sizeof($student_arr); $i++){
+                        if ($student_arr[$i] === ''){
+                            $skip_line = TRUE;
+                            $row_errors[] = "blank {$fields[$i]}";
+                        }
+                    }
+                    if ($skip_line==FALSE){
+                        //enters this if no empty values in row
+                        $studentObj = new Student($student_arr[0],$student_arr[1],$student_arr[2],$student_arr[3],$student_arr[4]);
+                        $row_errors = $studentDAO->add($studentObj);
+                    }
+                    if (!empty($row_errors)){
+                        $errors[] = ["file"=>$filename, "line"=>$row_num, "message"=>$row_errors];
+                    }
+                    else{
+                        $student_success++;
+                    }
+                }
+                fclose($student);
+                unlink($student_path);
 
                 //processes prerequisite.csv
                 $fields= fgetcsv($prerequisite);
@@ -305,7 +306,6 @@ function doBootstrap() {
                 // fclose($course_completed);
                 unlink($course_completed_path);
                 
-
                 //processes bid.csv
                 $fields = $bid_arr=fgetcsv($bid);
                 $filename = 'bid.csv';
@@ -335,18 +335,16 @@ function doBootstrap() {
                 fclose($bid);
 				unlink($bid_path);
             }
-
-
             }
         }
 
         $lines_loaded = [
-                        ["bid.csv" => $bid_success],
                         ["course.csv" => $course_success],
-                        ["course_completed.csv" => $course_completed_success],
-                        ["prerequisite.csv" => $prerequisite_success],
                         ["section.csv" => $section_success],
-                        ["student.csv" => $student_success]
+                        ["student.csv" => $student_success],
+                        ["prerequisite.csv" => $prerequisite_success],
+                        ["course_completed.csv" => $course_completed_success],
+                        ["bid.csv" => $bid_success],
                         ];
         
         if (!empty($errors)) {

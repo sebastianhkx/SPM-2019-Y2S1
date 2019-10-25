@@ -55,6 +55,29 @@ $userid = $_SESSION['userid'];
     <th>Number of lines</th>
   </tr>
 <?php
+  var_dump($msg['num-record-loaded']);
+  if(array_key_exists('num-record-loaded',$msg)){
+    $sorted_names = [];
+    foreach ($msg['num-record-loaded'] as $fileline){
+        foreach($fileline as $name=>$num){
+            $sorted_names[] = $name;
+        }
+    }
+    sort($sorted_names);
+    $sorted_num_record_loaded;
+    foreach ($sorted_names as $name){
+        foreach ($msg['num-record-loaded'] as $fileline){
+          foreach ($fileline as $filename=>$num){
+            if ($name === $filename){
+              $sorted_num_record_loaded[] = $fileline;
+              break;
+            }
+          } 
+        }
+    }
+    $msg['num-record-loaded'] = $sorted_num_record_loaded;
+  }
+  var_dump($msg);
   //displays lines loaded into a table
   foreach ($lines_loaded as $file_lines){
     foreach ($file_lines as $file=>$line){
