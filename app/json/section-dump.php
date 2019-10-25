@@ -27,18 +27,40 @@ else{
     $section = $input['section'];
     $courseEnrolledDAO = new CourseEnrolledDAO();
     $enrolledObjs = $courseEnrolledDAO->retrieveByCourseSection([$course, $section]);
-    //empty array to be appended to
-    $students = [];
-    foreach ($enrolledObjs as $enrolledObj){
-        $amount = $enrolledObj->amount;
-        //adds decimal to amount if amount is not in float form
-        if (sizeof(explode('.', $amount))==1){
-            $amount .= ".0";
-        }
-        //floatval converts amount to float
-        $students[] = ["userid"=>$enrolledObj->userid, "amount"=>floatval($amount)];
+
+    //input validation i.e. invalid course/section
+    $errors = [];
+    $courseDAO = new CourseDAO();
+    if ($courseDAO->retrieveByCourseId($course)==null){
+        $errors[] = 'invalid course';
     }
-    $result = ['status'=>'success', 'students'=>$students];
+    else{
+        $sectionDAO = new SectionDAO();
+        if ($sectionDAO->retrieveSection($course, $section)==null){
+            $errors = 'invalid section';
+        }
+    }
+    if (!empty($errors)){
+        //fails input validation
+        $result = [
+            'status' => 'error',
+            'messages' => array_values($errors)
+        ];
+    }
+    else{
+        //passes input validation
+        $students = [];
+        foreach ($enrolledObjs as $enrolledObj){
+            $amount = $enrolledObj->amount;
+            //adds decimal to amount if amount is not in float form
+            if (sizeof(explode('.', $amount))==1){
+                $amount .= ".0";
+            }
+            //floatval converts amount to float
+            $students[] = ["userid"=>$enrolledObj->userid, "amount"=>floatval($amount)];
+        }
+        $result = ['status'=>'success', 'students'=>$students];
+    }
 }
 
 header('Content-Type: application/json');
