@@ -23,6 +23,29 @@ class ResultDAO {
         return $result;
     }
 
+    public function retrieveByRound($round) {
+        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `userid` ';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+        while($row = $stmt->fetch()) {
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+                 
+        return $result;
+    }
+
     public function retrieveByUser($userid) {
         //this takes in a userid string
         $sql = 'SELECT * FROM bid_result WHERE userid=:userid';

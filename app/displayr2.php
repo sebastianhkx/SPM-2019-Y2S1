@@ -4,7 +4,7 @@ require_once 'include/common.php';
 require_once 'include/protect.php';
 
 $resultDAO = new ResultDAO();
-$results = $resultDAO->retrieveByRound(1);
+$results = $resultDAO->retrieveByRound(2);
 
 echo "<table border='1'>
     <tr>
