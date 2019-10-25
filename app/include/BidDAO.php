@@ -54,7 +54,7 @@ class BidDAO {
         //this takes in a array [course, section] and returns a array of bid objs
         //this function is used for round clearing
         
-        $sql = 'SELECT * FROM bid WHERE course=:course and section=:section order by amount DESC';
+        $sql = 'SELECT * FROM bid WHERE course=:course and section=:section order by amount DESC, userid ASC';
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
