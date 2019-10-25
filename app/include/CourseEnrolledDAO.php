@@ -139,7 +139,7 @@ class CourseEnrolledDAO {
 
     public function retrieveByCourseSection($courseSection){
         //this takes in an array [course, section] and returns array of courseEnrolledObjs
-        $sql = "SELECT * from course_enrolled where course = :course and section = :section";
+        $sql = "SELECT * from course_enrolled where course = :course and section = :section order by `userid` ASC";
 
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
