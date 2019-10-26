@@ -2,7 +2,7 @@
 
 require_once '../include/common.php';
 require_once '../include/clearingLogic.php';
-// require_once '../include/protect_json.php';
+require_once '../include/protect_json.php';
 
 $round_status_dao = new RoundStatusDAO();
 if ($round_status_dao->retrieveCurrentActiveRound() == null) {

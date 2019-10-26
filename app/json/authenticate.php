@@ -5,8 +5,9 @@ require_once '../include/token.php';
 // require_once '../include/protect.php';
 
 // isMissingOrEmpty(...) is in common.php
-$errors = [ isMissingOrEmpty ('username'), 
-            isMissingOrEmpty ('password') ];
+$errors = [ isMissingOrEmpty ('password'),
+            isMissingOrEmpty ('username')
+             ];
 $errors = array_filter($errors);
 
 
