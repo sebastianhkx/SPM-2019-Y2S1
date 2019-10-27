@@ -1,6 +1,6 @@
 <?php
 require_once 'include/common.php';
-require_once 'include/clearingLogic.php';
+// require_once 'include/clearingLogic.php';
 require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
@@ -39,14 +39,16 @@ $userid = $_SESSION['userid'];
 
     if (isset($_POST['stop_r1'])) {
       $roundstatus_dao->stopRound();
-      roundOneClearing();
+      // roundOneClearing();
+      //stop round now automatically triggers roundoneclearing
       header("Location: home_admin.php");
       exit;
     }
 
     elseif (isset($_POST['stop_r2'])){
       $roundstatus_dao->stopRound();
-      roundTwoClearing();
+      // roundTwoClearing();
+      // stop round now automatically triggers roundtwoclearing
       header("Location: home_admin.php");
       exit;
     }
