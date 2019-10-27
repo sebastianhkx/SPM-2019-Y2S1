@@ -116,12 +116,14 @@ class CourseEnrolledDAO {
         $stmt = null;
         $conn = null; 
 
-        if ($isDeleteOk){
-            return ['status'=>'success'];
-        }
-        else{
-            return ['status'=>'error', 'message'=>['no such enrollment record']];
-        }
+        return ['status'=>'success'];
+
+        // if ($isDeleteOk){
+        //     return ['status'=>'success'];
+        // }
+        // else{
+        //     return ['status'=>'error', 'message'=>['no such enrollment record']];
+        // }
     }
 
     ## truncate tables when bootstraping
