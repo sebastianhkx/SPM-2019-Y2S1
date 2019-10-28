@@ -64,6 +64,6 @@ else{
 }
 
 header('Content-Type: application/json');
-echo json_encode($result, JSON_PRESERVE_ZERO_FRACTION);
+echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
  
 ?>
