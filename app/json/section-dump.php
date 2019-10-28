@@ -18,7 +18,7 @@ if (!isEmpty($errors)) {
     //has common errors
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 else{
@@ -44,7 +44,7 @@ else{
         //fails input validation
         $result = [
             'status' => 'error',
-            'messages' => array_values($errors)
+            'message' => array_values($errors)
         ];
     }
     else{
