@@ -29,7 +29,8 @@ class Section {
     }
 
     public function getDay(){
-        return $this->day;
+        $arr = ["","Monday","Tuesday","Wednesday","Thursday","Friday"];
+        return $arr[$this->day];
     }
 
     public function getStart(){

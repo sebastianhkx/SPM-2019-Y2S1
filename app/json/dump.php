@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
 
 $bid_dao = new BidDAO();
 $course_dao = new CourseDAO();
@@ -30,7 +30,7 @@ foreach($course_dao->retrieveAll() as $one_course){
         "exam end"=>$one_course->getExamEndJSON()
     );
 }
- 
+
 $sectionDisplay=[];
 foreach($section_dao->retrieveAll() as $one_section){
     $sectionDisplay[]=[
@@ -53,7 +53,7 @@ foreach($student_dao->retrieveAll() as $one_student){
         "password"=>$one_student->getPassword(),
         "name"=>$one_student->getName(),
         "school"=>$one_student->getSchool(),
-        "edollar"=>$one_student->getEdollarJSON()
+        "edollar"=>floatval($one_student->getEdollarJSON())
     ];
 }
 
@@ -66,7 +66,7 @@ foreach($round_status as $one_status){
         foreach($bid_dao->retrieveAll()as $one_bid){
             $bidDisplay[]=[
                 "userid"=>$one_bid->getuserid(),
-                "amount"=>$one_bid->getAmountJSON(),
+                "amount"=>floatval($one_bid->getAmountJSON()),
                 "course"=>$one_bid->getCourse(),
                 "section"=>$one_bid->getSection()
             ];
@@ -115,6 +115,8 @@ foreach($round_status as $one_status){
         }
     }
 }
+// $course_completed_arr = $course_completed_dao->retrieveAllSortCourse();
+  
 
 // if ( $student != null ) { 
     $result = ["status" => "success", 
@@ -122,8 +124,8 @@ foreach($round_status as $one_status){
                 "section"=> $sectionDisplay,
                 "student"=>$studentDisplay,
                 "prerequisite" => $prerequisite_dao->retrieveAll(),
-                "Bid"=>$bidDisplay,
-                "completed-course" => $course_completed_dao->retrieveAll(),
+                "bid"=>$bidDisplay,
+                "completed-course" => $course_completed_dao->retrieveAllSortCourse(),
                 "section-student"=>$section_studentDisplay
             ];
 // } 
@@ -173,7 +175,7 @@ foreach($round_status as $one_status){
 //     $result = ["status" => "error"];
 // }
 
-  header('Content-Type: application/json');
-  echo json_encode($result, JSON_PRETTY_PRINT);
+// header('Content-Type: application/json');
+// echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
  
 ?>

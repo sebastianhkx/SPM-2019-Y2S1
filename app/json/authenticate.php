@@ -2,7 +2,9 @@
 
 require_once '../include/common.php';
 require_once '../include/token.php';
-// require_once '../include/protect.php';
+
+## testing comment out
+require_once '../include/protect.php';
 
 // isMissingOrEmpty(...) is in common.php
 $errors = [ isMissingOrEmpty ('password'),
