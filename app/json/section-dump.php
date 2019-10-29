@@ -37,7 +37,7 @@ else{
     else{
         $sectionDAO = new SectionDAO();
         if ($sectionDAO->retrieveSection($course, $section)==null){
-            $errors = 'invalid section';
+            $errors[] = 'invalid section';
         }
     }
     if (!empty($errors)){
@@ -50,7 +50,8 @@ else{
     else{
         //passes input validation
         $students = [];
-        foreach ($enrolledObjs as $enrolledObj){
+        if(!empty($enrolledObjs)){
+            foreach ($enrolledObjs as $enrolledObj){
             $amount = $enrolledObj->amount;
             //adds decimal to amount if amount is not in float form
             if (sizeof(explode('.', $amount))==1){
@@ -58,6 +59,7 @@ else{
             }
             //floatval converts amount to float
             $students[] = ["userid"=>$enrolledObj->userid, "amount"=>floatval($amount)];
+            }
         }
         $result = ['status'=>'success', 'students'=>$students];
     }
