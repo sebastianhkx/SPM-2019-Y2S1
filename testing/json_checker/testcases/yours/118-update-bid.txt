@@ -1,0 +1,11 @@
+{
+    "status": "error",
+    "message": [
+        "class timetable clash",
+        "course completed",
+        "exam timetable clash",
+        "insufficient e$",
+        "not own school course",
+        "section limit reached"
+    ]
+}

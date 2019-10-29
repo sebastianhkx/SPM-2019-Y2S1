@@ -1,0 +1,23 @@
+{
+    "status": "success",
+    "bids": [
+        {
+            "row": 1,
+            "userid": "larry.ng.2009",
+            "amount": 29.0,
+            "result": "-"
+        },
+        {
+            "row": 2,
+            "userid": "jerry.ng.2009",
+            "amount": 28.0,
+            "result": "-"
+        },
+        {
+            "row": 3,
+            "userid": "parker.ng.2009",
+            "amount": 25.0,
+            "result": "-"
+        }
+    ]
+}

@@ -29,7 +29,7 @@ class Section {
     }
 
     public function getDay(){
-        $arr = ["","Monday","Tuesday","Wednesday","Thursday","Friday"];
+        $arr = ["","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
         return $arr[$this->day];
     }
 
