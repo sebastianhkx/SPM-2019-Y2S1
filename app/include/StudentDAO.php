@@ -94,7 +94,7 @@ class StudentDAO {
         else{
             $decimal_place = 0;
         }
-        if ($student->edollar<0 || strlen($decimal_place)>2){
+        if ($student->edollar<0 || strlen($decimal_place)>2 || sizeof($edollar_array)>2){
             //2nd condition checks for edollars decimal place
             $errors[] = "invalid e-dollar";
         } 
