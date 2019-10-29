@@ -174,7 +174,7 @@ class BidDAO {
                 $existingBidSectionObj = $sectionDAO->retrieveBySection($bidObj);//existing bid
                 $existingStart = $existingBidSectionObj->start;
                 $existingEnd = $existingBidSectionObj->end;
-                if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
+                if (!$this->checkExistingCourseBid($bid) && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                     //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
                     $errors[] = 'class timetable clash';
@@ -192,7 +192,7 @@ class BidDAO {
                 $existingEnd = $existingBidCourseObj->exam_end;
                 //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
                 //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-                if ($bidObj->course != $bid->course && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
+                if (!$this->checkExistingCourseBid($bid) && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     $errors[] = 'exam timetable clash';
                     break;
                 }
@@ -422,14 +422,7 @@ class BidDAO {
         }
 
         if ($course_exists != null && $section_exists != null && $round_status != null) {
-            $matching_bid = False;
-            $current_bids = $this->retrieveByUser($bid->userid);
-            foreach ($current_bids as $current_bid) {
-                if ($current_bid->course == $section_exists->course && $current_bid->section == $section_exists->section) {
-                    $matching_bid = True;
-                    break;
-                }
-            }
+            $matching_bid = $this->checkExistingBid($bid);
             if (!$matching_bid) {
                 $errors[] = "no such bid";
             }
@@ -480,6 +473,34 @@ class BidDAO {
         $stmt->bindParam(':userid', $bid_input ->userid, PDO::PARAM_STR);
         $stmt->bindParam(':course', $bid_input ->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $bid_input ->section, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $amount = 0;
+
+        if($row = $stmt->fetch()){
+            $amount = $row['amount'];
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $amount;
+    } 
+
+    public function checkExistingCourseBid($bid_input) {
+        // this takes in a userid , course and section
+        // **no, this takes in a bid object without caring about the amount**
+        // returns amount bidded on existing bid, 0 if no existing bids
+        $sql = 'SELECT amount FROM bid WHERE userid=:userid AND course=:course';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $bid_input ->userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $bid_input ->course, PDO::PARAM_STR);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
