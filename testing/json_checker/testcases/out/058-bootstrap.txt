@@ -1,0 +1,83 @@
+{
+    "status": "error",
+    "num-record-loaded": [
+        {
+            "bid.csv": 15
+        },
+        {
+            "course.csv": 24
+        },
+        {
+            "course_completed.csv": 7
+        },
+        {
+            "prerequisite.csv": 10
+        },
+        {
+            "section.csv": 36
+        },
+        {
+            "student.csv": 26
+        }
+    ],
+    "error": [
+        {
+            "file": "bid.csv",
+            "line": 2,
+            "message": [
+                "course completed"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 4,
+            "message": [
+                "class timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 10,
+            "message": [
+                "exam timetable clash"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 12,
+            "message": [
+                "invalid amount"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 16,
+            "message": [
+                "not own school course",
+                "incomplete prerequisites"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 17,
+            "message": [
+                "not own school course",
+                "not enough e-dollars"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 23,
+            "message": [
+                "section limit reached"
+            ]
+        },
+        {
+            "file": "bid.csv",
+            "line": 24,
+            "message": [
+                "incomplete prerequisites"
+            ]
+        }
+    ]
+}

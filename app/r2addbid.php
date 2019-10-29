@@ -137,24 +137,24 @@ echo "<h2>Information:</h2>
         <p>Total Availdable Seats:{$r2Info->vacancy}</p>
         <p>Total Number Of Bids:$totalbids</p>
         <p>Minimun Bid Value:{$r2Info->min_amount}</p>";
-    if($totalbids > 0){
-      echo "<table border='1'>
-          <tr>
-              <th>No.</th>
-              <th>Bid Price</th>
-              <th>State</th>
-          </tr>";  
-      for($i=1;$i <= $totalbids;$i++){
-        $bid = $currentbids[$i-1];
-        $status = $bid_dao->bidStatus($bid);
-        echo "<tr>
-              <th>$i</th>
-              <th>{$bid->amount}</th>
-              <th>{$status}</th>
-            </tr>";
-      }
-        echo "</table><hr>";
-    }
+    // if($totalbids > 0){
+    //   echo "<table border='1'>
+    //       <tr>
+    //           <th>No.</th>
+    //           <th>Bid Price</th>
+    //           <th>State</th>
+    //       </tr>";  
+    //   for($i=1;$i <= $totalbids;$i++){
+    //     $bid = $currentbids[$i-1];
+    //     $status = $bid_dao->bidStatus($bid);
+    //     echo "<tr>
+    //           <th>$i</th>
+    //           <th>{$bid->amount}</th>
+    //           <th>{$status}</th>
+    //         </tr>";
+    //   }
+    //     echo "</table><hr>";
+    // }
 ?>
 <body>
 
