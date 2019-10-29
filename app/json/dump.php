@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
 
 $bid_dao = new BidDAO();
 $course_dao = new CourseDAO();
@@ -186,7 +186,7 @@ foreach($round_status as $one_status){
 // }
 
 // else {
-//     $result = ["status" => "error"];
+    // $result = ["status" => "error"];
 // }
 
 header('Content-Type: application/json');
