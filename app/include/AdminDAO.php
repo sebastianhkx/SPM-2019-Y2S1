@@ -3,7 +3,8 @@
 class AdminDAO {
        
     function retrieve($userid) {
-        $sql = 'SELECT userid, password FROM admin where userid = :userid';
+        $sql = 'SELECT userid, password FROM admin where BINARY userid = :userid';
+        #binary ensures case sensitive
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();

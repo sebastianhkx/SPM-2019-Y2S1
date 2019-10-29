@@ -123,7 +123,7 @@ foreach($round_status as $one_status){
                 "course"=> $courseDisplay,
                 "section"=> $sectionDisplay,
                 "student"=>$studentDisplay,
-                "prerequisite" => $prerequisite_dao->retrieveAll(),
+                "prerequisite" => $prerequisite_dao->retrieveAllSortCourse(),
                 "bid"=>$bidDisplay,
                 "completed-course" => $course_completed_dao->retrieveAllSortCourse(),
                 "section-student"=>$section_studentDisplay
@@ -175,7 +175,7 @@ foreach($round_status as $one_status){
 //     $result = ["status" => "error"];
 // }
 
-// header('Content-Type: application/json');
-// echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
+header('Content-Type: application/json');
+echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
  
 ?>

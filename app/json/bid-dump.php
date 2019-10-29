@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
 
@@ -80,20 +80,24 @@ else{
                 //no active round, last active is round 1
                 $results = $resultDAO->retrieveByRound(1);
             }
-            foreach ($results as $resultObj){
-                $amount = $resultObj->amount;
-                //adds decimal to amount if amount is not in float form
-                if (sizeof(explode('.', $amount))==1){
-                    $amount .= ".0";
+            if (!empty($results)){
+                foreach ($results as $resultObj){
+                    if ($resultObj->course==$course && $resultObj->section==$section){
+                        $amount = $resultObj->amount;
+                        //adds decimal to amount if amount is not in float form
+                        if (sizeof(explode('.', $amount))==1){
+                            $amount .= ".0";
+                        }
+                        if ($resultObj->result=='success'){
+                            $bid_result = 'in';
+                        }
+                        else{
+                            $bid_result = 'out';
+                        }
+                        $bids_to_ret[] = ["row"=>$i, "userid"=>$resultObj->userid, "amount"=>floatval($amount), "result"=>$bid_result];
+                        $i++;
+                    }
                 }
-                if ($resultObj->result=='success'){
-                    $bid_result = 'in';
-                }
-                else{
-                    $bid_result = 'out';
-                }
-                $bids_to_ret[] = ["row"=>$i, "userid"=>$resultObj->userid, "amount"=>floatval($amount), "result"=>$bid_result];
-                $i++;
             }
             $result = ['status'=>'success', 'bids'=>$bids_to_ret]; 
         }
