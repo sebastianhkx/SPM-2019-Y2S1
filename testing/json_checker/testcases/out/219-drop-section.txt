@@ -1,4 +1,4 @@
 {
  "status": "error",
- "message":["no such enrollment record"]
+ "message":["invalid course", "invalid userid"]
 }

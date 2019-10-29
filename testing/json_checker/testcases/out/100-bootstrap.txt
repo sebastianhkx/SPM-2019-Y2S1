@@ -5,16 +5,16 @@
             "bid.csv": 16
         },
         {
-            "course.csv": 25
+            "course.csv": 26
         },
         {
-            "course_completed.csv": 4
+            "course_completed.csv": 5
         },
         {
             "prerequisite.csv": 8
         },
         {
-            "section.csv": 37
+            "section.csv": 38
         },
         {
             "student.csv": 27

@@ -1,4 +1,5 @@
 <?php
+require_once 'clearingLogic.php';
 
 class RoundStatusDAO {
 
@@ -152,9 +153,11 @@ class RoundStatusDAO {
         
         if ($rounds[0]->status == 'started') {
             $round_num = 1;
+            roundOneClearing();
         }
         elseif ($rounds[1]->status == 'started') {
             $round_num = 2;
+            roundTwoClearing();
         }
 
         $sql = 'UPDATE round_status SET status = "ended" WHERE round_num = :round_num';

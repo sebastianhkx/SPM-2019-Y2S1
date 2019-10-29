@@ -136,9 +136,19 @@ class BidDAO {
             return $errors;
         }
 
+        
+
         //logic validation starts here, does not enter if there are any errors with input as return is called
         $roundStatusDAO = new RoundStatusDAO();
         $current_round = $roundStatusDAO->retrieveCurrentActiveRound();
+        //round ended (no active round) JSON
+        if ($current_round==null){
+            $errors[] = 'round ended';
+        }
+        
+        if (!empty($errors)){
+            return $errors;
+        }
 
         if ($current_round != null && $current_round->round_num == 1){
             //same school validation bootstrap + JSON
@@ -283,10 +293,7 @@ class BidDAO {
             }
         
 
-        //round ended (no active round) JSON
-        if ($current_round==null){
-            $errors[] = 'round ended';
-        }
+        
 
         //no vacancy check for round 2 JSON
         $courseEnrolledObjs = $courseEnrolledDAO->retrieveByCourseSection([$bid->course, $bid->section]);

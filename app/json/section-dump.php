@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-// require_once '../include/protect_json.php';
+require_once '../include/protect_json.php';
 
 
 $input = JSON_DECODE($_REQUEST['r'], true);
@@ -18,7 +18,7 @@ if (!isEmpty($errors)) {
     //has common errors
     $result = [
         "status" => "error",
-        "messages" => array_values($errors)
+        "message" => array_values($errors)
         ];
 }
 else{
@@ -44,7 +44,7 @@ else{
         //fails input validation
         $result = [
             'status' => 'error',
-            'messages' => array_values($errors)
+            'message' => array_values($errors)
         ];
     }
     else{
@@ -64,6 +64,6 @@ else{
 }
 
 header('Content-Type: application/json');
-echo json_encode($result, JSON_PRESERVE_ZERO_FRACTION);
+echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
  
 ?>
