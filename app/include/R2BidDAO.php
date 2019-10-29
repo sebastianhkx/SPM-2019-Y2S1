@@ -133,6 +133,21 @@ class R2BidDAO{
         $courseEnrolled_dao = new CourseEnrolledDAO();
         $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_course);
 
+        //course code not exist
+        $course_dao = new CourseDAO();
+        $course = $course_dao->retrieveByCourseId($drop_course);
+        if($course == null){
+            $errors[] = "invalid course";
+        }
+        else{
+            //check section exist
+            $section_dao = new SectionDAO();
+            $section = $section_dao -> retrieveSection($drop_course,$drop_section);
+            if($section == null){
+                $errors[] = "invalid section";
+            }
+        
+        }
         //check userid exist
         $student_dao = new StudentDAO();
         $student = $student_dao->retrieve($userid);
@@ -147,27 +162,12 @@ class R2BidDAO{
             $errors[] = 'round not active';
         }
 
-        //course code not exist
-        $course_dao = new CourseDAO();
-        $course = $course_dao->retrieveByCourseId($drop_course);
-        if($course == null){
-            $errors[] = "invalid course";
-        }
-        else{
-            //check section exist
-            $section_dao = new SectionDAO();
-            $section = $section_dao -> retrieveSection($drop_course,$drop_section);
-            if($section == null){
-                $errors[] = "invalid section";
-            }
-        }
-
         //not exist
         // $courseEnrolled_dao = new CourseEnrolledDAO();
         // $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($sectionobj->userid,$section->course);
-        if(empty($course_enrolled)){
-            $errors[] = "no such enrollment record";
-        }
+        // if(empty($course_enrolled)){
+        //     $errors[] = "no such enrollment record";
+        // }
 
         if(!empty($errors)){
             return $errors;
@@ -199,113 +199,113 @@ class R2BidDAO{
         return $isOK ;
     }
     
-    function searchCourseSection($bid){
-        //this function takes in a bid object to check if course and section exists
-        //return an index array incluing errors and an associative array of 
-        $section_dao = new SectionDAO();
-        $courseEnrolled_dao = new CourseEnrolledDAO(); 
-        $section = $section_dao->retrieveBySection($bid);
-        $result = [];
-        $errors = null;
-        if($section == null){
-            $errors[] = 'invalid course/section';
-        }
+    // function searchCourseSection($bid){
+    //     //this function takes in a bid object to check if course and section exists
+    //     //return an index array incluing errors and an associative array of 
+    //     $section_dao = new SectionDAO();
+    //     $courseEnrolled_dao = new CourseEnrolledDAO(); 
+    //     $section = $section_dao->retrieveBySection($bid);
+    //     $result = [];
+    //     $errors = null;
+    //     if($section == null){
+    //         $errors[] = 'invalid course/section';
+    //     }
         
-        if($errors == null){
-            $courseEnrolledObjs = $courseEnrolled_dao->retrieveByCourseSection([$bid->course, $bid->section]);
-            //var_dump($courseEnrolledObjs);
-            if ($courseEnrolledObjs != null){
-                $enrolled = sizeof($courseEnrolledObjs);
-            }
-            else{
-                $enrolled = 0;
-            }
-            $size = $section_dao->retrieveBySection($bid)->size;
-            if ($size-$enrolled<=0){
-                $errors[] = 'no vacancy';
-            }
-        }
+    //     if($errors == null){
+    //         $courseEnrolledObjs = $courseEnrolled_dao->retrieveByCourseSection([$bid->course, $bid->section]);
+    //         //var_dump($courseEnrolledObjs);
+    //         if ($courseEnrolledObjs != null){
+    //             $enrolled = sizeof($courseEnrolledObjs);
+    //         }
+    //         else{
+    //             $enrolled = 0;
+    //         }
+    //         $size = $section_dao->retrieveBySection($bid)->size;
+    //         if ($size-$enrolled<=0){
+    //             $errors[] = 'no vacancy';
+    //         }
+    //     }
   
-        if($errors == null){
-            $result = $this->updateBidinfo($bid);
-        }
+    //     if($errors == null){
+    //         $result = $this->updateBidinfo($bid);
+    //     }
         
-        return [$result,$errors];
-    }
+    //     return [$result,$errors];
+    // }
 
-    function checkBidsStatus($bidsobj){
-        //this function take in an array of bid object and return an array of bid object and bid status
-        $result = [];
+    // function checkBidsStatus($bidsobj){
+    //     //this function take in an array of bid object and return an array of bid object and bid status
+    //     $result = [];
 
-        foreach($bidsobj as $bid){
-            $state = "Successful";
-            $bid_info = $this->updateBidinfo($bid);
-            if(!in_array(array($bid->amount,'Successful'),$bid_info)){
-                $state = "Unsuccessful";
-            }
-            $result[] = array('bid'=>$bid,'status'=>$state);
-        }
-        return $result;
-    }
+    //     foreach($bidsobj as $bid){
+    //         $state = "Successful";
+    //         $bid_info = $this->updateBidinfo($bid);
+    //         if(!in_array(array($bid->amount,'Successful'),$bid_info)){
+    //             $state = "Unsuccessful";
+    //         }
+    //         $result[] = array('bid'=>$bid,'status'=>$state);
+    //     }
+    //     return $result;
+    // }
 
-    function checkCourseEnrolled($bid){
-        //this function take in a bid object to check number of course enrolled
-        $courseEnrolled_dao =  new CourseEnrolledDAO;
-        $bid_dao = new BidDAO();
-        $course_dao = new CourseDAO();
-        $section_dao = new SectionDAO();
+    // function checkCourseEnrolled($bid){
+    //     //this function take in a bid object to check number of course enrolled
+    //     $courseEnrolled_dao =  new CourseEnrolledDAO;
+    //     $bid_dao = new BidDAO();
+    //     $course_dao = new CourseDAO();
+    //     $section_dao = new SectionDAO();
 
-        $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
-        $bids = $bid_dao->retrieveByUser($bid->userid);
-        $errors = [];
-        $availablebid = 5 - sizeof($coursesEnrolled);
+    //     $coursesEnrolled = $courseEnrolled_dao -> retrieveByUserid($bid->userid);
+    //     $bids = $bid_dao->retrieveByUser($bid->userid);
+    //     $errors = [];
+    //     $availablebid = 5 - sizeof($coursesEnrolled);
 
-        if(sizeof($coursesEnrolled) == 5){
-            $errors[] = 'more than 5 courses enrolled';
-        }
+    //     if(sizeof($coursesEnrolled) == 5){
+    //         $errors[] = 'more than 5 courses enrolled';
+    //     }
 
-        if(empty($errors) && $availablebid == sizeof($bids)){
-            $errors[] = 'section limit reached';
-        }
+    //     if(empty($errors) && $availablebid == sizeof($bids)){
+    //         $errors[] = 'section limit reached';
+    //     }
 
-        //check class time table and exam timetable for current bid and course enrolled
-        //exam clash
-        $course_bid = $course_dao->retrieveByCourseId($bid->course);
-        $new_start = $course_bid->exam_start;
-        $new_end = $course_bid->exam_end;
-        foreach ($coursesEnrolled as $bidObj){
-            $existingBidCourseObj = $course_dao->retrieveByCourseId($bidObj->course);
-            $existingStart = $existingBidCourseObj->exam_start;
-            $existingEnd = $existingBidCourseObj->exam_end;
-            //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
-            //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-            if ($bidObj->course != $bid->course && $course_bid->exam_date == $existingBidCourseObj->exam_date && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd))){
-                $errors[] = 'exam timetable clash';
-                break;
-            }
-        }
+    //     //check class time table and exam timetable for current bid and course enrolled
+    //     //exam clash
+    //     $course_bid = $course_dao->retrieveByCourseId($bid->course);
+    //     $new_start = $course_bid->exam_start;
+    //     $new_end = $course_bid->exam_end;
+    //     foreach ($coursesEnrolled as $bidObj){
+    //         $existingBidCourseObj = $course_dao->retrieveByCourseId($bidObj->course);
+    //         $existingStart = $existingBidCourseObj->exam_start;
+    //         $existingEnd = $existingBidCourseObj->exam_end;
+    //         //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
+    //         //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+    //         if ($bidObj->course != $bid->course && $course_bid->exam_date == $existingBidCourseObj->exam_date && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd))){
+    //             $errors[] = 'exam timetable clash';
+    //             break;
+    //         }
+    //     }
 
-        //class clash
-        $section_bid = $section_dao->retrieveBySection($bid);
-        $new_start = $section_bid->start;
-        $new_end = $section_bid->end;
-        foreach ($coursesEnrolled as $bidObj){
-            $existingBidSectionObj = $section_dao->retrieveBySection($bidObj);//existing bid
-            $existingStart = $existingBidSectionObj->start;
-            $existingEnd = $existingBidSectionObj->end;
-            if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd)))
-                //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
-                //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-                $errors[] = 'class timetable clash';
-                break;
-        }
+    //     //class clash
+    //     $section_bid = $section_dao->retrieveBySection($bid);
+    //     $new_start = $section_bid->start;
+    //     $new_end = $section_bid->end;
+    //     foreach ($coursesEnrolled as $bidObj){
+    //         $existingBidSectionObj = $section_dao->retrieveBySection($bidObj);//existing bid
+    //         $existingStart = $existingBidSectionObj->start;
+    //         $existingEnd = $existingBidSectionObj->end;
+    //         if ($bidObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($new_start<$existingEnd and $new_start>$existingStart) || ($existingStart<$new_end and $existingStart>$new_start) || ($new_start == $existingStart || $new_end == $existingEnd)))
+    //             //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
+    //             //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
+    //             $errors[] = 'class timetable clash';
+    //             break;
+    //     }
 
-        if (empty($errors)){
-            $errors = $bid_dao->add($bid);
-        }
+    //     if (empty($errors)){
+    //         $errors = $bid_dao->add($bid);
+    //     }
 
-        return $errors;
-    }
+    //     return $errors;
+    // }
 
     function deleteAll(){
         $sql = 'TRUNCATE TABLE r2_bid_info';
