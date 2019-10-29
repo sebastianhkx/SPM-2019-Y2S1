@@ -186,7 +186,7 @@ foreach($round_status as $one_status){
 // }
 
 // else {
-//     $result = ["status" => "error"];
+    // $result = ["status" => "error"];
 // }
 
 header('Content-Type: application/json');
