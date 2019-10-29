@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
 
 $bid_dao = new BidDAO();
 $course_dao = new CourseDAO();
@@ -61,28 +61,42 @@ foreach($student_dao->retrieveAll() as $one_student){
 
 $bidDisplay=[];
 $round_status=$round_status_dao->retrieveall();
-foreach($round_status as $one_status){
-    if(($one_status->round_num='1' && $one_status->status=="started") || ($one_status->round_num='2' && $one_status->status=="started")){
-        foreach($bid_dao->retrieveAll()as $one_bid){
-            $bidDisplay[]=[
-                "userid"=>$one_bid->getuserid(),
-                "amount"=>floatval($one_bid->getAmountJSON()),
-                "course"=>$one_bid->getCourse(),
-                "section"=>$one_bid->getSection()
-            ];
-        }
-    }
-    else{
-        foreach($result_dao->retrieveall() as $one_result){
-            $bidDisplay[]=[
-                "userid"=>$one_result->getUserid(),
-                "course"=>$one_result->getCourse(),
-                "section"=>$one_result->getSection(),
-                "amount"=>$one_result->getAmountJSON()
-            ];
-        }
+if(($round_status[0]->status=="started") || ($round_status[1]->status=="started")){
+    //has active round
+    foreach($bid_dao->retrieveAll()as $one_bid){
+        $bidDisplay[]=[
+            "userid"=>$one_bid->getuserid(),
+            "amount"=>floatval($one_bid->getAmountJSON()),
+            "course"=>$one_bid->getCourse(),
+            "section"=>$one_bid->getSection()
+        ];
     }
 }
+else{
+    // var_dump($round_status);
+    if ($round_status[1]->status=="ended"){
+        //recently ended round is 2
+        foreach($result_dao->retrieveByRound(2) as $resultObj){
+            $bidDisplay[] = [
+                "userid" => $resultObj->getUserid(),
+                "amount" =>floatval($resultObj->getAmountJSON()),
+                "course"=>$resultObj->getCourse(),
+                "section"=>$resultObj->getSection()
+            ];
+        }     
+    }
+    elseif ($round_status[0]->status=="ended"){
+        //recently ended round is 1
+        foreach($result_dao->retrieveByRound(1) as $resultObj){
+            $bidDisplay[] = [
+                "userid" => $resultObj->getUserid(),
+                "amount" =>floatval($resultObj->getAmountJSON()),
+                "course"=>$resultObj->getCourse(),
+                "section"=>$resultObj->getSection()
+            ];
+        } 
+    }
+}   
 
 
 
