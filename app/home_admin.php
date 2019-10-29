@@ -38,7 +38,10 @@ $userid = $_SESSION['userid'];
 $roundstatus_dao = new RoundStatusDAO();
 if (empty($round_status)){
   $round_status = $roundstatus_dao->retrieveAll();
-  var_dump($round_status);
+  // var_dump($round_status);
+  echo "ROUND 1: " . $round_status[0]->status . "<br>";
+  echo "ROUND 2: " . $round_status[1]->status . "<hr>";
+
 ?>
 <!-- Round 1 controls-->
   <form id='stop_r1' action="processclearing.php" method="post">

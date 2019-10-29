@@ -1,18 +1,6 @@
-<!-- testing of auto submit form -->
-
-<form method="post" action='test.php'>
-    <select name="myselect" onchange="this.form.submit();">
-        <option>blue</option>
-        <option>red</option>
-    </select>
-</form>
-
 <?php
+$date = "2013-11-01";
 
-$selected = '';
 
-$res = $_POST['myselect'];
-
-echo $res;
-
-?>
+$date = date_create("2013-11-01");
+echo date_format($date,"Ymd");
