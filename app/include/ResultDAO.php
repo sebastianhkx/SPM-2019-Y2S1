@@ -24,7 +24,7 @@ class ResultDAO {
     }
 
     public function retrieveByRound($round) {
-        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `amount` DESC, `userid` ASC';
+        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `COURSE` ASC, `SECTION` ASC , `amount` DESC, `userid` ASC';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
