@@ -88,11 +88,12 @@ class CourseDAO {
             $errors[]='invalid exam end';
         }
         else{
-            $start_time=explode(":",$course->exam_start);
-            $end_time=explode(":",$course->exam_end);
-            if($start_time[0]*60+$start_time[1]>$start_time[0]*60+$start_time[1]){
+            // $start_time=explode(":",$course->exam_start);
+            // $end_time=explode(":",$course->exam_end);
+            if(strtotime($course->exam_start)>strtotime($course->exam_end)){
                 $errors[]='invalid exam end';
             }
+            // var_dump($start_time,$end_time);
         }
         if(strlen($course->title)>100){
             $errors[]='invalid title';

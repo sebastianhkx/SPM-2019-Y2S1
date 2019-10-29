@@ -37,7 +37,7 @@ class CourseCompletedDAO {
         $arr = array();
 
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $arr[] = ["userid: " . $row['userid'], "course: " . $row['code'] ];
+            $arr[] = ["userid" => $row['userid'], "course" => $row['code'] ];
         }
 
         $conn = null;
