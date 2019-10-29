@@ -24,6 +24,27 @@ class CourseCompletedDAO {
 
     }
 
+    public function retrieveAllSortCourse(){
+        $sql = 'SELECT * FROM course_completed ORDER BY `code`';
+
+        $connMgr = new ConnectionManager();     
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $arr = array();
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $arr[] = ['"userid": ' . $row['userid'], '"course": ' . $row['code'] ];
+        }
+
+        $conn = null;
+        $stmt = null;
+        return $arr;
+
+    }
     public function retrieve($userid){
         //this funtion takes in a single string 'userid' and return an array of course that user has completed
         $connMgr = new ConnectionManager();  

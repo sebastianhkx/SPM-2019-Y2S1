@@ -1,7 +1,8 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+## testing comment out
+// require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
 $assoc = TRUE;
