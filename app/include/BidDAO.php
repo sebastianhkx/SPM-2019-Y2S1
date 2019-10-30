@@ -162,8 +162,8 @@ class BidDAO {
             }
         }
 
-        //retrieves list of current bids //round 1
-        $bidObj_array = $this->retrieveByUser($bid->userid);
+        //retrieves list of current bids without new bid course //round 1
+        $bidObj_array = $this->retrieveByUseridNotCourse($bid->userid, $bid->course);
         if (!empty($bidObj_array)){
             //has existing bids, does not enter if there are no existing bids as it would be unnecessary to check
             //timetable clash BOOTSTRAP + JSON
@@ -174,7 +174,7 @@ class BidDAO {
                 $existingBidSectionObj = $sectionDAO->retrieveBySection($bidObj);//existing bid
                 $existingStart = $existingBidSectionObj->start;
                 $existingEnd = $existingBidSectionObj->end;
-                if (!$this->checkExistingCourseBid($bid) && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
+                if ($bidSectionObj->day == $existingBidSectionObj->day && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                     //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
                     $errors[] = 'class timetable clash';
@@ -192,7 +192,7 @@ class BidDAO {
                 $existingEnd = $existingBidCourseObj->exam_end;
                 //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
                 //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-                if (!$this->checkExistingCourseBid($bid) && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
+                if ($bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<$existingEnd and $newStart>$existingStart) || ($existingStart<$newEnd and $existingStart>$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     $errors[] = 'exam timetable clash';
                     break;
                 }
@@ -378,6 +378,32 @@ class BidDAO {
 
         if($row = $stmt->fetch()){
             $result = new bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+
+        return $result;
+    }
+
+    public function retrieveByUseridNotCourse($userid, $course){
+        // returns bid 
+        $sql = 'SELECT * FROM bid WHERE userid=:userid AND course!=:course';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = [];
+
+        if($row = $stmt->fetch()){
+            $result[] = new bid($row['userid'], $row['amount'], $row['course'], $row['section']);
         }
 
         $stmt = null;
