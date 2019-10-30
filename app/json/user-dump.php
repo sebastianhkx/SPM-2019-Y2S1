@@ -5,23 +5,25 @@ require_once '../include/common.php';
 require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
-$assoc = TRUE;
 
-$jsonStr = $_REQUEST['r'];
-$userid = json_decode($jsonStr, $assoc)['userid'];
+$input = [];
+if (isset($_REQUEST['r'])){
+    $input = JSON_DECODE($_REQUEST['r'], true);
+}
 
-$errors = [ isMissingOrEmpty ($userid) ];
+$errors = [ isMissingOrEmptyJson ($input, 'userid') ];
 $errors = array_filter($errors);
 
 
-// if (!isEmpty($errors)) {
-    // $result = [
-    //     "status" => "error",
-    //     "message" => array_values($errors)
-    //     ];
-// }
-// else{
-    // $userid = $_REQUEST['userid'];
+
+if (!isEmpty($errors)) {
+    $result = [
+        "status" => "error",
+        "message" => array_values($errors)
+        ];
+}
+else{
+    $userid = $input['userid'];
 
     $student_dao = new StudentDAO();
     $student = $student_dao->retrieve($userid);
@@ -40,9 +42,9 @@ $errors = array_filter($errors);
                     "message" => ['invalid userid']
                 ];
     }
-// }
+}
 
-header('Content-Type: application/json');
+// header('Content-Type: application/json');
 echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
  
 ?>
