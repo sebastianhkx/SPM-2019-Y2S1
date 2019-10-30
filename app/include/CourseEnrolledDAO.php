@@ -152,7 +152,7 @@ class CourseEnrolledDAO {
 
         $stmt->execute();
 
-        $result = null;
+        $result = [];
 
         while($row = $stmt->fetch()){
             $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
