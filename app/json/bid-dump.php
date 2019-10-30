@@ -1,13 +1,15 @@
 <?php
 
 require_once '../include/common.php';
-require_once '../include/protect_json.php';
+// require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
 
 
-
-$input = JSON_DECODE($_REQUEST['r'], true);
+$input = [];
+if (isset($_REQUEST['r'])){
+    $input = JSON_DECODE($_REQUEST['r'], true);
+}
 
 // var_dump($input);
 // var_dump(null===0);

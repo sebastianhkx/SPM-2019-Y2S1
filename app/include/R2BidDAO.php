@@ -173,6 +173,10 @@ class R2BidDAO{
             return $errors;
         }
 
+        if ($course_enrolled==null){
+            return True;
+        }
+
         $courseEnrolled_dao -> delete($course_enrolled);
         $result_dao = new ResultDAO();
         $student_dao = new StudentDAO();

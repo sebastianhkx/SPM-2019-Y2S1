@@ -4,7 +4,10 @@ require_once '../include/common.php';
 require_once '../include/protect_json.php';
 
 
-$input = JSON_DECODE($_REQUEST['r'], true);
+$input = [];
+if (isset($_REQUEST['r'])){
+    $input = JSON_DECODE($_REQUEST['r'], true);
+}
 
 
 $errors = [ isMissingOrEmptyJson ($input, 'course'),
