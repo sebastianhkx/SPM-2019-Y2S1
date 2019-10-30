@@ -124,7 +124,7 @@ function roundTwoResolve($courseSection){
     $bidDAO = new BidDAO();
     $resultDAO = new ResultDAO();
     $studentDAO = new StudentDAO();
-    $courseDAO = new courseDAO();
+    $courseDAO = new CourseDAO();
     $sectionDAO = new SectionDAO();
     $courseEnrolledDAO = new CourseEnrolledDAO();
 
