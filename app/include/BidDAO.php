@@ -745,7 +745,7 @@ class BidDAO {
         //not enough edollars BOOTSTRAP+JSON
         if ($studentDAO->retrieve($bid->userid)!=null){
             if ($edollars<$bid->amount){
-                $errors[] = 'not enough e-dollars';
+                $errors[] = 'not enough e-dollar';
             }
         }
 
