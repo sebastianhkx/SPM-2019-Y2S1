@@ -1,3 +1,2 @@
-
-app/include/test.php
 app/include/ConnectionManager.php
+app/.DS_Store
