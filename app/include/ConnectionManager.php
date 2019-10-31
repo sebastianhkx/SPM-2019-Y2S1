@@ -6,14 +6,24 @@ class ConnectionManager {
         
         $host = "localhost";
         $username = "root";
-    
-        $password = "";                // WAMP
-        $port = 3306;                  // WAMP
 
-        // $password = "root";         // MAMP   
+        ## check if machine is windows
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $password = "";                
+            $port = 3306;                  
+        }
 
-        // $password = "oAoW79DW2TSy"; // AWS
-        // $port = 8888;               // AWS
+        ## check if machine is mac
+        elseif (PHP_OS === 'Darwin') {
+            $password = "root";       
+            $port = 3306;                      
+        }
+
+        ## check if machine is AWS
+        elseif (PHP_OS === 'Linux') {
+            $password = "oAoW79DW2TSy"; 
+            $port = 8888;               
+        }
 
         $dbname = "g6t6";
 
