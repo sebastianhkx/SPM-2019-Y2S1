@@ -134,9 +134,9 @@ $r2Info = $r2BidDAO->getr2bidinfo($temp_bid);
 echo "<h2>Information:</h2>
         <p>Course:{$course}</p>
         <p>Section:{$section}</p>
-        <p>Total Availdable Seats:{$r2Info->vacancy}</p>
+        <p>Total Available Seats:{$r2Info->vacancy}</p>
         <p>Total Number Of Bids:$totalbids</p>
-        <p>Minimun Bid Value:{$r2Info->min_amount}</p>";
+        <p>Minimum Bid Value:{$r2Info->min_amount}</p>";
     // if($totalbids > 0){
     //   echo "<table border='1'>
     //       <tr>

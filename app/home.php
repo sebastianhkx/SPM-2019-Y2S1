@@ -45,6 +45,65 @@ $userid = $_SESSION['userid'];
         echo "<h1>No active bidding round currently.</h1>";
     }
     echo "<hr>";
+
+    $bidDAO = new BidDAO();
+    $resultDAO = new ResultDAO();
+    $r2BidDAO = new R2BidDAO();
+    $resultObjs = $resultDAO->retrieveByUser($userid);
+    $bidObjs =  $bidDAO->retrieveByUser($userid);
+    if (!empty($resultObjs) || !empty($bidObjs)){
+      echo 
+      "
+      <table border='1'>
+        <tr>
+          <th colspan='4'>Bid Results</th>
+        </tr>
+        <tr>
+          <th>Course</th>
+          <th>Section</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>";
+      foreach ($bidObjs as $bidObj){
+        if ($round_status=='1'){
+          $result = 'Pending';
+        }
+        else{
+          $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
+          $vacancy = $r2BidInfo->vacancy;
+          $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
+          if ($bidObj->amount>$clearingPrice){
+            $result = 'Success';
+          }
+          else{
+            $result = 'Fail';
+          }
+
+        }
+
+        echo
+        "
+        <tr>
+          <td>{$bidObj->course}</td>
+          <td>{$bidObj->section}</td>
+          <td>{$bidObj->amount}</td>
+          <td>$result</td>
+        </tr>";
+      }
+      foreach ($resultObjs as $resultObj){
+        $result = ucfirst($resultObj->result);
+        echo
+        "
+        <tr>
+          <td>{$resultObj->course}</td>
+          <td>{$resultObj->section}</td>
+          <td>{$resultObj->amount}</td>
+          <td>$result</td>
+        </tr>";
+      }
+
+      echo "</table>";
+    }
 ?>
 </div>
 

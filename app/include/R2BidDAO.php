@@ -111,6 +111,24 @@ class R2BidDAO{
         return $output;
     }
 
+    public function updateBidVacancy($r2Bid_info){
+        //var_dump($result);
+        $sql = 'UPDATE r2_bid_info SET vacancy = :vacancy  WHERE course=:course AND section = :section';
+        $connMgr = new ConnectionManager();
+        $conn = $connMgr->getConnection();
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':course', $r2Bid_info->course, PDO::PARAM_STR);
+        $stmt->bindParam(':section', $r2Bid_info->section, PDO::PARAM_STR);
+        $stmt->bindParam(':vacancy', $r2Bid_info->vacancy, PDO::PARAM_INT);
+
+        $output = $stmt->execute();
+
+        // var_dump($output);
+
+        return $output;
+    }
+
     public function deleteInfo(){
         //this function is used to empty the r2_bid_info table
         $sql = 'TRUNCATE TABLE r2_bid_info';

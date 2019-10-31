@@ -113,6 +113,13 @@ class CourseEnrolledDAO {
             $isDeleteOk = TRUE;
         }
 
+        $r2BidDAO = new R2BidDAO();
+        if ($isDeleteOk){
+            $r2Bid_info = $r2BidDAO->getr2bidinfo($courseEnrolled);
+            $r2Bid_info->vacancy = $r2Bid_info->vacancy+1;
+            $r2BidDAO->updateBidVacancy($r2Bid_info);
+        }
+
         $stmt = null;
         $conn = null; 
 

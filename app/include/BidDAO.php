@@ -345,7 +345,14 @@ class BidDAO {
         if($current_round->round_num == 2){
             $r2BidDAO = new R2BidDAO();
             $r2Info = $r2BidDAO->getr2bidinfo($bid);
-            $vacancy = $r2Info->vacancy;
+            if ($courseEnrolledObjs != null){
+                $enrolled = sizeof($courseEnrolledObjs);
+            }
+            else{
+                $enrolled = 0;
+            }
+            $size = $sectionDAO->retrieveBySection($bid)->size;
+            $vacancy = $size-$enrolled;
             $oldMin = $r2Info->min_amount;
             $newMin = $this->getRoundTwoSuccessfullPrice($bid, $vacancy-1)+1;
             // var_dump($newMin,'new', $oldMin);
