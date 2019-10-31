@@ -6,17 +6,18 @@ $userid = $_SESSION['userid'];
 $courseEnrolledDAO = new CourseEnrolledDAO;
 $r2bidDAO = new R2BidDAO();
 
-$page = "";
+$page = "bidding.php";
 $message = "";
 
 //check round number
 $roundstatus_dao = new RoundStatusDAO();
 $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+// var_dump($round_status);
 if($round_status != null){
 
   if($round_status->round_num == 1){
     $page = "bidding.php";
-    $message =  "no course enrolled!";
+    // $message =  "no course enrolled!";
   }
   else{
     $page = "r2bidding.php";
@@ -75,7 +76,7 @@ $course_enrolled = $courseEnrolledDAO->retrieveByUserid($_SESSION['userid']);
 //var_dump($_SESSION);
 $resultDAO = new ResultDAO;
 
-$message =  "no course enrolled!";
+// $message =  "no course enrolled!";
 if (!empty($course_enrolled) && $round_active){
   $message = "";
 ?>
@@ -118,10 +119,31 @@ foreach ($course_enrolled as $course){
 
 ?>
     </table>
-        <br><input type='submit' value='Drop Bids'>
+        <br><input type='submit' value='Drop Section(s)'>
 </form>
 <?php
+
+
 }//closes if (!empty($course_enrolled)){
+  $student_dao = new StudentDAO();
+  $student = $student_dao->retrieve($userid); // student object
+  
+  echo "<h2>Your info:</h2>";
+  echo "<table border=1>
+      <tr>
+          <th>Name</th>
+          <td>$student->name</td>
+      </tr>  
+      <tr>
+          <th>School</th>
+          <td>$student->school</td>
+      </tr>
+      <tr>
+          <th>e$ Balance</th>
+          <td>$student->edollar</td>
+      </tr>
+      </table><hr>";
+
 if (isset($errors) && $round_active){
   // var_dump($message);
   if (is_array($errors)){
