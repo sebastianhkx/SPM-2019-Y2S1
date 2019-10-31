@@ -60,7 +60,7 @@ class SectionDAO {
         $section_name=$section->section;
         $section_number=substr($section_name,1);
         // var_dump($section);
-        if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<0  || $section_number>100){
+        if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<1  || $section_number>99){
             $errors[]='invalid section';
         }
 

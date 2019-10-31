@@ -42,11 +42,12 @@ echo "<table border='1'>
 
 for ($i = 1; $i <= count($bids); $i++) {
     $bid = $bids[$i-1];
+    $edollar = number_format($bid->amount,2);
     echo "
     <tr>
         <td>$i</td>
         <td>$bid->userid</td>
-        <td>$bid->amount</td>
+        <td>$edollar</td>
         <td>$bid->code</td>
         <td>$bid->section</td>
     </tr>";

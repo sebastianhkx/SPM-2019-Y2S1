@@ -17,6 +17,39 @@ function doBootstrap() {
     $prerequisite_success = 0;
     $course_completed_success = 0;
     $bid_success = 0;
+
+    $bidDAO= new BidDAO();//has fk dependency on course, section, student
+    $bidDAO->deleteAll();
+
+    $course_completedDAO= new CourseCompletedDAO();//has fk dependency on course, student
+    $course_completedDAO->deleteAll();
+
+    $prerequisiteDAO= new PrerequisiteDAO();//has fk dependency on course
+    $prerequisiteDAO->deleteAll();
+
+    $sectionDAO= new SectionDAO();//has fk dependency on course
+    $sectionDAO->deleteAll();
+
+    $studentDAO= new StudentDAO();//no depdenency
+    $studentDAO->deleteAll();
+
+    $courseDAO= new CourseDAO();//no dependency
+    $courseDAO->deleteAll();
+
+    //todo delete all for new tables
+
+    $resultDAO = new ResultDAO();
+    $resultDAO->deleteAll();
+
+    $courseEnrolledDAO = new CourseEnrolledDAO();
+    $courseEnrolledDAO->deleteAll();
+
+    $r2bidDAO = new R2BidDAO();
+    $r2bidDAO->deleteAll();
+
+    //sets round to one
+    $roundDAO = new RoundStatusDAO();
+    $roundDAO->setRound1();
     
     if ($_FILES["bootstrap-file"]["size"] <= 0)
         $errors[] = "input files not found";
@@ -85,38 +118,7 @@ function doBootstrap() {
 
                 // var_dump(fgetcsv($student));
 
-                $bidDAO= new BidDAO();//has fk dependency on course, section, student
-                $bidDAO->deleteAll();
-
-                $course_completedDAO= new CourseCompletedDAO();//has fk dependency on course, student
-                $course_completedDAO->deleteAll();
-
-                $prerequisiteDAO= new PrerequisiteDAO();//has fk dependency on course
-                $prerequisiteDAO->deleteAll();
-
-                $sectionDAO= new SectionDAO();//has fk dependency on course
-                $sectionDAO->deleteAll();
-
-                $studentDAO= new StudentDAO();//no depdenency
-                $studentDAO->deleteAll();
-
-                $courseDAO= new CourseDAO();//no dependency
-                $courseDAO->deleteAll();
-
-                //todo delete all for new tables
-
-                $resultDAO = new ResultDAO();
-                $resultDAO->deleteAll();
-
-                $courseEnrolledDAO = new CourseEnrolledDAO();
-                $courseEnrolledDAO->deleteAll();
-
-                $r2bidDAO = new R2BidDAO();
-                $r2bidDAO->deleteAll();
-
-                //sets round to one
-                $roundDAO = new RoundStatusDAO();
-                $roundDAO->setRound1();
+                
 
 
                 // read each line from csv

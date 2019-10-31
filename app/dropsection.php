@@ -98,7 +98,7 @@ if (!empty($course_enrolled) && $round_active){
 foreach ($course_enrolled as $course){
     $bid_result = $resultDAO->retrieveByCourseEnrolled($course);
     // var_dump($bid_result);
-    $amount = $bid_result->amount;
+    $amount = number_format($bid_result->amount,2);
     echo 
 "
         <tr>

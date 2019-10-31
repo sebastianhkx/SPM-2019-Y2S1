@@ -65,29 +65,31 @@ $userid = $_SESSION['userid'];
           <th>Status</th>
         </tr>";
       foreach ($bidObjs as $bidObj){
-        if ($round_status=='1'){
-          $result = 'Pending';
-        }
-        else{
-          $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
-          $vacancy = $r2BidInfo->vacancy;
-          $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
-          if ($bidObj->amount>$clearingPrice){
-            $result = 'Success';
-          }
-          else{
-            $result = 'Fail';
-          }
+      //   if ($round_status=='1'){
+      //     $result = 'Pending';
+      //   }
+      //   else{
+      //     $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
+      //     $vacancy = $r2BidInfo->vacancy;
+      //     $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
+      //     if ($bidObj->amount>$clearingPrice){
+      //       $result = 'Success';
+      //     }
+      //     else{
+      //       $result = 'Fail';
+      //     }
 
-        }
+      //   }
+
+        $edollar = number_format($bidObj->amount,2);
 
         echo
         "
         <tr>
           <td>{$bidObj->course}</td>
           <td>{$bidObj->section}</td>
-          <td>{$bidObj->amount}</td>
-          <td>$result</td>
+          <td>{$edollar}</td>
+          <td>Pending</td>
         </tr>";
       }
       foreach ($resultObjs as $resultObj){

@@ -74,6 +74,8 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
   $student = $student_dao->retrieve($userid); // student object
   $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids 
 
+  $edollar = number_format($student->edollar,2);
+
   echo "Current Round: 2 (Round start)";
   echo "<h2>Your info:</h2>";
   echo "<table border=1>
@@ -87,7 +89,7 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
       </tr>
       <tr>
           <th>e$ Balance</th>
-          <td>$student->edollar</td>
+          <td>$edollar</td>
       </tr>
       </table><hr>";
 
@@ -107,11 +109,12 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
   for ($i=1; $i<=sizeof($bids); $i++) {
       $bid = $bids[$i-1];
       $status = $bid_dao->bidStatus($bid);
+      $edollar = number_format($bid->amount,2);
       echo "
       <tr>
           <td>$i</td>
           <td>{$bid->userid}</td>
-          <td>{$bid->amount}</td>
+          <td>{$edollar}</td>
           <td>{$bid->course}</td>
           <td>{$bid->section}</td>
           <td>{$status}</td>

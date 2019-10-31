@@ -18,10 +18,11 @@ echo "<table border='1'>
 
 for ($i = 1; $i <= count($results); $i++) {
     $result = $results[$i-1];
+    $edollar = number_format($result->amount,2);
     echo "
     <tr>
         <td>$result->userid</th>
-        <td>$result->amount</th>
+        <td>$edollar</th>
         <td>$result->course</th>
         <td>$result->section</th>
         <td>$result->result</th>

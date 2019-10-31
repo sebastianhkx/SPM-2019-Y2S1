@@ -78,6 +78,7 @@
     }
     $student = $student_dao->retrieve($userid); // student object
     $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
+    $edollar = number_format($student->edollar,2);
 
     echo "<h2>Your info:</h2>";
     echo "<table border=1>
@@ -91,7 +92,7 @@
         </tr>
         <tr>
             <th>e$ Balance</th>
-            <td>$student->edollar</td>
+            <td>$edollar</td>
         </tr>
         </table><hr>";
   
@@ -108,11 +109,12 @@
   
     for ($i = 1; $i <= count($bids); $i++) {
         $bid = $bids[$i-1];
+        $edollar = number_format($bid->amount,2);
         echo "
         <tr>
             <td>$i</td>
             <td>$bid->userid</td>
-            <td>$bid->amount</td>
+            <td>$edollar </td>
             <td>$bid->course</td>
             <td>$bid->section</td>
         </tr>";
