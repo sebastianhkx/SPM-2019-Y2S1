@@ -76,7 +76,7 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
 
   $edollar = number_format($student->edollar,2);
 
-  echo "Current Round: 2 (Round start)";
+  echo "Current Round: 2";
   echo "<h2>Your info:</h2>";
   echo "<table border=1>
       <tr>
@@ -117,7 +117,7 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
           <td>{$edollar}</td>
           <td>{$bid->course}</td>
           <td>{$bid->section}</td>
-          <td>{$status}</td>
+          <td>Pending</td>
       </tr>";
   }
 
