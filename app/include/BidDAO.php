@@ -176,12 +176,12 @@ class BidDAO {
                 $existingStart = $existingBidSectionObj->start;
                 $existingEnd = $existingBidSectionObj->end;
                 // var_dump($newStart, $newEnd, $existingStart, $existingEnd,$bidSectionObj->day,$existingBidSectionObj->day);
-                if ($bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
+                if ($bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                     // 2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-                    $msg = 'class timetable clash';
                     $errors[] = 'class timetable clash';
                     break;
+                }        
             }
             
             
@@ -268,11 +268,12 @@ class BidDAO {
                 $existingBidSectionObj = $sectionDAO->retrieveBySection($courseEnrolledObj);//existing bid
                 $existingStart = $existingBidSectionObj->start;
                 $existingEnd = $existingBidSectionObj->end;
-                if ($courseEnrolledObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd)))
+                if ($courseEnrolledObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                     //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
                     $errors[] = 'class timetable clash';
                     break;
+                }                 
             }
             
             
@@ -332,7 +333,7 @@ class BidDAO {
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_STR);
         $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
 
@@ -777,7 +778,7 @@ class BidDAO {
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':userid', $bid->userid, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $bid->amount, PDO::PARAM_STR);
         $stmt->bindParam(':course', $bid->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $bid->section, PDO::PARAM_STR);
 

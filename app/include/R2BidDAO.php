@@ -34,7 +34,7 @@ class R2BidDAO{
 
         $stmt->bindParam(':course', $r2Bid->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $r2Bid->section, PDO::PARAM_STR);
-        $stmt->bindParam(':min_amount', $r2Bid->min_amount, PDO::PARAM_INT);
+        $stmt->bindParam(':min_amount', $r2Bid->min_amount, PDO::PARAM_STR);
         $stmt->bindParam(':vacancy', $r2Bid->vacancy, PDO::PARAM_INT);
 
 
@@ -102,7 +102,7 @@ class R2BidDAO{
 
         $stmt->bindParam(':course', $r2Bid_info->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $r2Bid_info->section, PDO::PARAM_STR);
-        $stmt->bindParam(':min_amount', $r2Bid_info->min_amount, PDO::PARAM_INT);
+        $stmt->bindParam(':min_amount', $r2Bid_info->min_amount, PDO::PARAM_STR);
 
         $output = $stmt->execute();
 

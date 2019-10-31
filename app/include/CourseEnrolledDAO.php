@@ -12,7 +12,7 @@ class CourseEnrolledDAO {
         $stmt->bindParam(':userid', $course_enrolled->userid, PDO::PARAM_STR);
         $stmt->bindParam(':course', $course_enrolled->course, PDO::PARAM_STR);
         $stmt->bindParam(':section', $course_enrolled->section, PDO::PARAM_STR);
-        $stmt->bindParam(':amount', $course_enrolled->amount, PDO::PARAM_INT);
+        $stmt->bindParam(':amount', $course_enrolled->amount, PDO::PARAM_STR);
         $stmt->bindParam(':day', $course_enrolled->day, PDO::PARAM_INT);
         $stmt->bindParam(':start', $course_enrolled->start, PDO::PARAM_STR);
         $stmt->bindParam(':end', $course_enrolled->userid, PDO::PARAM_STR);
