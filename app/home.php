@@ -94,12 +94,13 @@ $userid = $_SESSION['userid'];
       }
       foreach ($resultObjs as $resultObj){
         $result = ucfirst($resultObj->result);
+        $edollar = number_format($resultObj->amount,2);
         echo
         "
         <tr>
           <td>{$resultObj->course}</td>
           <td>{$resultObj->section}</td>
-          <td>{$resultObj->amount}</td>
+          <td>{$edollar}</td>
           <td>$result</td>
         </tr>";
       }
