@@ -7,7 +7,7 @@ $userid = $_SESSION['userid'];
 
 $student_dao = new StudentDAO();
 $bid_dao = new BidDAO();
-$courseDAO = new courseDAO();
+$courseDAO = new CourseDAO();
 $sectionDAO = new SectionDAO();
 $r2BidDAO = new R2BidDAO();
 
@@ -110,6 +110,16 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
       $bid = $bids[$i-1];
       $status = $bid_dao->bidStatus($bid);
       $edollar = number_format($bid->amount,2);
+      $r2BidDAO = new R2BidDAO();
+      $r2BidInfo = $r2BidDAO->getr2bidinfo($bid);
+      $vacancy = $r2BidInfo->vacancy;
+      $clearingPrice = $bid_dao->getRoundTwoSuccessfullPrice($bid, $vacancy);
+      if ($bid->amount>$clearingPrice){
+        $result = 'Success';
+      }
+      else{
+        $result = 'Fail';
+      }
       echo "
       <tr>
           <td>$i</td>
@@ -117,7 +127,7 @@ if (isset($_POST['bid']) && isset($_POST['bidamount'])){
           <td>{$edollar}</td>
           <td>{$bid->course}</td>
           <td>{$bid->section}</td>
-          <td>Pending</td>
+          <td>$result</td>
       </tr>";
   }
 

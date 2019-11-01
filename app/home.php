@@ -89,7 +89,7 @@ $userid = $_SESSION['userid'];
           <td>{$bidObj->course}</td>
           <td>{$bidObj->section}</td>
           <td>{$edollar}</td>
-          <td>$result</td>
+          <td>Pending</td>
         </tr>";
       }
       foreach ($resultObjs as $resultObj){
