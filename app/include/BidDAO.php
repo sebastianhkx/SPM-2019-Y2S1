@@ -268,7 +268,7 @@ class BidDAO {
                 $existingBidSectionObj = $sectionDAO->retrieveBySection($courseEnrolledObj);//existing bid
                 $existingStart = $existingBidSectionObj->start;
                 $existingEnd = $existingBidSectionObj->end;
-                if ($courseEnrolledObj->course != $bid->course && $bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
+                if ($bidSectionObj->day == $existingBidSectionObj->day && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and timetable clash wouldnt matter
                     //2nd condition checks if days clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
                     $errors[] = 'class timetable clash';
@@ -287,7 +287,7 @@ class BidDAO {
                 $existingEnd = $existingBidCourseObj->exam_end;
                 //1st condition checks that the course for the new bid and existing bid doesnt match, because new bid updates old bid and exam clash wouldnt matter
                 //2nd condition checks if exam date clash, 3rd condition checks if new start between existing start end, 4th checks if existing start between new start end, 5th checks if either start end overlaps
-                if ($courseEnrolledObj->course != $bid->course && $bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
+                if ($bidCourseObj->exam_date == $existingBidCourseObj->exam_date && (($newStart<=$existingEnd && $newStart>=$existingStart) || ($existingStart<=$newEnd && $existingStart>=$newStart) || ($newStart == $existingStart || $newEnd == $existingEnd))){
                     $errors[] = 'exam timetable clash';
                     break;
                 }
