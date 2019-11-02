@@ -35,7 +35,7 @@ if ($userid !== "admin") {
 
       <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="">Home&nbsp;</a>
+            <a class="nav-link" href="home_admin.php">Home&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">

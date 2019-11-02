@@ -4,48 +4,140 @@ require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
 
-// bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>BIOS Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>BIOS Admin Home</title>
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
-<body>
+<body id="page-top">
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand">BIOS</a>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
+      
+      <ul class="navbar-nav ml-left">
+          <li class="nav-item">
+            <a class="nav-link">&nbsp;</a>
+          </li>
+      </ul>
+
+      <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="home.php">Home&nbsp;</a>
+          </li>
+      </ul>
+      <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="bidding.php">Bidding&nbsp;</a>
+          </li>
+      </ul>
+      <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
+          </li>
+      </ul>
+      <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
+          </li>
+      </ul>
+
+        <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link"><?= $userid ?>&nbsp;</a>
+        </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="logout.php">Logout</a>
+          </li>
+        </ul>
+
+      </div>
     </div>
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Home</a></li>
+  </nav>
 
-      <li><a href="bidding.php">Bidding</a></li>
-      <li><a href='dropbid.php'>Drop Bid</a></li>
-      <li><a href='dropsection.php'>Drop Section</a></li>
-      <li><a href='logout.php'>Log Out</a></li>
-    </ul>
-  </div>
-</nav>
-  
+<!-- Buffer space -->
 <div class="container">
-  <h3>Hello, <?= $userid ?> and welcome back!</h3>
-
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <br>
+    <br>
+    <br>
+  </div>
 <?php
-    $roundstatus_dao = new RoundStatusDAO();
-    $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
-    if ($round_status != null) {
-        echo "<h1>Current Round: $round_status->round_num</h1>";
-    }
-    else {
-        echo "<h1>No active bidding round currently.</h1>";
-    }
-    echo "<hr>";
+$roundstatus_dao = new RoundStatusDAO();
+$round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+?>
 
+<html>
+<!-- Page Content start here-->
+<div class="container-fluid">
+  <!-- Round status -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <?php
+              if ($round_status != null) {echo "Current Round: $round_status->round_num";}
+              else {echo "No active bidding round currently";}
+            ?>
+          </h6>
+        </div>
+      </div>
+    </div>
+
+            <!-- User info -->
+    <div class="col-lg-6 mr-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">
+            Your Info
+          </h6>
+        </div>
+        <br>
+        <div class='text-center'>
+        <?php
+        $student_dao = new StudentDAO();
+        $student = $student_dao->retrieve($userid);
+        $edollar = number_format($student->edollar,2);
+        ?>
+
+        <table class="table table-bordered">
+          <tr>
+              <th>Name</th>
+              <td><?= $student->name ?></td>
+          </tr>  
+          <tr>
+              <th>School</th>
+              <td><?= $student->school ?></td>
+          </tr>
+          <tr>
+              <th>e$ Balance</th>
+              <td><?= $edollar ?></td>
+          </tr>
+        </table>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow mb-4">
+          <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Bid Results</h6>
+          </div>
+            <br>
+            <?php
     $bidDAO = new BidDAO();
     $resultDAO = new ResultDAO();
     $r2BidDAO = new R2BidDAO();
@@ -54,10 +146,7 @@ $userid = $_SESSION['userid'];
     if (!empty($resultObjs) || !empty($bidObjs)){
       echo 
       "
-      <table border='1'>
-        <tr>
-          <th colspan='4'>Bid Results</th>
-        </tr>
+      <table class='table table-bordered'>
         <tr>
           <th>Course</th>
           <th>Section</th>
@@ -108,9 +197,31 @@ $userid = $_SESSION['userid'];
       echo "</table>";
     }
 ?>
+      </div>
+    </div>
+  
+    <!-- page end -->
 </div>
 
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/demo/datatables-demo.js"></script>
+
 </body>
+
 </html>
 
 
