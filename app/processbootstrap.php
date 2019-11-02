@@ -26,7 +26,7 @@ if ($userid !== "admin") {
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="">Merlion University BIOS</a>
+      <a class="navbar-brand" href="home_admin.php">Merlion University BIOS</a>
       
       <ul class="navbar-nav ml-left">
           <li class="nav-item">
