@@ -11,7 +11,7 @@ $userid = $_SESSION['userid'];
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>BIOS Admin Home</title>
+  <title>BIOS Bootstrap</title>
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -22,7 +22,7 @@ $userid = $_SESSION['userid'];
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="">Merlion University BIOS</a>
+      <a class="navbar-brand" href="home_admin.php">Merlion University BIOS</a>
       
       <ul class="navbar-nav ml-left">
           <li class="nav-item">
@@ -32,7 +32,7 @@ $userid = $_SESSION['userid'];
 
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="">Home&nbsp;</a>
+            <a class="nav-link" href="home_admin.php">Home&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">

@@ -11,7 +11,7 @@ if  (isset($_SESSION['userid'])) {
 # send user back to the login page with the appropriate message if it was not
  
 else{
-	header("Location: login.php?error=Session not found");
+	header("Location: login.php?error=Session not found!");
 	// header("Location: login.php");
 	exit();
 }
