@@ -1,8 +1,12 @@
 <?php
 require_once 'include/common.php';
 require_once 'include/protect.php';
-// implement protect.php later
+
 $userid = $_SESSION['userid'];
+if ($userid !== "admin") {
+  header("Location: login.php?error=You are not admin!");
+  exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
