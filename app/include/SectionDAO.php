@@ -24,6 +24,30 @@ class SectionDAO {
         return $result;
     }
 
+    public  function retrievebyCourse($course) {
+        $sql = 'SELECT * FROM section WHERE course=:course';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+
+        while($row = $stmt->fetch()) {
+            $result[] = new Section($row['course'], $row['section'], $row['day'], $row['start'], $row['end'], $row['instructor'], $row['venue'], (int)$row['size']);
+        }
+        
+        $stmt = null;
+        $conn = null; 
+                 
+        return $result;
+    }
+
     public function deleteAll(){
 
         $connMgr = new ConnectionManager();      
