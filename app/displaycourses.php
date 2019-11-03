@@ -3,7 +3,7 @@
 require_once 'include/common.php';
 require_once 'include/protect.php';
 ?>
-<html>
+<!-- <html>
     <style>
         table {
             border-collapse: collapse;
@@ -18,12 +18,23 @@ require_once 'include/protect.php';
         padding: 10px;
         }
     </style>
-</html>
+</html> -->
 <?php
 $dao = new CourseDAO();
 $courses = $dao->retrieveAll();
 
-echo "<table border='1'>
+// to be implemented
+// filter by school
+// filter by subject
+// search course
+// 
+?>
+
+<html>
+<input height="100" type="text" id="search_course" onkeyup="filterFunction()" placeholder="Search for course" >
+
+<?php
+echo "<table id='course_table' border='1'>
     <tr>
         <th>No.</th>
         <th>Course</th>
@@ -50,5 +61,30 @@ for ($i = 1; $i <= count($courses); $i++) {
         <td>$course->exam_end</td>
     </tr>";
 }
-
+echo "</table>";
 ?>
+
+<script>
+function filterFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("search_course");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("course_table");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+
