@@ -81,6 +81,11 @@ if ($userid === "admin") {
 <?php
 $roundstatus_dao = new RoundStatusDAO();
 $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+
+// message for end of rounds
+$round_statuses = $roundstatus_dao->retrieveAll();
+$round1_arr = [$round_statuses[0]->round_num, $round_statuses[0]->status];
+$round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
 ?>
 
 <html>
@@ -94,8 +99,18 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">
             <?php
-              if ($round_status != null) {echo "Current Round: $round_status->round_num";}
-              else {echo "No active bidding round currently";}
+              if ($round_status != null) {
+                echo "Current Round: $round_status->round_num";
+              }
+              elseif ($round1_arr == [1, 'ended'] && $round2_arr == [2, 'pending']) {
+                echo "Round 1 bidding has ended, please check your results";
+              }
+              elseif ($round1_arr == [1, 'ended'] && $round2_arr == [2, 'ended']) {
+                echo "Round 2 bidding has ended, please check your results";
+              }
+              else {
+                echo "No active bidding round currently";
+              }
             ?>
           </h6>
         </div>

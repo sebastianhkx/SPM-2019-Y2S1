@@ -295,7 +295,7 @@ else {
       echo "<h6 class='m-0 font-weight-bold text-primary'>Course Catalogue</h6>";
 
       ?>
-      <input class="form-control bg-light border-1 small" height="100" type="text" id="search_course" onkeyup="filterFunction()" placeholder="Search for course" value='<?=$course_lookup?>' >
+      <input class="form-control bg-light border-1 small" height="100" type="text" id="search_course" onkeyup="filterFunction()" placeholder="Enter course ID to search" value='<?=$course_lookup?>' >
 
       <?php
       // section lookup
