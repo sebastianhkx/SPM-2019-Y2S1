@@ -3,7 +3,11 @@ require_once 'include/common.php';
 require_once 'include/protect.php';
 
 $userid = $_SESSION['userid'];
-
+// protect user page from admin
+if ($userid === "admin") {
+  header("Location: login.php");
+  exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +16,7 @@ $userid = $_SESSION['userid'];
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <title>BIOS Admin Home</title>
+  <title>BIOS Student Home</title>
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -82,9 +86,11 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
 <html>
 <!-- Page Content start here-->
 <div class="container-fluid">
-  <!-- Round status -->
+    <!-- Round status -->
     <div class="col-lg-6 mb-4">
       <div class="card shadow mb-4">
+      <div class="card-header ">
+
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">
             <?php
@@ -94,18 +100,21 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
           </h6>
         </div>
       </div>
+      </div>
+
     </div>
 
             <!-- User info -->
     <div class="col-lg-6 mr-4">
       <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">
-            Your Info
-          </h6>
-        </div>
+        <div class="card-header py-3">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+              Your Info
+            </h6>
+          </div>
         <br>
-        <div class='text-center'>
+        <!-- <div class='text-center'> -->
         <?php
         $student_dao = new StudentDAO();
         $student = $student_dao->retrieve($userid);
@@ -126,7 +135,7 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
               <td><?= $edollar ?></td>
           </tr>
         </table>
-        </div>
+          </div>
         
       </div>
     </div>
@@ -134,73 +143,69 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
     <div class="col-lg-6 mb-4">
       <div class="card shadow mb-4">
           <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Bid Results</h6>
-          </div>
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Bidding Overview</h6>
+            </div>
             <br>
             <?php
-    $bidDAO = new BidDAO();
-    $resultDAO = new ResultDAO();
-    $r2BidDAO = new R2BidDAO();
-    $resultObjs = $resultDAO->retrieveByUser($userid);
-    $bidObjs =  $bidDAO->retrieveByUser($userid);
-    if (!empty($resultObjs) || !empty($bidObjs)){
-      echo 
-      "
-      <table class='table table-bordered'>
-        <tr>
-          <th>Course</th>
-          <th>Section</th>
-          <th>Amount</th>
-          <th>Status</th>
-        </tr>";
-      foreach ($bidObjs as $bidObj){
-        if ($round_status->round_num =='1'){
-          $result = 'Pending';
-        }
-        else{
-          $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
-          $vacancy = $r2BidInfo->vacancy;
-          $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
-          if ($bidObj->amount>$clearingPrice){
-            $result = 'Success';
-          }
-          else{
-            $result = 'Fail';
-          }
-
-        }
-
-        $edollar = number_format($bidObj->amount,2);
-
-        echo
-        "
-        <tr>
-          <td>{$bidObj->course}</td>
-          <td>{$bidObj->section}</td>
-          <td>{$edollar}</td>
-          <td>Pending</td>
-        </tr>";
-      }
-      foreach ($resultObjs as $resultObj){
-        $result = ucfirst($resultObj->result);
-        $edollar = number_format($resultObj->amount,2);
-        echo
-        "
-        <tr>
-          <td>{$resultObj->course}</td>
-          <td>{$resultObj->section}</td>
-          <td>{$edollar}</td>
-          <td>$result</td>
-        </tr>";
-      }
-
-      echo "</table>";
-    }
-?>
+            $bidDAO = new BidDAO();
+            $resultDAO = new ResultDAO();
+            $r2BidDAO = new R2BidDAO();
+            $resultObjs = $resultDAO->retrieveByUser($userid);
+            $bidObjs =  $bidDAO->retrieveByUser($userid);
+            if (!empty($resultObjs) || !empty($bidObjs)){
+              echo 
+              "
+              <table class='table table-bordered'>
+                <tr>
+                  <th>Course</th>
+                  <th>Section</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>";
+              foreach ($bidObjs as $bidObj){
+                if ($round_status->round_num =='1'){
+                  $result = 'Pending';
+                }
+                else{
+                  $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
+                  $vacancy = $r2BidInfo->vacancy;
+                  $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
+                  if ($bidObj->amount>$clearingPrice){
+                    $result = 'Success';
+                  }
+                  else{
+                    $result = 'Fail';
+                  }
+                }
+                $edollar = number_format($bidObj->amount,2);
+                echo "
+                <tr>
+                  <td>{$bidObj->course}</td>
+                  <td>{$bidObj->section}</td>
+                  <td>{$edollar}</td>
+                  <td>Pending</td>
+                </tr>";
+              }
+              foreach ($resultObjs as $resultObj){
+                $result = ucfirst($resultObj->result);
+                $edollar = number_format($resultObj->amount,2);
+                echo "
+                <tr>
+                  <td>{$resultObj->course}</td>
+                  <td>{$resultObj->section}</td>
+                  <td>{$edollar}</td>
+                  <td>$result</td>
+                </tr>";
+              }
+              echo "</table>";
+            }
+            ?>
+          </div>
       </div>
     </div>
-  
-    <!-- page end -->
+
+<!-- page end -->
 </div>
 
   <!-- Bootstrap core JavaScript-->
