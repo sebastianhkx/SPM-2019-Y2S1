@@ -78,6 +78,31 @@ class BidDAO {
         return $result;
     }
 
+    public  function retrievebyCourseUserID($course, $userid) {
+        $sql = 'SELECT * FROM bid WHERE course=:course and userid = :userid';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = null;
+
+        while($row = $stmt->fetch()) {
+            $result = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+        }
+        
+        $stmt = null;
+        $conn = null; 
+                 
+        return $result;
+    }
+
     public function deleteAll(){
         $sql = 'TRUNCATE TABLE bid';
 

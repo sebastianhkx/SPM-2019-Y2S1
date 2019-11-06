@@ -67,13 +67,12 @@
     $bid_dao = new BidDAO();
 
     $errors = '';
-    if (isset($_POST['submitdrop'])){
-        $coursedrop = $_POST['coursedrop']; // for repopulating form fields also
-        $sectiondrop = $_POST['sectiondrop'];
+    if (isset($_POST['dropbid'])){
+        $coursedrop = $_POST['dropbid'];
+        $sectiondrop = $bid_dao->retrievebyCourseUserID($coursedrop, $userid)->section;
 
         $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
         $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
-        //$errors = $bid_dao->drop($bid_to_drop);
         $errors = $bid_dao->drop($bid_to_drop);
     }
     $student = $student_dao->retrieve($userid); // student object
@@ -97,33 +96,37 @@
         </table><hr>";
   
     echo "<h2>Your current bids:</h2>";
-  
-    echo "<table border='1'>
+?>
+<form method='post' action='dropbid.php'>
+    <table border='2'>
         <tr>
-            <th>No.</th>
             <th>User ID</th>
             <th>Amount</th>
             <th>Course</th>
             <th>Section</th>
-        </tr>";
-  
-    for ($i = 1; $i <= count($bids); $i++) {
-        $bid = $bids[$i-1];
-        $edollar = number_format($bid->amount,2);
-        echo "
+            <th>Drop</th>
+        </tr>
+<?php
+// var_dump($course_enrolled);
+foreach ($bids as $bid){
+    $amount = number_format($bid->amount,2);
+    echo 
+"
         <tr>
-            <td>$i</td>
-            <td>$bid->userid</td>
-            <td>$edollar </td>
-            <td>$bid->course</td>
-            <td>$bid->section</td>
-        </tr>";
-    }
-  
-    echo "</table><hr>";
+            <td>{$bid->userid}</td>
+            <td>$amount</td>
+            <td>{$bid->course}</td>
+            <td>{$bid->section}</td>
+            <td> <input type='radio' name='dropbid' value={$bid->course}> </td>
+        </tr>
+";
+}
 ?>
+    </table>
+        <br><input type='submit' name = 'submitdrop' value='Drop Bid'>
+</form>
 
-<html>
+<!-- <html>
 <body>
     <h2>I want to drop this bid:</h2>
     <form action="dropbid.php" method="POST">
@@ -135,7 +138,7 @@
     <tr><td>
     <input type="submit" name='submitdrop' value="Drop Bid" ></td></tr>
     </table>
-    <br>
+    <br> -->
 
 <?php
     // if user drops a bid

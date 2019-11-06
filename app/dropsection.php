@@ -31,7 +31,7 @@ else{
 }
 
 if (isset($_POST["dropped_section"])){
-    //var_dump($_POST["dropped_section"]);
+    // var_dump($_POST["dropped_section"]);
     $drop_courses = $_POST['dropped_section'];
     $errors = [];
     foreach($drop_courses as $dropcourse){
@@ -119,7 +119,7 @@ foreach ($course_enrolled as $course){
 
 ?>
     </table>
-        <br><input type='submit' value='Drop Section(s)'>
+        <br><input type='submit' value='Drop Section'>
 </form>
 <?php
 
