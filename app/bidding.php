@@ -17,7 +17,7 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
 if ($round_status != null) {
   $round_num = $round_status->round_num;
   if($round_num == 2){
-    header("location:r2bidding.php");
+    header("location:new_r2bidding.php");
     exit();
   }
 }
@@ -62,7 +62,7 @@ else {
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
       
@@ -84,12 +84,12 @@ else {
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
+            <a class="nav-link" href="new_dropbid.php">Drop Bid&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
+            <a class="nav-link" href="new_dropsection.php">Drop Section&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav ml-auto">
@@ -108,14 +108,6 @@ else {
     </div>
   </nav>
 
-<!-- Buffer space -->
-<div class="container">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <br>
-    <br>
-    <br>
-  </div>
-
 <body id="page-top">
 
   <!-- Page Wrapper -->
@@ -124,7 +116,7 @@ else {
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Content Row -->
-          <div class="row">
+          <div class="row mt-4">
 
           <!-- Content Row -->
 

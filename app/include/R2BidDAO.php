@@ -148,8 +148,6 @@ class R2BidDAO{
     public function r2dropSection($userid,$drop_course,$drop_section){
         //this function take in a section object to reset the vacancy for that section
         $errors = null;
-        $courseEnrolled_dao = new CourseEnrolledDAO();
-        $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_course);
 
         //course code not exist
         $course_dao = new CourseDAO();
@@ -180,24 +178,18 @@ class R2BidDAO{
             $errors[] = 'round not active';
         }
 
-        //not exist
-        // $courseEnrolled_dao = new CourseEnrolledDAO();
-        // $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($sectionobj->userid,$section->course);
-        // if(empty($course_enrolled)){
-        //     $errors[] = "no such enrollment record";
-        // }
-
         if(!empty($errors)){
             return $errors;
         }
 
-        if ($course_enrolled==null){
-            return True;
-        }
-
-        $courseEnrolled_dao -> delete($course_enrolled);
+        // if ($course_enrolled==null){
+        //     return True;
+        // }
+        $courseEnrolled_dao = new CourseEnrolledDAO();
         $result_dao = new ResultDAO();
         $student_dao = new StudentDAO();
+        $course_enrolled = $courseEnrolled_dao -> retrieveByUseridCourse($userid,$drop_course);
+        $courseEnrolled_dao -> delete($course_enrolled);
         $result = $result_dao->retrieveByCourseEnrolled($course_enrolled);
         $result_dao->delete($result);
         $student_dao->addEdollar($result->userid, $result->amount);

@@ -23,7 +23,7 @@ if ($userid !== "admin") {
 </head>
 <body id="page-top">
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="home_admin.php">Merlion University BIOS</a>
       
@@ -59,13 +59,6 @@ if ($userid !== "admin") {
     </div>
   </nav>
 
-<!-- Buffer space -->
-<div class="container">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <br>
-    <br>
-    <br>
-  </div>
 
 <?php
 $roundstatus_dao = new RoundStatusDAO();
@@ -76,7 +69,7 @@ if (empty($round_status)){
 
 <html>
 <!-- Page Content start here-->
-<div class="container-fluid">
+<div class="container-fluid mt-4">
 
 <!-- Round 1 controls -->
 <div class="card border-left-primary shadow h-100 py-2">

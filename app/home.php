@@ -25,7 +25,7 @@ if ($userid === "admin") {
 </head>
 <body id="page-top">
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
       
@@ -47,12 +47,12 @@ if ($userid === "admin") {
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
+            <a class="nav-link" href="new_dropbid.php">Drop Bid&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
+            <a class="nav-link" href="new_dropsection.php">Drop Section&nbsp;</a>
           </li>
       </ul>
 
@@ -71,13 +71,6 @@ if ($userid === "admin") {
     </div>
   </nav>
 
-<!-- Buffer space -->
-<div class="container">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <br>
-    <br>
-    <br>
-  </div>
 <?php
 $roundstatus_dao = new RoundStatusDAO();
 $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
@@ -92,9 +85,9 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
 <!-- Page Content start here-->
 <div class="container-fluid">
     <!-- Round status -->
-    <div class="col-lg-6 mb-4">
+    <div class="col-lg-6 mb-4 mt-4">
       <div class="card shadow mb-4">
-      <div class="card-header ">
+      <div class="card-header">
 
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">

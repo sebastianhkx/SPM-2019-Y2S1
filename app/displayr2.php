@@ -29,7 +29,7 @@ if ($userid !== "admin") {
 </head>
 <body id="page-top">
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="home_admin.php">Merlion University BIOS</a>
       
@@ -65,15 +65,7 @@ if ($userid !== "admin") {
     </div>
   </nav>
 
-<!-- Buffer space -->
-<div class="container">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <br>
-    <br>
-    <br>
-  </div>
-
-<div class="container-fluid">
+<div class="container-fluid mt-4">
     <h1 class="h3 mb-0 text-gray-800">Round 2 Bidding Result</h1>
 
 <?php
