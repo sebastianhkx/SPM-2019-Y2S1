@@ -1,9 +1,24 @@
 <?php
     require_once 'include/common.php';
     require_once 'include/protect.php';
-    $page ="bidding.php";
     $roundstatus_dao = new RoundStatusDAO();
+    $student_dao = new StudentDAO();
+    $bid_dao = new BidDAO();
     $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+    $round_message = "No active bidding round currently.";
+    $errors = "";
+    $userid = $_SESSION['userid'];
+    $disabled = "";
+    $page = "bidding.php";
+
+    if(isset($_POST['submitdrop']) && isset($_POST['drop_course'])){
+      $coursedrop = $_POST['drop_course'];
+      $selected_bid = $bid_dao->retrieveByUseridCourse($userid, $coursedrop);
+      $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $selected_bid->section); // the current drop bid method doesn't need amount. might need to revisit the method.
+      $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $selected_bid->section);
+      $errors = $bid_dao->drop($bid_to_drop);
+    }
+
     if($round_status != null){
         if($round_status->round_num == 1){
             $page = "bidding.php";
@@ -11,151 +26,165 @@
         else{
             $page = "r2bidding.php";
         }
+        $round_message = "Current Round: Round $round_status->round_num";
+    }else{
+        $disabled = "disabled";
     }
-?>
-<html>
-    <style>
-        th, td {
-            text-align: center;
-        }
-    </style>
-</html>
-<html>
-<head>
-  <title>BIOS Drop Bid</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand">BIOS</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li><a href="home.php">Home</a></li>
-      <li><a href=<?=$page?>>Bidding</a></li>
-      <li class="active"><a href='dropbid.php'>Drop Bid</a></li>
-      <li><a href='dropsection.php'>Drop Section</a></li>
-      <li><a href='logout.php'>Log Out</a></li>
-    </ul>
-  </div>
-</nav>
-<div class="container">
-
-<?php
-    // Displays the current active round
-    $roundstatus_dao = new RoundStatusDAO();
-    $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
-    if ($round_status != null) {
-        echo "<h1>Current Round: $round_status->round_num</h1>";
-    }
-    else {
-        echo "<h1>No active bidding round currently.</h1>";
-    }
-    echo "<hr>";
-
-    $coursedrop = '';
-    $sectiondrop = '';
-
-    $userid = $_SESSION['userid'];
-
-    $student_dao = new StudentDAO();
-    $bid_dao = new BidDAO();
-
-    $errors = '';
-    if (isset($_POST['dropbid'])){
-        $coursedrop = $_POST['dropbid'];
-        $sectiondrop = $bid_dao->retrievebyCourseUserID($coursedrop, $userid)->section;
-
-        $bid_to_drop_temp = new Bid($userid, 0, $coursedrop, $sectiondrop); // the current drop bid method doesn't need amount. might need to revisit the method.
-        $bid_to_drop = new Bid($userid, $bid_dao->checkExistingBid($bid_to_drop_temp), $coursedrop, $sectiondrop);
-        $errors = $bid_dao->drop($bid_to_drop);
-    }
-    $student = $student_dao->retrieve($userid); // student object
-    $bids = $bid_dao->retrieveByUser($userid); // could be an array of bids
+    
+    $student = $student_dao->retrieve($userid);//student object
+    $bids = $bid_dao->retrieveByUser($userid); //array of bids object
     $edollar = number_format($student->edollar,2);
 
-    echo "<h2>Your info:</h2>";
-    echo "<table border=1>
-        <tr>
-            <th>Name</th>
-            <td>$student->name</td>
-        </tr>  
-        <tr>
-            <th>School</th>
-            <td>$student->school</td>
-        </tr>
-        <tr>
-            <th>e$ Balance</th>
-            <td>$edollar</td>
-        </tr>
-        </table><hr>";
-  
-    echo "<h2>Your current bids:</h2>";
-?>
-<form method='post' action='dropbid.php'>
-    <table border='2'>
-        <tr>
-            <th>User ID</th>
-            <th>Amount</th>
-            <th>Course</th>
-            <th>Section</th>
-            <th>Drop</th>
-        </tr>
-<?php
-// var_dump($course_enrolled);
-foreach ($bids as $bid){
-    $amount = number_format($bid->amount,2);
-    echo 
-"
-        <tr>
-            <td>{$bid->userid}</td>
-            <td>$amount</td>
-            <td>{$bid->course}</td>
-            <td>{$bid->section}</td>
-            <td> <input type='radio' name='dropbid' value={$bid->course}> </td>
-        </tr>
-";
-}
-?>
-    </table>
-        <br><input type='submit' name = 'submitdrop' value='Drop Bid'>
-</form>
-
-<!-- <html>
-<body>
-    <h2>I want to drop this bid:</h2>
-    <form action="dropbid.php" method="POST">
-        <table>
-        <tr><td style='text-align:left'>
-    Course: </td><td><input type="text" name="coursedrop" value="<?= $coursedrop ?>" required> </td></tr>
-    <tr><td style='text-align:left'>
-    Section: </td><td><input type="text" name="sectiondrop" value="<?= $sectiondrop ?>" required> </td></tr>
-    <tr><td>
-    <input type="submit" name='submitdrop' value="Drop Bid" ></td></tr>
-    </table>
-    <br> -->
-
-<?php
-    // if user drops a bid
-   
-    if (is_array($errors)) {
-    echo "<font color='red'>Error!</font><br>
-    <ul>";
-    foreach($errors as $err) {
-        echo "<font color='red'><li>$err</li></font>";
+    $table = "<table class='table table-responsive-ml table-bordered table-hover'>
+                <tr>
+                  <th>No.</th>
+                  <th>Amount</th>
+                  <th>Course</th>
+                  <th>Section</th>
+                  <th>Drop</th>
+                </tr>";
+    $count = 0;
+    foreach($bids as $bid){
+      $count++;
+      $dollar = number_format($bid->amount,2);
+      $table .= "<tr>
+                    <td>$count</td>
+                    <td>$dollar</td>
+                    <td>{$bid->course}</td>
+                    <td>{$bid->section}</td>
+                    <td> <input type='radio' name='drop_course' value={$bid->course} $disabled> </td>
+                </tr>";
     }
-    echo "</ul>";
-    }
-    elseif ($errors!='') {
-    echo "<font color='green'>Bid was dropped successfully!<br>
-            e$ updated</font>";
-    }   
+    $table .= "<tr><td colspan='5'><input class='btn btn-primary' type='submit' name='submitdrop' value='Drop Bid' $disabled>
+              </td></tr>
+              </table>";
 ?>
-</div>
-</body>
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BIOS Drop Bid</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  </head>
+
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
+      
+      <ul class="navbar-nav ml-left">
+        <li class="nav-item">
+          <a class="nav-link">&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="home.php">Home&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href=<?=$page?>>Bidding&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link"><?= $userid ?>&nbsp;</a>
+        </li>
+      </ul>  
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="logout.php">Logout</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+
+  <body>
+    <div id = 'wrapper'>
+      <div class = 'container-fluid'>
+        <div class ='row mt-4'>
+
+          <div class='col-md-4'>
+            <!-- first card in left column -->
+            <div class='card shadow mb-4'>
+              <div class='card-body'>
+                <h5 class='m-0 font-weight-bold text-primary'>
+                  <?=$round_message?>
+                </h5>
+              </div>
+            </div>
+            <!-- second card in left column -->
+            <div class='card shadow mb-4'>
+              <div class ='card-header'>
+                <h6 class='m-0 font-weight-bold text-primary'>Your Info</h6>
+              </div>
+              <div class='card-body text-center'>
+                <table class='table table-bordered'>
+                  <tr>
+                    <th>Name</th>
+                    <td><?=$student->name?></td>
+                  </tr>
+                  <tr>
+                    <th>School</th>
+                    <td><?=$student->school?></td>
+                  </tr>
+                  <tr>
+                    <th>e$ Balance</th>
+                    <td><?=$edollar?></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class='col'>
+            <div class='card shadow mb-4'>
+              <div class='card-header'>
+                <h5 class='m-0 font-weight-bold text-primary'>I want to drop:</h5>                
+              </div>
+              <div class='card-body text-center'>
+                <form method='POST' action ='dropbid.php '>
+                  <?=$table?>
+                </form>
+                <?php
+                  if(is_array($errors)){
+                    echo "<font color='red>Error!</font><br>!";
+                    echo "<ul>";
+                    foreach($errors as $err){
+                      echo "<font color='red'><li>$err</li></font>";
+                    }
+                    echo "</ul>";
+                  }elseif($errors != ''){
+                    echo "<font color='green'>Bid was dropped successfully!<br>
+                          e$ updated</font>";
+                  }
+                ?>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
 </html>

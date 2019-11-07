@@ -1,168 +1,205 @@
 <?php
-require_once 'include/common.php';
-require_once 'include/protect.php';
-
-$userid = $_SESSION['userid'];
-$courseEnrolledDAO = new CourseEnrolledDAO;
-$r2bidDAO = new R2BidDAO();
-
-$page = "bidding.php";
-$message = "";
-
-//check round number
-$roundstatus_dao = new RoundStatusDAO();
-$round_status = $roundstatus_dao->retrieveCurrentActiveRound();
-// var_dump($round_status);
-if($round_status != null){
-
-  if($round_status->round_num == 1){
-    $page = "bidding.php";
-    // $message =  "no course enrolled!";
-  }
-  else{
-    $page = "r2bidding.php";
-  }
-  $round_active = TRUE;
-
-}
-else{
-  $message =  "round not active";
-  $round_active = FALSE;
-}
-
-if (isset($_POST["dropped_section"])){
-    // var_dump($_POST["dropped_section"]);
-    $drop_courses = $_POST['dropped_section'];
-    $errors = [];
-    foreach($drop_courses as $dropcourse){
-      $section = $courseEnrolledDAO->retrieveByUseridCourse($userid, $dropcourse);
-      $errors[] = $r2bidDAO->r2dropSection($userid,$dropcourse,$section->section);
-    }
-}
-
-// bootstrap tut from https://www.w3schools.com/bootstrap/bootstrap_navbar.asp 
-?>
-<html>
-<head>
-  <title>BIOS Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-</head>
-<body>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand">BIOS</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li><a href="home.php">Home</a></li>
-      <li><a href=<?=$page?>>Bidding</a></li>
-      <li><a href='dropbid.php'>Drop Bid</a></li>
-      <li class="active"><a href="#">Drop Section</a></li>
-      <li><a href='logout.php'>Log Out</a></li>
-    </ul>
-  </div>
-</nav>
-  
-<div class="container">
-
-<?php
-//gets lists of course enrolled
-$course_enrolled = $courseEnrolledDAO->retrieveByUserid($_SESSION['userid']);
-//var_dump($course_enrolled);
-//var_dump($_SESSION);
-$resultDAO = new ResultDAO;
-
-// $message =  "no course enrolled!";
-if (!empty($course_enrolled) && $round_active){
-  $message = "";
-?>
-<form method='post' action='dropsection.php'>
-    <table border='2'>
-        <tr>
-            <th>Course</th>
-            <th>Section</th>
-            <th>Day</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Exam Date</th>
-            <th>Exam Start Time</th>
-            <th>Exam End Time</th>
-            <th>Amount</th>
-            <th>Drop</th>
-        </tr>
-<?php
-// var_dump($course_enrolled);
-foreach ($course_enrolled as $course){
-    $bid_result = $resultDAO->retrieveByCourseEnrolled($course);
-    // var_dump($bid_result);
-    $amount = number_format($bid_result->amount,2);
-    echo 
-"
-        <tr>
-            <td>{$course->course}</td>
-            <td>{$course->section}</td>
-            <td>$course->day</td>
-            <td>$course->start</td>
-            <td>$course->end</td>
-            <td>$course->exam_date</td>
-            <td>$course->exam_start</td>
-            <td>$course->exam_end</td>
-            <td>$amount</td>
-            <td> <input type='radio' name='dropped_section[]' value={$course->course}> </td>
-        </tr>
-";
-}
-
-?>
-    </table>
-        <br><input type='submit' value='Drop Section'>
-</form>
-<?php
-
-
-}//closes if (!empty($course_enrolled)){
+  require_once 'include/common.php';
+  require_once 'include/protect.php';
+  $userid = $_SESSION['userid'];
+  $courseEnrolled_dao = new CourseEnrolledDAO;
+  $r2bid_dao = new R2BidDAO();
+  $roundstatus_dao = new RoundStatusDAO();
   $student_dao = new StudentDAO();
-  $student = $student_dao->retrieve($userid); // student object
-  
-  echo "<h2>Your info:</h2>";
-  echo "<table border=1>
-      <tr>
-          <th>Name</th>
-          <td>$student->name</td>
-      </tr>  
-      <tr>
-          <th>School</th>
-          <td>$student->school</td>
-      </tr>
-      <tr>
-          <th>e$ Balance</th>
-          <td>$student->edollar</td>
-      </tr>
-      </table><hr>";
+  $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
+  $round_message = "No active bidding round currently.";
+  $errors = "";
+  $disabled = "";
+  $page = "bidding.php";
 
-if (isset($errors) && $round_active){
-  // var_dump($message);
-  if (is_array($errors)){
-    echo "<font color='green'>Bid was dropped successfully!<br>
-            e$ updated</font><br>";
+  if(isset($_POST['Sectiondrop']) && isset($_POST['drop_course'])){
+    $drop_section = $_POST['drop_course'];
+    $section = $courseEnrolled_dao->retrieveByUseridCourse($userid, $drop_section);
+    $errors = $r2bid_dao->r2dropSection($userid,$drop_section,$section->section);
   }
-  else{
-    echo "<font color='red'>Error!</font><br><ul>";
-      foreach($errors as $err) {
-        echo "<font color='red'><li>$err</li></font>";
-      }
-    echo "</ul>";
+  $student = $student_dao->retrieve($userid);
+  $edollar = number_format($student->edollar,2);
+
+
+  if($round_status != null){
+    if($round_status->round_num == 1){
+      $page = 'bidding.php';
+    }else{
+      $page = 'r2bidding.php';
+    }
+    $round_message = "Current Round: Round $round_status->round_num";
+  }else{
+    $disabled = 'disabled';
   }
-}
-else{
-  echo "<font color='red'>$message</font><br><ul>";
-}
+
+  $courses_enrolled = $courseEnrolled_dao->retrieveByUserid($userid);
+
+  $table = "<table class='table table-responsive table-bordered table-hover'>
+                <tr>
+                  <th>No.</th>
+                  <th>Amount</th>
+                  <th>Course</th>
+                  <th>Section</th>
+                  <th>Day</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Exam Date</th>
+                  <th>Exam Start Time</th>
+                  <th>Exam End Time</th>
+                  <th>Drop</th>
+                </tr>";
+  $count = 0;
+  foreach($courses_enrolled as $course){
+    $count++;
+      $dollar = number_format($course->amount,2);
+      $table .= "<tr>
+                    <td>$count</td>
+                    <td>$dollar</td>
+                    <td>{$course->course}</td>
+                    <td>{$course->section}</td>
+                    <td>{$course->day}</td>
+                    <td>{$course->start}</td>
+                    <td>{$course->end}</td>
+                    <td>{$course->exam_date}</td>
+                    <td>{$course->exam_start}</td>
+                    <td>{$course->exam_end}</td>
+                    <td> <input type='radio' name='drop_course' value={$course->course} $disabled> </td>
+                </tr>";
+  }
+  $table .= "<tr><td colspan='11'><input class='btn btn-primary' type='submit' name='Sectiondrop' value='Drop Section' $disabled>
+              </td></tr>
+              </table>";
 ?>
-</div>
 
-</body>
+<!DOCTYPE html>
+<html lang = 'en'>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BIOS Drop Section</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  </head>
+
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
+      
+      <ul class="navbar-nav ml-left">
+        <li class="nav-item">
+          <a class="nav-link">&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="home.php">Home&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href=<?=$page?>>Bidding&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item  active">
+          <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link"><?= $userid ?>&nbsp;</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="logout.php">Logout</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+
+  <body>
+
+    <div id='wrapper'>
+      <div class='container-fluid'>
+        <div class='row mt-4'>
+          <!-- left column -->
+          <div class='col-auto'>
+            <!-- first card in left column -->
+            <div class='card shadow mb-4'>
+              <div class='card-body'>
+                <h5 class='m-0 font-weight-bold text-primary'>
+                  <?=$round_message?>
+                </h5>
+              </div>
+            </div>
+            <!-- second card in left column -->
+            <div class='card shadow mb-4'>
+              <div class ='card-header'>
+                <h6 class='m-0 font-weight-bold text-primary'>Your Info</h6>
+              </div>
+              <div class='card-body text-center'>
+                <table class='table table-bordered'>
+                  <tr>
+                    <th>Name</th>
+                    <td><?=$student->name?></td>
+                  </tr>
+                  <tr>
+                    <th>School</th>
+                    <td><?=$student->school?></td>
+                  </tr>
+                  <tr>
+                    <th>e$ Balance</th>
+                    <td><?=$edollar?></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- right column -->
+          <div class='col-lg'>
+            <div class='card shadow mb-4'>
+              <div class='card-header'>
+                <h5 class='m-0 font-weight-bold text-primary'>I want to drop:</h5>                
+              </div>
+              <div class='card-body text-center'>
+                <form method='POST' action ='dropsection.php '>
+                  <?=$table?>
+                </form>
+                <?php
+                  if(is_array($errors)){
+                    echo "<font color='red>Error!</font><br>!";
+                    echo "<ul>";
+                    foreach($errors as $err){
+                      echo "<font color='red'><li>$err</li></font>";
+                    }
+                    echo "</ul>";
+                  }elseif($errors != ''){
+                    echo "<font color='green'>Section was dropped successfully!<br>
+                          e$ updated</font>";
+                  }
+                ?>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
 </html>

@@ -17,7 +17,7 @@ $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
 if ($round_status != null) {
   $round_num = $round_status->round_num;
   if($round_num == 2){
-    header("location:new_r2bidding.php");
+    header("location:r2bidding.php");
     exit();
   }
 }
@@ -52,7 +52,7 @@ else {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Dashboard</title>
+  <title>BIOS R1 Bidding</title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -84,12 +84,12 @@ else {
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="new_dropbid.php">Drop Bid&nbsp;</a>
+            <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="new_dropsection.php">Drop Section&nbsp;</a>
+            <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav ml-auto">

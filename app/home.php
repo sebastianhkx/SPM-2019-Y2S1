@@ -47,12 +47,12 @@ if ($userid === "admin") {
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="new_dropbid.php">Drop Bid&nbsp;</a>
+            <a class="nav-link" href="dropbid.php">Drop Bid&nbsp;</a>
           </li>
       </ul>
       <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="new_dropsection.php">Drop Section&nbsp;</a>
+            <a class="nav-link" href="dropsection.php">Drop Section&nbsp;</a>
           </li>
       </ul>
 
