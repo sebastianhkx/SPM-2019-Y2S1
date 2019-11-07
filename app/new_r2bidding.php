@@ -13,8 +13,6 @@
   $roundstatus_dao = new RoundStatusDAO();
   //$courses = $course_dao->retrieveAll();
   $sections = $section_dao->retrieveAll();
-  $student = $student_dao->retrieve($userid);
-  $edollar = number_format($student->edollar,2);
   $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
   $round_message = "Current Round: Round $round_status->round_num";
   $errors = "";
@@ -28,6 +26,9 @@
     $bid = new Bid($userid,$amount,$select_course,$select_section);
     $errors = $bid_dao->add($bid);
   }
+  $student = $student_dao->retrieve($userid);
+  $student_edollar = number_format($student->edollar,2);
+
 
   $bids = $bid_dao->retrieveByUser($userid);
   $table = "";
@@ -152,7 +153,7 @@
                   </tr>
                   <tr>
                     <th>e$ Balance</th>
-                    <td><?=$edollar?></td>
+                    <td><?=$student_edollar?></td>
                   </tr>
                 </table>
               </div>

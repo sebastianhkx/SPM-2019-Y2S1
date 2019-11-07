@@ -6,8 +6,6 @@
   $r2bid_dao = new R2BidDAO();
   $roundstatus_dao = new RoundStatusDAO();
   $student_dao = new StudentDAO();
-  $student = $student_dao->retrieve($userid);
-  $edollar = number_format($student->edollar,2);
   $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
   $round_message = "No active bidding round currently.";
   $errors = "";
@@ -19,6 +17,9 @@
     $section = $courseEnrolled_dao->retrieveByUseridCourse($userid, $drop_section);
     $errors = $r2bid_dao->r2dropSection($userid,$drop_section,$section->section);
   }
+  $student = $student_dao->retrieve($userid);
+  $edollar = number_format($student->edollar,2);
+
 
   if($round_status != null){
     if($round_status->round_num == 1){

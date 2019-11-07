@@ -62,8 +62,18 @@ if ($userid !== "admin") {
 
 <?php
 $roundstatus_dao = new RoundStatusDAO();
+$display = "";
+$round_status = "";
 if (empty($round_status)){
   $round_status = $roundstatus_dao->retrieveAll();
+  $display1 = $round_status[0]->status;
+  $display2 = $round_status[1]->status;
+  if( $round_status[0]->status == 'pending'){
+    $display1 = 'Round not started';
+  }
+  if($round_status[1]->status == 'pending'){
+    $display2 = 'Round not started';
+  }
 }
 ?>
 
@@ -77,7 +87,7 @@ if (empty($round_status)){
     <div class="row no-gutters align-items-center">
       <div class="col mr-2">
         <div class="h5 mb-0 font-weight-bold text-gray-800">Round 1<br><br></div>
-        <div class="text-s font-weight-bold text-primary text-uppercase mb-1"><?= $round_status[0]->status ?></div>
+        <div class="text-s font-weight-bold text-primary text-uppercase mb-1"><?= $display1 ?></div>
       </div>
 
       <form id='stop_r1' action="processclearing.php" method="post">
@@ -94,7 +104,7 @@ if (empty($round_status)){
               }
               if ($round_status[0]->status == 'ended'){
                 echo "
-                  <span class='text'><a href='displayr1.php' target='_blank'> Click to see round 1 results </a></span>";
+                  <span class='text'><a href='displayr1.php' target='_blank'> Round ended and cleared successfully. Click to see round 1 results </a></span>";
               }
             ?>
           </a>
@@ -112,7 +122,7 @@ if (empty($round_status)){
     <div class="row no-gutters align-items-center">
       <div class="col mr-2">
         <div class="h5 mb-0 font-weight-bold text-gray-800">Round 2<br><br></div>
-        <div class="text-s font-weight-bold text-primary text-uppercase mb-1"><?= $round_status[1]->status ?></div>
+        <div class="text-s font-weight-bold text-primary text-uppercase mb-1"><?= $display2 ?></div>
       </div>
 
       <form id='stop_r1' action="processclearing.php" method="post">
@@ -129,7 +139,7 @@ if (empty($round_status)){
               }
               if ($round_status[1]->status == 'ended'){
                 echo "
-                  <span class='text'><a href='displayr2.php' target='_blank'> Click to see round 2 results </a></span>";
+                  <span class='text'><a href='displayr2.php' target='_blank'>Round ended and cleared successfully. Click to see round 2 results </a></span>";
               }
             ?>            
         </a>
