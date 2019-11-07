@@ -18,7 +18,7 @@
   $round_status = $roundstatus_dao->retrieveCurrentActiveRound();
   $round_message = "Current Round: Round $round_status->round_num";
   $errors = "";
-  $section_info = "Search a module to check the available seats and minimun bid amount";
+  $section_info = "Search a module to check the available seats and minimum bid amount";
   
 
   if(isset($_POST['submit_bid'])){
@@ -226,7 +226,7 @@
         <!-- second row -->
         <div class='row'>
           <div class='col'>
-            <h6 class='m-0 font-weight-bold text-primary'>Search a module to check the available seats and minimun bid amount</h6>
+            <h6 class='m-0 font-weight-bold text-primary'>Search a module to check the available seats and minimum bid amount</h6>
             <input class='form-control bg-light border-1' type='text' id='search_course' onkeyup="filterFunction()" placeholder='Enter Course ID'>
             <table class='table table-bordered table-responsive-ml' id='course_table'>
               <tr>
@@ -236,7 +236,7 @@
                 <th>School</th>
                 <th>Title</th>
                 <th>Vacancy</th>
-                <th>Minimun Bid</th>
+                <th>Minimum Bid</th>
               </tr>
               <?php
                 $count = 0;
