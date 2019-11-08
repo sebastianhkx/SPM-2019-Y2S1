@@ -68,7 +68,7 @@ if ($userid !== "admin") {
 <!-- Buffer space -->
 
 <div class="container-fluid mt-4">
-    <h1 class="h3 mb-0 text-gray-800">Round 2 Bidding Result</h1>
+    <h1 class="h3 mb-0 text-gray-800">Round 1 Bidding Result</h1>
 
 <?php
 

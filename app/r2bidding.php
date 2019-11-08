@@ -179,7 +179,7 @@
                     <th>Course</th>
                     <th>Section</th>
                     <th>Amount</th>
-                    <th>Status</th>
+                    <th>Live Status</th>
                   </tr>
                   <?=$table?>
                 </table>

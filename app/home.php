@@ -25,6 +25,7 @@ if ($userid === "admin") {
 </head>
 <body id="page-top">
 
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="home.php">Merlion University BIOS</a>
@@ -69,7 +70,7 @@ if ($userid === "admin") {
 
       </div>
     </div>
-  </nav>
+</nav>
 
 <?php
 $roundstatus_dao = new RoundStatusDAO();
@@ -83,13 +84,29 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
 
 <html>
 <!-- Page Content start here-->
-<div class="container-fluid">
-    <!-- Round status -->
-    <div class="col-lg-6 mb-4 mt-4">
-      <div class="card shadow mb-4">
-      <div class="card-header">
+<!-- <div class="container-fluid">
+  <div class='row'> -->
 
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+
+  <!-- Main Content -->
+  <div id="content">
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-4">
+
+    <!-- Round status -->
+    <div class="col-auto mt-4">
+      <div class="card shadow ">
+        <div class="card-header">
+
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
           <h6 class="m-0 font-weight-bold text-primary">
             <?php
               if ($round_status != null) {
@@ -106,49 +123,52 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
               }
             ?>
           </h6>
+          </div>
+
         </div>
       </div>
-      </div>
-
     </div>
+    <!-- end of round status -->
 
-            <!-- User info -->
-    <div class="col-lg-6 mr-4">
+    <!-- User info -->
+    <div class="col-auto">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
+
           <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">
               Your Info
             </h6>
           </div>
-        <br>
-        <!-- <div class='text-center'> -->
-        <?php
-        $student_dao = new StudentDAO();
-        $student = $student_dao->retrieve($userid);
-        $edollar = number_format($student->edollar,2);
-        ?>
+          <br>
+          <?php
+          $student_dao = new StudentDAO();
+          $student = $student_dao->retrieve($userid);
+          $edollar = number_format($student->edollar,2);
+          ?>
 
-        <table class="table table-bordered">
-          <tr>
-              <th>Name</th>
-              <td><?= $student->name ?></td>
-          </tr>  
-          <tr>
-              <th>School</th>
-              <td><?= $student->school ?></td>
-          </tr>
-          <tr>
-              <th>e$ Balance</th>
-              <td><?= $edollar ?></td>
-          </tr>
-        </table>
-          </div>
-        
+          <table class="table table-bordered">
+            <tr>
+                <th>Name</th>
+                <td><?= $student->name ?></td>
+            </tr>  
+            <tr>
+                <th>School</th>
+                <td><?= $student->school ?></td>
+            </tr>
+            <tr>
+                <th>e$ Balance</th>
+                <td><?= $edollar ?></td>
+            </tr>
+          </table>
+
+        </div>
       </div>
     </div>
+    <!-- end of info -->
 
-    <div class="col-lg-6 mb-4">
+    <!-- bid overview -->
+    <div class="col-auto">
       <div class="card shadow mb-4">
           <div class="card-header py-3">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -164,7 +184,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
             if (!empty($resultObjs) || !empty($bidObjs)){
               echo 
               "
-              <table class='table table-bordered'>
+              <table class='table table-responsive table-bordered'>
                 <tr>
                   <th>Course</th>
                   <th>Section</th>
@@ -212,9 +232,120 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
           </div>
       </div>
     </div>
-
-<!-- page end -->
+<!-- end of bid overview -->
 </div>
+
+<div class="col-lg-8">
+
+                   <!-- Timetable last row to right col -->
+    <div class="col-auto mt-4">
+      <div class="card shadow mb-6">
+        <div class="card-header mb-6">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+              Your timetable
+            </h6>
+            <?php
+              $bidDAO = new BidDAO();
+              $courseEnrolledDAO = new CourseEnrolledDAO();
+              $bids = $bidDAO->retrieveByUser($userid);
+              $courseEnrolled = $courseEnrolledDAO->retrieveByUserid($userid);
+              $date = [1=>'Mon',2=>'Tue',3=>'Wed',4=>'Thu',5=>'Fri',6=>'Sat',7=>'Sun'];
+              $time = ['08:00'];
+              #generate time from 08:00 to 22:45
+              while ($time[sizeof($time)-1] != '22:45'){
+                $time[] = date('H:i',strtotime($time[sizeof($time)-1])+strtotime('00:15:00'));
+              }
+              #calculate rowspan of bids and course enrolled
+              $sectionDAO = new SectionDAO();
+              $bidtimetable = [];
+              $courseenrolledtimetable = [];
+              foreach ($bids as $bid){
+                $sectionObj = $sectionDAO->retrieveBySection($bid);
+                $rowspan = (strtotime($sectionObj->end)-strtotime($sectionObj->start))/900;
+                if (isset($bitimetable[$sectionObj->day])){
+                  $bidtimetable[$sectionObj->day][substr($sectionObj->start,0,5)] = [$sectionObj, $rowspan];
+                }
+                else{
+                  $bidtimetable[$sectionObj->day] = [substr($sectionObj->start,0,5)=>[$sectionObj, $rowspan]];
+                }
+              }
+
+              foreach ($courseEnrolled as $courseEnroll){
+                $rowspan = (strtotime($courseEnroll->end)-strtotime($courseEnroll->start))/900;
+                if (isset($bitimetable[$courseEnroll->day])){
+                  $courseenrolledtimetable[$courseEnroll->day][substr($courseEnroll->start,0,5)] = [$courseEnroll, $rowspan];
+                }
+                else{
+                  $courseenrolledtimetable[$courseEnroll->day] = [substr($courseEnroll->start,0,5)=>[$courseEnroll, $rowspan]];
+                }
+              }
+            ?>
+          </div>
+
+          <div class="card-header py-3   d-flex flex-row align-items-center justify-content-between">
+          <!-- <table class='table table-responsive table-bordered'> -->
+          <table border='1' cellpadding='4'>
+            <tr>
+              <th >Time</th>
+            <?php
+              foreach ($date as $num=>$day){
+                echo "<th width='100'> $day </th>";
+              }
+            ?>
+            </tr>
+            <?php
+              $skipday = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0, 6=>0, 7=>0];
+              $rowskip = 0;
+              foreach ($time as $colname){
+                echo "<tr>";
+                if ($rowskip==0){
+                  echo "<td rowspan='4'>$colname</td>";
+                  
+                }
+                foreach ($date as $num=>$day){
+                  if (isset($bidtimetable[$num][$colname])){
+                    echo "<td bgcolor='#B580D1' rowspan='{$bidtimetable[$num][$colname][1]}'><font color='black'>{$bidtimetable[$num][$colname][0]->course}</font></td>";
+                    $skipday[$num] = $bidtimetable[$num][$colname][1];
+                  }
+                  if (isset($courseenrolledtimetable[$num][$colname])){
+                    echo "<td bgcolor='green' rowspan='{$courseenrolledtimetable[$num][$colname][1]}'><font color='black'>{$courseenrolledtimetable[$num][$colname][0]->course}</font></td>";
+                    $skipday[$num] = $courseenrolledtimetable[$num][$colname][1];
+                  }
+                  if ($skipday[$num]==0){
+                    echo "<td height='2'></td>";
+                  }
+                  else{
+                    $skipday[$num] -= 1;  
+                  }
+                }
+                echo "</tr>";
+                $rowskip = ($rowskip+1)%4;
+              }
+            ?>
+          </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+
+</div>
+         
+            </div>
+
+    
+            </div>
+      <!-- End of Main Content -->
+
+
+    <!-- </div> -->
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
