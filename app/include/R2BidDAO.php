@@ -18,7 +18,7 @@ class R2BidDAO{
         $result = [];
 
         if ($row = $stmt->fetch()){
-            $result = new R2Bid($row['course'],$row['section'],$row['min_amount'],$row['vacancy']);
+            $result = new R2Bid($row['course'],$row['section'],$row['min_amount'],(int)$row['vacancy']);
             //$result = array("course"=>$row["course"], "section"=>$row['section'], "min_amount"=>$row["min_amount"],"vacancy"=>$row['vacancy']);
         }
         return $result;

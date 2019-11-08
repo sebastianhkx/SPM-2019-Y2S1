@@ -71,12 +71,17 @@ else{
                     if (sizeof(explode('.', $amount))==1){
                         $amount .= ".0";
                     }
-                    $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
-                    if ($bidObj->amount>$clearingPrice){
-                    $result = 'success';
+                    if ($current_round->round_num == 2) {
+                        $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
+                        if ($bidObj->amount>$clearingPrice) {
+                        $result = 'success';
+                        }
+                        else {
+                        $result = 'fail';
+                        }
                     }
-                    else{
-                    $result = 'fail';
+                    else {
+                        $result = 'pending';
                     }
                     //floatval converts amount to float
                     $bids_to_ret[] = ["userid"=>$bidObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($bidObj->userid)->edollar, "status"=>$result];
@@ -89,7 +94,7 @@ else{
                         $min_bid = min($bid_amounts); // if #bids < #vacancy
                     }
                     else {
-                        $min_bid = $bidDAO->getClearingPrice($bidObj, $vacancy); // if #bids >= #vacancy
+                        $min_bid = $bidDAO->getClearingPrice($bidObj, $vacancy-1); // if #bids >= #vacancy
                     }
                 }
             }
@@ -106,9 +111,10 @@ else{
             $resultDAO = new ResultDAO();
             $studentDAO = new StudentDAO();
             $r2_bid_dao = new R2BidDAO();
+            $course_enrolled_dao = new CourseEnrolledDAO();
             $bidObj = new Bid('', '', $course, $section);
             $r2_bid_info = $r2_bid_dao->getr2bidinfo($bidObj);
-            $vacancy = $r2_bid_info->vacancy;
+            $vacancy = $sectionDAO->retrievebyCourseSection($course, $section)->size - count($course_enrolled_dao->retrieveByCourseSection([$course, $section]));
             if ($roundStatus[1]->status=='ended') {
                 // no active round, last active is round 2
                 $results1 = $resultDAO->retrieveByRound(1);
@@ -124,21 +130,48 @@ else{
             if (!empty($results)) {
                 foreach ($results as $resultObj) {
                     if ($resultObj->course==$course && $resultObj->section==$section) {
+                        $status = $resultObj->result;
                         $amount = $resultObj->amount;
-                        $bid_amounts[] = $amount;
+                        if ($status == 'success') {
+                            $bid_amounts[] = $amount;
+                        }
                         //adds decimal to amount if amount is not in float form
                         if (sizeof(explode('.', $amount))==1) {
                             $amount .= ".0";
                         }
-                        $bids_to_ret[] = ["userid"=>$resultObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($resultObj->userid)->edollar, "result"=>$resultObj->result];
+
+                        if ($roundStatus[0]->status=='ended' && $roundStatus[0]->status=='pending') {
+                        $bids_to_ret[] = ["userid"=>$resultObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($resultObj->userid)->edollar, "status"=>$status];
+                        }
+                        elseif ($roundStatus[0]->status=='ended' && $roundStatus[0]->status=='ended') {
+                            if ($status == 'success') {
+                                $bids_to_ret[] = ["userid"=>$resultObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($resultObj->userid)->edollar, "status"=>$status];
+                            }
+                        }
                     }
                 }
             }
             if (!empty($bid_amounts)) {
                 $min_bid = min($bid_amounts);
             }
-            if ($roundStatus[1]->status=='ended' && $results2 == null) {
-                $min_bid = 10;
+
+            if ($roundStatus[1]->status=='ended') {
+                if ($results2 == null) {
+                    $min_bid = 10;
+                }
+                else {
+                $bid_amounts = [];
+                foreach ($results2 as $resultObj) {
+                    if ($resultObj->course==$course && $resultObj->section==$section) {
+                        $status = $resultObj->result;
+                        $amount = $resultObj->amount;
+                        if ($status == 'success') {
+                            $bid_amounts[] = $amount;
+                        }
+                    }
+                }
+                $min_bid = min($bid_amounts);              
+                }
             }
             $result = ['status' => 'success', 
                         'vacancy' => $vacancy,
