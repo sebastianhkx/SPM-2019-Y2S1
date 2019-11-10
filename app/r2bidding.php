@@ -18,6 +18,11 @@
   $errors = "";
   $section_info = "Search a module to check the available seats and minimum bid amount";
   
+  if($round_status->round_num!=2){
+    header('location:bidding.php');
+  }
+
+
 
   if(isset($_POST['submit_bid'])){
     $amount = $_POST['bidamount'];
