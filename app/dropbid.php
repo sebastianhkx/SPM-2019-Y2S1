@@ -10,11 +10,12 @@
     $userid = $_SESSION['userid'];
     $disabled = "";
     $page = "bidding.php";
-
+    // protect user drop bid page from admin
     if($userid==='admin'){
-      header("Location:home_admin.php")
+      header("Location:home_admin.php");
+      exit();
     }
-    
+
     if(isset($_POST['submitdrop']) && isset($_POST['drop_course'])){
       $coursedrop = $_POST['drop_course'];
       $selected_bid = $bid_dao->retrieveByUseridCourse($userid, $coursedrop);

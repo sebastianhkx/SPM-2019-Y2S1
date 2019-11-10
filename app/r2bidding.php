@@ -17,9 +17,10 @@
   $round_message = "Current Round: Round $round_status->round_num";
   $errors = "";
   $section_info = "Search a module to check the available seats and minimum bid amount";
-  
+  // protect r2bidding page 
   if($round_status->round_num!=2){
     header('location:bidding.php');
+    exit();
   }
 
 
