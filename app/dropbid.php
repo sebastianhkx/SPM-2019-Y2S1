@@ -11,6 +11,10 @@
     $disabled = "";
     $page = "bidding.php";
 
+    if($userid==='admin'){
+      header("Location:home_admin.php")
+    }
+    
     if(isset($_POST['submitdrop']) && isset($_POST['drop_course'])){
       $coursedrop = $_POST['drop_course'];
       $selected_bid = $bid_dao->retrieveByUseridCourse($userid, $coursedrop);
