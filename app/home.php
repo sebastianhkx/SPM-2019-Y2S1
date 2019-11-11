@@ -99,7 +99,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
     <!-- Begin Page Content -->
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-5">
 
     <!-- Round status -->
     <div class="col-auto mt-4">
@@ -235,7 +235,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
 <!-- end of bid overview -->
 </div>
 
-<div class="col-lg-8">
+<div class="col-lg-7">
 
                    <!-- Timetable last row to right col -->
     <div class="col-auto mt-4">
