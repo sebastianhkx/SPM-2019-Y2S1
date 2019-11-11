@@ -181,11 +181,13 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
             $r2BidDAO = new R2BidDAO();
             $resultObjs = $resultDAO->retrieveByUser($userid);
             $bidObjs =  $bidDAO->retrieveByUser($userid);
+            $r_num = "";
             if (!empty($resultObjs) || !empty($bidObjs)){
               echo 
               "
               <table class='table table-responsive table-bordered'>
                 <tr>
+                  <th>Round</th>
                   <th>Course</th>
                   <th>Section</th>
                   <th>Amount</th>
@@ -194,8 +196,10 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
               foreach ($bidObjs as $bidObj){
                 if ($round_status->round_num =='1'){
                   $result = 'Pending';
+                  $r_num = '1';
                 }
                 else{
+                  $r_num = '2';
                   $r2BidInfo = $r2BidDAO->getr2bidinfo($bidObj);
                   $vacancy = $r2BidInfo->vacancy;
                   $clearingPrice = $bidDAO->getRoundTwoSuccessfullPrice($bidObj, $vacancy);
@@ -209,6 +213,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
                 $edollar = number_format($bidObj->amount,2);
                 echo "
                 <tr>
+                  <td>$r_num</td>
                   <td>{$bidObj->course}</td>
                   <td>{$bidObj->section}</td>
                   <td>{$edollar}</td>
@@ -218,8 +223,10 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
               foreach ($resultObjs as $resultObj){
                 $result = ucfirst($resultObj->result);
                 $edollar = number_format($resultObj->amount,2);
+                $r_num = $resultObj->round_num;
                 echo "
                 <tr>
+                  <td>$r_num</td>
                   <td>{$resultObj->course}</td>
                   <td>{$resultObj->section}</td>
                   <td>{$edollar}</td>
