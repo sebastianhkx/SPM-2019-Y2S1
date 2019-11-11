@@ -5,7 +5,7 @@ require_once 'include/protect.php';
 $userid = $_SESSION['userid'];
 // protect user page from admin
 if ($userid === "admin") {
-  header("Location: login.php");
+  header("Location: home_admin.php");
   exit();
 }
 $student_dao = new StudentDAO();

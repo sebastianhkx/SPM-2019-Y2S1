@@ -12,6 +12,12 @@
   $disabled = "";
   $page = "bidding.php";
 
+ // protect user drop section page from admin
+ if($userid==='admin'){
+  header("Location:home_admin.php");
+  exit();
+}
+
   if(isset($_POST['Sectiondrop']) && isset($_POST['drop_course'])){
     $drop_section = $_POST['drop_course'];
     $section = $courseEnrolled_dao->retrieveByUseridCourse($userid, $drop_section);
