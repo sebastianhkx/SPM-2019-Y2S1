@@ -226,7 +226,7 @@
                     }
                     echo "</ul>";
                   }elseif($errors != ''){
-                    echo "<font color='green'>Section was dropped successfully!<br>
+                    echo "<font color='green'>Bid was added successfully!<br>
                           e$ updated</font>";
                   }
                 ?>
