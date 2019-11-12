@@ -249,9 +249,12 @@ class BidDAO {
         //bidded more than 5 BOOTSTRAP + JSON
         $to_refund = 0;
         $existingBid = $this->retrieveByUseridCourse($bid->userid, $bid->course);//null if no existing bid
+        $courseEnrolledDAO = new CourseEnrolledDAO();
+        $courseEnrolledObj_array = $courseEnrolledDAO->retrieveByUserid($bid->userid);
+        $allowedBidNum = 5 - sizeof($courseEnrolledObj_array);
         //does not have existing bid, doesnt not need to check for updating bid as bids submmitted would still be 5
         // var_dump($bidObj_array);
-        if (sizeof($bidObj_array)>=5){
+        if (sizeof($bidObj_array)>=$allowedBidNum){
             $errors[] = 'section limit reached';
         }
 
