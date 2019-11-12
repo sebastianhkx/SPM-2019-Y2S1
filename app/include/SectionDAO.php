@@ -106,12 +106,14 @@ class SectionDAO {
         if ($courseDAO->retrieveByCourseId($section->course)==null){
             $errors[] = "invalid course";
         }
-        $section_name=$section->section;
-        $section_number=substr($section_name,1);
-        // var_dump($section);
-        if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<1  || $section_number>99){
-            $errors[]='invalid section';
-        }
+        else{
+            $section_name=$section->section;
+            $section_number=substr($section_name,1);
+            // var_dump($section);
+            if($section_name[0] != 'S' || !is_numeric($section_number) || $section_number<1  || $section_number>99 || substr($section_number,0,1)=='0'){
+                $errors[]='invalid section';
+            }
+        }  
 
         if( $section->day<1 || $section->day>7 ){
             $errors[]= 'invalid day';
