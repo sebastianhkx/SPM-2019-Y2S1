@@ -131,7 +131,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
     <!-- end of round status -->
 
     <!-- User info -->
-    <div class="col-auto">
+    <div class="col-auto mt-4">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
 
@@ -330,14 +330,85 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
                 $rowskip = ($rowskip+1)%4;
               }
             ?>
-          </table>
+          </table>          
           </div>
 
         </div>
       </div>
     </div>
 
+<!-- Exam schedule -->
+<div class="col-auto mt-4">
+      <div class="card shadow mb-6">
+        <div class="card-header mb-6">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+              Exam Schedule
+            </h6>
+            </div>
 
+          <table class='table table-responsive table-bordered'>
+            <tr>
+              <th>Course</th>
+              <th>Section</th>
+              <th>Exam Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+            </tr>
+            <?php
+            //$bidDAO = new BidDAO();
+            $courseDAO = new CourseDAO();
+            //$sectionDAO = new SectionDAO();
+            //$bids = $bidDAO->retrieveByUser($userid);
+            foreach ($bids as $bid){
+              $sectionObj = $sectionDAO->retrieveBySection($bid);
+              $courseId = $bid->course;
+              $section = $bid->section;
+              $courseObj = $courseDAO->retrieveByCourseId($courseId);
+              $exam_date = $courseObj->exam_date;
+              $start_time = $courseObj->exam_start;
+              $end_time = $courseObj->exam_end;
+              $status = "Pending";
+              //$sectionObj = $sectionDAO->retrieveBySection($bid);
+              echo "
+              <tr>
+              <td>$courseId</td>
+              <td>$section</td>
+              <td>$exam_date </td>
+              <td>$start_time</td>
+              <td>$end_time </td>
+              <td>$status </td>
+              </tr>";
+            }
+            foreach($courseEnrolled as $one_courseEnrolled){
+              $courseId = $one_courseEnrolled->course;
+              $section = $one_courseEnrolled->section;
+              $exam_date = $one_courseEnrolled->exam_date;
+              $start_time = $one_courseEnrolled->exam_start;
+              $end_time = $one_courseEnrolled->exam_end;
+              $status = 'Success';
+              echo "
+              <tr>
+              <td>$courseId</td>
+              <td>$section</td>
+              <td>$exam_date </td>
+              <td>$start_time</td>
+              <td>$end_time </td>
+              <td>$status </td>
+              </tr>";
+            }
+        
+
+          ?>
+          </table>
+
+
+</div>
+            </div>
+            </div>
+            </div>
+            </div>
 
 </div>
          
