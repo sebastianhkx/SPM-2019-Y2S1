@@ -131,7 +131,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
     <!-- end of round status -->
 
     <!-- User info -->
-    <div class="col-auto">
+    <div class="col-auto mt-4">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
 
@@ -330,9 +330,7 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
                 $rowskip = ($rowskip+1)%4;
               }
             ?>
-          </table>
-          <hr>
-          
+          </table>          
           </div>
 
         </div>
@@ -347,17 +345,16 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
             <h6 class="m-0 font-weight-bold text-primary">
               Exam Schedule
             </h6>
-
-          <div class="card-header py-3   d-flex flex-row align-items-center justify-content-between">
+            </div>
 
           <table class='table table-responsive table-bordered'>
             <tr>
-              <td>Course</td>
-              <td>Section</td>
-              <td>Exam Date</td>
-              <td>Start Time</td>
-              <td>End Time</td>
-              <td>Status</td>
+              <th>Course</th>
+              <th>Section</th>
+              <th>Exam Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
             </tr>
             <?php
             //$bidDAO = new BidDAO();
