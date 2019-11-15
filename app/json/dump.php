@@ -120,7 +120,7 @@ elseif($round_status[0]->status == 'ended'){ // R1 ended
             "userid"=>$one_result->getUserid(),
             "course"=>$one_result->getCourse(),
             "section"=>$one_result->getSection(),
-            "amount"=>$one_result->getAmountJSON()
+            "amount"=>floatval($one_result->getAmountJSON())
         ];
     }
 }
