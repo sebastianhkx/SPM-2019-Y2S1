@@ -415,7 +415,7 @@ class BidDAO {
         $result = null;
 
         if($row = $stmt->fetch()){
-            $result = new bid($row['userid'], $row['amount'], $row['course'], $row['section']);
+            $result = new Bid($row['userid'], $row['amount'], $row['course'], $row['section']);
         }
 
         $stmt = null;
