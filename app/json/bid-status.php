@@ -33,7 +33,7 @@ else{
     else{
         $sectionDAO = new SectionDAO();
         if ($sectionDAO->retrieveSection($course, $section)==null){
-            $errors = 'invalid section';
+            $errors[] = 'invalid section';
         }
     }
     if (!empty($errors)){
