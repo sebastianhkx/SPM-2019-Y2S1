@@ -102,33 +102,31 @@ else{
 
 $section_studentDisplay=[];
 $round_status=$round_status_dao->retrieveall();
-foreach($round_status as $one_status){
-    if($one_status->round_num=="1"){
-        if($one_status->status="ended"){
-            foreach($result_dao->retrieveall() as $one_result){
-                $section_studentDisplay[]=[
-                    "userid"=>$one_result->getUserid(),
-                    "course"=>$one_result->getCourse(),
-                    "section"=>$one_result->getSection(),
-                    "amount"=>$one_result->getAmountJSON()
-                ];
-            }
-        }
-        else{
-            $section_studentDisplay=[];
-        }
-    }
-    elseif($one_status->round_num=='2'){
-        foreach($result_dao->retrieveall() as $one_result){
-            $section_studentDisplay[]=[
-                "userid"=>$one_result->getUserid(),
-                "course"=>$one_result->getCourse(),
-                "section"=>$one_result->getSection(),
-                "amount"=>$one_result->getAmountJSON()
-            ];
-        }
+
+if($round_status[1]->status == 'ended'){ // R2 ended
+    foreach($result_dao->retrieveByRoundForDump(2) as $one_result){
+        $section_studentDisplay[]=[
+            "userid"=>$one_result->getUserid(),
+            "course"=>$one_result->getCourse(),
+            "section"=>$one_result->getSection(),
+            "amount"=>floatval($one_result->getAmountJSON())
+        ];
     }
 }
+
+elseif($round_status[0]->status == 'ended'){ // R1 ended
+    foreach($result_dao->retrieveByRoundForDump(1) as $one_result){
+        $section_studentDisplay[]=[
+            "userid"=>$one_result->getUserid(),
+            "course"=>$one_result->getCourse(),
+            "section"=>$one_result->getSection(),
+            "amount"=>$one_result->getAmountJSON()
+        ];
+    }
+}
+
+// }
+// var_dump($section_studentDx`isplay);
 // $course_completed_arr = $course_completed_dao->retrieveAllSortCourse();
   
 
