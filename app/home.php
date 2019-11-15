@@ -253,16 +253,11 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
               Your timetable
             </h6>
             <?php
-              $bidDAO = new BidDAO();
               $courseEnrolledDAO = new CourseEnrolledDAO();
               $bids = $bidDAO->retrieveByUser($userid);
               $courseEnrolled = $courseEnrolledDAO->retrieveByUserid($userid);
               $date = [1=>'Mon',2=>'Tue',3=>'Wed',4=>'Thu',5=>'Fri',6=>'Sat',7=>'Sun'];
-              $time = ['08:00'];
-              #generate time from 08:00 to 22:45
-              while ($time[sizeof($time)-1] != '22:45'){
-                $time[] = date('H:i',strtotime($time[sizeof($time)-1])+strtotime('00:15:00'));
-              }
+              
               #calculate rowspan of bids and course enrolled
               $sectionDAO = new SectionDAO();
               $bidtimetable = [];
@@ -304,7 +299,12 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
             <?php
               $skipday = [1=>0, 2=>0, 3=>0, 4=>0, 5=>0, 6=>0, 7=>0];
               $rowskip = 0;
-              foreach ($time as $colname){
+              $time = '07:45';
+              #generate time from 08:00 to 22:45
+              while ($time != '22:45'){
+                $time = date('H:i',strtotime($time)+900);
+                // echo $time;
+                $colname = $time;
                 echo "<tr>";
                 if ($rowskip==0){
                   echo "<td rowspan='4'>$colname</td>";
@@ -399,7 +399,6 @@ $round2_arr = [$round_statuses[1]->round_num, $round_statuses[1]->status];
               </tr>";
             }
         
-
           ?>
           </table>
 

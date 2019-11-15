@@ -44,6 +44,10 @@ class CourseEnrolledDAO {
         while($row = $stmt->fetch()){
             $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'],$row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
+
+        $stmt = null;
+        $conn = null; 
+
         return $result;
     }
 
@@ -64,6 +68,9 @@ class CourseEnrolledDAO {
         while($row = $stmt->fetch()){
             $result = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
+        $stmt = null;
+        $conn = null; 
+
         return $result;
     }
 
@@ -144,6 +151,8 @@ class CourseEnrolledDAO {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute();
         $count = $stmt->rowCount();
+        $stmt = null;
+        $conn = null; 
     }
 
     public function retrieveByCourseSection($courseSection){
@@ -164,6 +173,9 @@ class CourseEnrolledDAO {
         while($row = $stmt->fetch()){
             $result[] = new CourseEnrolled($row['userid'], $row['course'], $row['section'], $row['amount'], $row['day'], $row['start'], $row['end'], $row['exam_date'], $row['exam_start'], $row['exam_end']);
         }
+        $stmt = null;
+        $conn = null; 
+        
         return $result;
     }
 
