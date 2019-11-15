@@ -117,13 +117,14 @@ else{
             $vacancy = $sectionDAO->retrievebyCourseSection($course, $section)->size - count($course_enrolled_dao->retrieveByCourseSection([$course, $section]));
             if ($roundStatus[1]->status=='ended') {
                 // no active round, last active is round 2
-                $results1 = $resultDAO->retrieveByRound(1);
-                $results2 = $resultDAO->retrieveByRound(2);
-                $results = array_merge($results1, $results2);
+                $results1 = $resultDAO->retrieveByRoundForBidStatus(1);
+                $results2 = $resultDAO->retrieveByRoundForBidStatus(2);
+                $results = $resultDAO->retrieveAllForBidStatus();
             }
             elseif ($roundStatus[0]->status=='ended') {
                 // no active round, last active is round 1
-                $results = $resultDAO->retrieveByRound(1);
+                $results = $resultDAO->retrieveByRoundForBidStatus(1);
+                // var_dump($results);
             }
             $min_bid = 10; // initialise to 10 if no results
             $bid_amounts = []; // to get min bid
@@ -140,10 +141,10 @@ else{
                             $amount .= ".0";
                         }
 
-                        if ($roundStatus[0]->status=='ended' && $roundStatus[0]->status=='pending') {
+                        if ($roundStatus[0]->status=='ended') {
                         $bids_to_ret[] = ["userid"=>$resultObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($resultObj->userid)->edollar, "status"=>$status];
                         }
-                        elseif ($roundStatus[0]->status=='ended' && $roundStatus[0]->status=='ended') {
+                        elseif ($roundStatus[1]->status=='ended') {
                             if ($status == 'success') {
                                 $bids_to_ret[] = ["userid"=>$resultObj->userid, "amount"=>floatval($amount), "balance"=>$studentDAO->retrieve($resultObj->userid)->edollar, "status"=>$status];
                             }
@@ -170,7 +171,9 @@ else{
                         }
                     }
                 }
-                $min_bid = min($bid_amounts);              
+                if (!empty($bid_amounts)) {
+                    $min_bid = min($bid_amounts);       
+                }       
                 }
             }
             $result = ['status' => 'success', 

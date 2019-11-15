@@ -23,6 +23,27 @@ class ResultDAO {
         return $result;
     }
 
+    public function retrieveAllForBidStatus() {
+        $sql = 'SELECT * FROM bid_result ORDER BY `amount` DESC, `userid` ASC';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+        while($row = $stmt->fetch()) {
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+                 
+        return $result;
+    }
+
     public function retrieveByRound($round) {
         $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `COURSE` ASC, `SECTION` ASC , `amount` DESC, `userid` ASC';
         
@@ -46,8 +67,9 @@ class ResultDAO {
         return $result;
     }
 
-    public function retrieveByRoundForDump($round) {
-        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `COURSE` ASC, `userid` ASC';
+
+    public function retrieveByRoundForBidStatus($round) {
+        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `amount` DESC, `userid` ASC';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
