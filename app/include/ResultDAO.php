@@ -67,9 +67,8 @@ class ResultDAO {
         return $result;
     }
 
-
-    public function retrieveByRoundForBidStatus($round) {
-        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `amount` DESC, `userid` ASC';
+    public function retrieveByRoundForDump($round) {
+        $sql = 'SELECT * FROM bid_result where round_num = :round AND result = "success" ORDER BY `COURSE` ASC, `userid` ASC';
         
         $connMgr = new ConnectionManager();      
         $conn = $connMgr->getConnection();
@@ -113,6 +112,29 @@ class ResultDAO {
         $stmt = null;
         $conn = null; 
 
+        return $result;
+    }
+
+    public function retrieveByRoundForBidStatus($round) {
+        $sql = 'SELECT * FROM bid_result where round_num = :round ORDER BY `amount` DESC, `userid` ASC';
+        
+        $connMgr = new ConnectionManager();      
+        $conn = $connMgr->getConnection();
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(':round', $round, PDO::PARAM_STR);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+
+        $result = array();
+        while($row = $stmt->fetch()) {
+            $result[] = new Result($row['userid'], $row['amount'], $row['course'], $row['section'], $row['result'],$row['round_num']);
+        }
+
+        $stmt = null;
+        $conn = null; 
+                 
         return $result;
     }
 
