@@ -22,7 +22,7 @@ class Bid {
         return $this->section;
     }
     public function getAmountJSON(){
-        return number_format($this->amount,1);
+        return number_format($this->amount,2);
 }
 }
 

@@ -33,7 +33,7 @@ class Student {
     }
 
     public function getEdollarJSON(){
-        return number_format($this->edollar,1);
+        return number_format($this->edollar,2);
 }
 
     ## Hashed pw auth
