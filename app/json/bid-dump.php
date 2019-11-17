@@ -1,7 +1,7 @@
 <?php
 
 require_once '../include/common.php';
-// require_once '../include/protect_json.php';
+require_once '../include/protect_json.php';
 
 // isMissingOrEmpty(...) is in common.php
 
